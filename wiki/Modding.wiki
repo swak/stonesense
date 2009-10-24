@@ -11,7 +11,7 @@ These blocks are defined to be 32x32 pixels in size. Hence *every sprite is 32x3
 
 Here's an example of a typical Stonesense sprite: 
 
-http://i38.tinypic.com/30lcaj8.png
+http://stonesense.googlecode.com/svn/wiki/img/tiletree.png
 
 ==objects.pcx==
 This file contains most of the visualizer's artwork. 
