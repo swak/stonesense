@@ -17,6 +17,13 @@ As you can see, each creature is identified by a *'gameID'* attribute. This has 
 
 When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the matching *Sheet Index*.
 
+Now there is nothing wrong with reusing a sprite. Consider this:
+{{{
+<Creature gameID="GIBBON_WHITE_HANDED" 	sheetIndex = 42  /> 
+<Creature gameID="GIBBON_BLACK_HANDED" 	sheetIndex = 42 /> 
+}}}
+
+
 ===Example:===
 We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be *'camel_1_hump'*. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
 
