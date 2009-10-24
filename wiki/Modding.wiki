@@ -1,3 +1,4 @@
+#labels Featured
 =Sprites=
 Understanding how Stonesense deals with sprites is central to anyone who wishes to modify the content. The scheme is not very complicated, and this guide will give a short introduction to how they work.
 
@@ -13,10 +14,6 @@ Here's an example of a typical Stonesense sprite:
 
 http://stonesense.googlecode.com/svn/wiki/img/tiletree.png 
 
-
-==objects.pcx==
-This file contains most of the visualizer's artwork, anything that does not fit on the other sheets goes here. Typically buildings, vegetation, walls and liquids. Each sprite occupies a 32x32 pixel area, and the sheet is 20 sprites wide (640 pixels).
-
 ===Sprite Index===
 Sprite Index is a concept for referring to a specific sprite on a sheet. The index starts with the upper left sprite which has index zero. It then increments to the right. Stonesense is hardcoded to 20 sprites wide sheets, this means that the last sprite to the right in the first row has Sprite Index 19. The first sprite on the second row has index 20. This boundary is hardcoded and changing the size of the sheet will not affect it.
 
@@ -24,5 +21,14 @@ This image shows how sprites are indexed. Note: Grid added for readability.
 http://stonesense.googlecode.com/svn/wiki/img/sheets_index_objects.png
 
 
+==objects.pcx==
+This file contains most of the visualizer's artwork, anything that does not fit on the other sheets goes here. Typically buildings, vegetation, walls and liquids. Each sprite occupies a 32x32 pixel area, and the sheet is 20 sprites wide (640 pixels).
+
 ==creatures.pcx==
 Holds all the creatures, and just like the objects sheet, it also wraps its Sprite Index at 20.
+
+==floors.bmp==
+Holds all the floor sprites. Note that these are *32x16* pixels in size. The Sprite Index for floors is *not* wrapped.
+
+==Ramps.bmp==
+Holds all the various ramp sprites. Each row of sprites represent a different ramp _material_, eg grass, stone or dirt.
