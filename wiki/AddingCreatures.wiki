@@ -15,4 +15,10 @@ The structure of this file is fairly simple:
 
 As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
 
-When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the mathcing Sheet Index.
+When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the matching *Sheet Index*.
+
+Example:
+We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be 'camel_1_hump'. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
+
+This means we have to draw our camel at this location: 
+http://stonesense.googlecode.com/svn/wiki/img/creature_newcre_pos.png
