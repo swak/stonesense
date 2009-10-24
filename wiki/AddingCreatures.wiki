@@ -20,5 +20,10 @@ When trying to render a creature, Stonesense will look up its gameID in this tab
 Example:
 We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be 'camel_1_hump'. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
 
-This means we have to draw our camel at this location: 
+This means we have to draw our camel at this location (the grid was added for readability): 
 http://stonesense.googlecode.com/svn/wiki/img/creature_newcre_pos.png
+
+Now all we have to do is add the following line to Creatures.xml:
+{{{
+<Creature gameID="camel_1_hump"      sheetIndex = 18 /> 
+}}}
