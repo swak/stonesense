@@ -13,7 +13,7 @@ The structure of this file is fairly simple:
 <Creature gameID="dog" 		sheetIndex = 21 /> 
 }}}
 
-As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
+As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress, see [AddingCreatures#List-of-Creatures List of Creatures]. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
 
 When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the matching *Sheet Index*.
 
