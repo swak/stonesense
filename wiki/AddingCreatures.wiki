@@ -1,0 +1,3 @@
+#labels Featured
+=Adding Creatures to Stonesense=
+Adding new creatures to Stonesense is fairly easy, but before reading this guide I suggest you familiarize yourself with how Stonesense deals with creature [Sprites].
