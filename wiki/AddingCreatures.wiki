@@ -27,3 +27,6 @@ Now all we have to do is add the following line to Creatures.xml:
 {{{
 <Creature gameID="camel_1_hump"      sheetIndex = 18 /> 
 }}}
+
+==List of Creatures==
+[http://stonesense.googlecode.com/svn/wiki/CreatureList.txt List for .40d]
