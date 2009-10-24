@@ -1,2 +1,12 @@
-=Creatures and Stonesense=
+=Sprites=
+Understanding how Stonesense deals with sprites is central to anyone who wishes to modify the content. The scheme is not very complicated, and this guide will give a short introduction to how they work.
 
+The sprites are stored in four bitmaps; _floos.bmp, ramps.bmp, creatures.pcx_ and _objects.pcx_. All found in the root of your Stonesense directory.
+
+The way sprites are loaded from these files varies a bit.
+
+==In general==
+Stonesense reads the world as a series of blocks. These blocks are defined to be 32x32 pixels in size. Hence *every sprite is 32x32 pixels* big. There are no alpha values yet, so partial transparency is not supported. RGB 255,0,255 (Hot pink) is considered fully transparent.
+
+==objects.pcx==
+This file contains most of the visualizer's artwork. 
