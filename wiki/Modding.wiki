@@ -9,5 +9,7 @@ The way sprites are loaded from these files varies a bit.
 Stonesense reads the world as a series of blocks. 
 These blocks are defined to be 32x32 pixels in size. Hence *every sprite is 32x32 pixels* big. There are no alpha values yet, so partial transparency is not supported. RGB 255,0,255 (Hot pink) is considered fully transparent.
 
+Here's an example of a typical Stonesense sprite: http://i38.tinypic.com/30lcaj8.png
+
 ==objects.pcx==
 This file contains most of the visualizer's artwork. 
