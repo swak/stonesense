@@ -2,7 +2,7 @@
 =Sprites=
 Understanding how Stonesense deals with sprites is central to anyone who wishes to modify the content. The scheme is not very complicated, and this guide will give a short introduction to how they work.
 
-The sprites are stored in four bitmaps; _floos.bmp, ramps.bmp, creatures.pcx_ and _objects.pcx_. All found in the root of your Stonesense directory.
+The sprites are stored in four bitmaps; _floos.png, ramps.png, creatures.png_ and _objects.png_. All found in the root of your Stonesense directory.
 
 The way sprites are loaded from these files varies a bit.
 
@@ -21,14 +21,14 @@ This image shows how sprites are indexed. Note: Grid added for readability.
 http://stonesense.googlecode.com/svn/wiki/img/sheets_index_objects.png
 
 
-==objects.pcx==
+==objects.png==
 This file contains most of the visualizer's artwork, anything that does not fit on the other sheets goes here. Typically buildings, vegetation, walls and liquids. Each sprite occupies a 32x32 pixel area, and the sheet is 20 sprites wide (640 pixels).
 
-==creatures.pcx==
+==creatures.png==
 Holds all the creatures, and just like the objects sheet, it also wraps its Sprite Index at 20.
 
-==floors.bmp==
+==floors.png==
 Holds all the floor sprites. Note that these are *32x16* pixels in size. The Sprite Index for floors is *not* wrapped.
 
-==Ramps.bmp==
+==Ramps.png==
 Holds all the various ramp sprites. Each row of sprites represent a different ramp _material_, eg grass, stone or dirt.
