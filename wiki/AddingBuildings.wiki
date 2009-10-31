@@ -51,4 +51,28 @@ Here is an annotated sample of the XML format used in the building.xml
 
 }}}
 
-= Composite sprites =
+= Tile Conditions =
+
+A tile must match all the condition entries to be displayed (There's no OR style syntax. Yet). The first matching tile is displayed, so put more complex conditions above and more generic conditions below.
+
+A side benefit of this is used in workshops: We wrote the 'border' tiles and put them unchanged a the bottom of each workshop. Then we put the actual workshop graphics above. Only the tiles that we dont otherwise specify get the generic border.
+
+== List of Condition Options ==
+
+  * *PositionIndex*: Matches on the location of a tile within a building. Used in multitile buildings such as workshops. Less effective on anything with non-fixed dimensions. The index is from west to east then north to south, and is zero based, eg:
+  || 0 || 1 || 2 ||
+  || 3 || 4 || 5 ||
+  || 6 || 7 || 8 ||
+
+  * *MaterialType*: Name of a type of material that the construction is made from. This is general material only, not specific subtype. Sometimes the material may be surprising, such as all forges are considered 'metal' because it takes the material type from the anvil.
+  || Wood || Stone || Metal || Leather || Slik ^1^ || 
+  || PlantCloth || GreenGlass || ClearGlass || CrystalGlass || 
+  ^1^ until a bugfix release...
+
+  * *NeighbourWall*: Detects whether one of the cells neighbors is solid rock or constructed wall. Good for determining orientations of doors and similar. Remember to make sure 
+  || None || North || South || West || East ||
+
+  * *NeighbourSameBuilding*: Detects whether one of the cells neighbors is of the same type of building. Note that it does *not* pay any attention to whether is is actually part of the same building, or just another built alongside. Useful for edges of buildings that should merge with their neighbors, or where PositionIndex wont work due to changing shape.
+  || None || North || South || West || East ||
+
+= Advanced Sprites =
