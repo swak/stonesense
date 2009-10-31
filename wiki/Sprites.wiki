@@ -2,7 +2,7 @@
 =Sprites=
 Understanding how Stonesense deals with sprites is central to anyone who wishes to modify the content. The scheme is not very complicated, and this guide will give a short introduction to how they work.
 
-The sprites are stored in four bitmaps; _floos.png, ramps.png, creatures.png_ and _objects.png_. All found in the root of your Stonesense directory.
+The sprites are stored in four bitmaps; _floors.png, ramps.png, creatures.png_ and _objects.png_. All found in the root of your Stonesense directory.
 
 The way sprites are loaded from these files varies a bit.
 
