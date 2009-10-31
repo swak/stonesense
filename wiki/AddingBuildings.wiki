@@ -1,0 +1,54 @@
+#summary A quick guide to adding buildings to Stonesense
+
+= Adding Buildings to Stonesense =
+
+This is a brief summary of how to add new building sprites to Stonesense.
+
+Some familiarity with the way [Sprites] work in general would be useful.
+
+= Sprite graphics =
+
+First new graphics will need to be developed for the buildings. Then they will need to be added to _objects.png_ as per the instructions on [Sprites]. You will need to know the indexes of the sprites. While you can figure these out by counting, there is a shortcut: within Stonesense, hit F10 and the objects.png will be displayed, with index numbers superimposed.
+
+= _buildingname_.xml =
+
+To tell Stonesense what to do with the graphics you have added, you need to define the building in an xml file. Create one with a sensible name in the _buildings_ folder, and add it to the list in _index.txt_
+
+hint: why not copy of the most similar building.xml instead of starting from scratch?
+
+= XML format =
+
+Here is an annotated sample of the XML format used in the building.xml
+
+{{{
+<?xml version="1.0" ?> <!-- this lets the xml parser know that your file is xml -->
+
+<Building name="Cabinet" gameID="cabinet">
+<!-- Building is the root node of the xml file. You can only have one per file -->
+<!-- The name attribute doesnt do much yet, but may be used for UI stuff later -->
+<!-- the gameID must match what the debug interface on stonesense returns -->
+
+	<Tile>
+	<!-- Each potential display element is a Tile node -->
+
+		<Condition type="MaterialType" value="Wood" />
+		<!-- A tile can have conditions that determine whether to use that tile -->
+		<!-- The first tile with all matching conditions is the one displayed -->
+		<!-- More on these below -->
+
+		<Sprite sheetIndex = 88 />
+		<!-- And here's what you were waiting for -->
+		<!-- This Sprite node tells Stonesense to use graphic 88 for the cabinet -->
+		<!-- More tricks to use on this below, too -->
+
+	</Tile> <!-- The end of this tile node -->
+
+	<Tile> <!-- Another tile element -->
+		<Sprite sheetIndex = 87 />
+	</Tile> <!-- Without a condition tag, this tile will make anything that isnt already drawn use graphic #87 -->
+	
+</Building> <!-- any xml tag needs a closing tag to match, or to have its own closing slash before the right angle bracket -->
+
+}}}
+
+= Composite sprites =
