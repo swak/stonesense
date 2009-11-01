@@ -79,6 +79,8 @@ A side benefit of this is used in workshops: We wrote the 'border' tiles and put
 
 Firstly, a tile can contain multiple sprites. This is useful where parts of a tile can be used repeatedly. The bench in a workshop, for example, is separate from the tools and objects. By drawing a bench, then drawing eg a tool, the same bench can be used repeatedly, and can be swapped out for benches of other materials.
 
+A tile can also contain no sprites, which is how you get an undrawn tile instead of a default box.
+
 To assist in combining sprites, it is possible to offset the sprites before they are drawn. Adding an offsetx and offsety attribute with appropriate integer values to the Sprite tag will achieve this.
 
 _hacky trick:_ Sprites with offsets are clipped *before* the offset is applied, of course. This means that they can be drawn outside the boundaries of the original sprite. So if you *really* needed a tile to be drawn taller than 32 pixels, you could draw the lower part with one sprite, and the upper part with another, offset, sprite. Of course, it wouldn't *really* be taller, and thus might interact with the rest of the terrain in strange ways.
