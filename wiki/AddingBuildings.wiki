@@ -14,7 +14,7 @@ First new graphics will need to be developed for the buildings. Then they will n
 
 To tell Stonesense what to do with the graphics you have added, you need to define the building in an xml file. Create one with a sensible name in the _buildings_ folder, and add it to the list in _index.txt_
 
-hint: why not copy of the most similar building.xml instead of starting from scratch?
+_hint:_ why not make a copy of the most similar building.xml instead of starting from scratch?
 
 = XML format =
 
