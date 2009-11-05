@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+
+
+
+<Building name="Restraint" gameID="restraint"> 
+	<Tile>
+		<Sprite sheetIndex = 107 />
+	</Tile>
+</Building> 

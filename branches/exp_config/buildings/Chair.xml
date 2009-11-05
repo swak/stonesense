@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+
+
+<Building name="Chair" gameID="seat"> 
+
+	<Tile>
+		<Condition type="MaterialType" value="Wood" />
+		<Sprite sheetIndex = 84 />
+	</Tile>	
+	
+	<Tile>
+		<Sprite sheetIndex = 85 />
+	</Tile>
+	
+</Building> 
