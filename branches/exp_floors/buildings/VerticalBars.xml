@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+
+
+<Building name="Vertical Bars" gameID="vertical_bars"> 
+
+	<Tile>
+		<Sprite sheetIndex=105 />
+		<Condition type="NeighbourSameBuilding" value="South" />
+		<Condition type="NeighbourSameBuilding" value="West" />
+	</Tile>		
+	<Tile>
+		<Sprite sheetIndex=104 />
+		<Condition type="NeighbourSameBuilding" value="North" />
+		<Condition type="NeighbourSameBuilding" value="East" />
+	</Tile>		
+	<Tile>
+		<Sprite sheetIndex=103 />
+		<Condition type="NeighbourSameBuilding" value="North" />
+		<Condition type="NeighbourSameBuilding" value="West" />
+	</Tile>
+	<Tile>
+		<Sprite sheetIndex=102 />
+		<Condition type="NeighbourSameBuilding" value="South" />
+		<Condition type="NeighbourSameBuilding" value="East" />
+	</Tile>
+		
+	<Tile>
+		<Sprite sheetIndex=101/>
+		<Condition type="NeighbourSameBuilding" value="North" />
+	</Tile>
+	<Tile>
+		<Sprite sheetIndex=101 />
+		<Condition type="NeighbourSameBuilding" value="South" />
+	</Tile>
+	
+	<Tile>
+		<Sprite sheetIndex=101/>
+		<Condition type="NeighbourWall" value="North" />
+	</Tile>
+	<Tile>
+		<Sprite sheetIndex=101 />
+		<Condition type="NeighbourWall" value="South" />
+	</Tile>
+	
+
+	
+	<Tile>
+		<Sprite sheetIndex = 100 />
+	</Tile>
+	
+</Building> 
