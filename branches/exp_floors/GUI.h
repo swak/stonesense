@@ -27,5 +27,7 @@ extern BITMAP* IMGFloorSheet;
 extern BITMAP* IMGObjectSheet; 
 extern BITMAP* IMGCreatureSheet; 
 extern BITMAP* IMGRampSheet; 
+extern BITMAP* IMGWallSheet; 
+extern BITMAP* IMGRamptopSheet; 
 
 extern Crd2D debugCursor;

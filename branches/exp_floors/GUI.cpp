@@ -24,6 +24,8 @@ BITMAP* IMGFloorSheet;
 BITMAP* IMGObjectSheet;
 BITMAP* IMGCreatureSheet; 
 BITMAP* IMGRampSheet; 
+BITMAP* IMGWallSheet; 
+BITMAP* IMGRamptopSheet; 
 BITMAP* buffer = 0;
 
 Crd2D debugCursor;
@@ -273,19 +275,21 @@ void loadGraphicsFromDisk(){
   register_png_file_type();
  
 
-  IMGObjectSheet = load_bitmap_withWarning("objects.png");
-
+	IMGObjectSheet = load_bitmap_withWarning("objects.png");
 	IMGFloorSheet = load_bitmap_withWarning("floors.png");
-	
-  IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
-
-	IMGRampSheet = load_bitmap_withWarning("Ramps.png");
+	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
+	IMGRampSheet = load_bitmap_withWarning("ramps.png");
+	IMGWallSheet = load_bitmap_withWarning("walls.png");
+	IMGRamptopSheet = load_bitmap_withWarning("ramptops.png");
 }
+
 void destroyGraphics(){
   destroy_bitmap(IMGFloorSheet);
   destroy_bitmap(IMGObjectSheet);
   destroy_bitmap(IMGCreatureSheet);
   destroy_bitmap(IMGRampSheet);
+  destroy_bitmap(IMGRamptopSheet);
+  destroy_bitmap(IMGWallSheet);
 }
 
 void saveScreenshot(){

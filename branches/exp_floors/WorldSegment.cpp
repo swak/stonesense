@@ -84,6 +84,14 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
       for(int32_t vsx=viewedSegment->x; vsx < vsxmax; vsx++){
           for(int32_t vsy=viewedSegment->y; vsy < vsymax; vsy++){
                 Block *b = getBlock(vsx,vsy,vsz);
+                if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
+                {
+	                Block* bLow = getBlock(vsx,vsy,vsz-1);
+	                if (bLow)
+	                {
+	            		bLow->DrawRamptops(target);    
+            		}
+            	}
                 if (b)
                 {
                     b->Draw(target);
