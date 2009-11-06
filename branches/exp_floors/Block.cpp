@@ -8,7 +8,6 @@
 
 #include "dfhack/library/DFTypes.h"
 
-
 BITMAP* temptile=0;
 
 
@@ -45,7 +44,7 @@ void Block::Draw(BITMAP* target){
 	correctBlockForSegmetOffset( drawx, drawy, drawz);
 	drawx *= TILEWIDTH;
 	drawy *= TILEWIDTH;
-	pointToScreen((int*)&drawx, (int*)&drawy, drawz * WALLHEIGHT);
+	pointToScreen((int*)&drawx, (int*)&drawy, drawz * (WALLHEIGHT+FLOORHEIGHT));
 	drawx -= TILEWIDTH>>1;
 
   int tileBorderColor = makecol(85,85,85);
@@ -53,7 +52,7 @@ void Block::Draw(BITMAP* target){
 	//Draw Floor
 	if(floorType > 0){
     sheetOffsetX = TILEWIDTH * GetFloorSpriteMap(floorType, materialIndex);
-		masked_blit(IMGFloorSheet, target, sheetOffsetX,0, drawx,drawy, TILEWIDTH,TILEHEIGHT);
+		masked_blit(IMGFloorSheet, target, sheetOffsetX,0, drawx,drawy, TILEWIDTH,TILEHEIGHT+FLOORHEIGHT);
 
     //Northern frame
     if(this->depthBorderNorth)
@@ -67,9 +66,9 @@ void Block::Draw(BITMAP* target){
 	//Draw Ramp
   if(ramp.type > 0){
     sheetOffsetX = SPRITEWIDTH * ramp.index;
-    sheetOffsetY = SPRITEHEIGHT * GetRampMaterialTypeMap(ramp.type);
+    sheetOffsetY = (SPRITEHEIGHT + FLOORHEIGHT) * GetRampMaterialTypeMap(ramp.type);
 
-		masked_blit(IMGRampSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT);
+		masked_blit(IMGRampSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT + FLOORHEIGHT);
 	}
 
 
@@ -117,7 +116,10 @@ void Block::Draw(BITMAP* target){
 	if(wallType > 0){
     //draw wall
     int spriteNum =  GetWallSpriteMap(wallType, materialIndex);
-    DrawSpriteFromSheet( spriteNum, target, IMGObjectSheet, drawx, drawy );
+    sheetOffsetX = (spriteNum % SHEET_OBJECTSWIDE) * SPRITEWIDTH;
+	sheetOffsetY = (spriteNum / SHEET_OBJECTSWIDE) * (SPRITEHEIGHT + FLOORHEIGHT); 
+	
+    masked_blit(IMGWallSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT + FLOORHEIGHT);
 
     drawy -= (WALLHEIGHT);
     //Northern border
@@ -150,7 +152,32 @@ void Block::Draw(BITMAP* target){
   }
 }
 
+void Block::DrawRamptops(BITMAP* target){
+	if (ramp.type > 0)
+	{
+	
+	int sheetOffsetX, sheetOffsetY;
+  if(config.hide_outer_blocks){
+    if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
+    if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
+  }
 
+	int32_t drawx = x;
+	int32_t drawy = y;
+  	int32_t drawz = z+1; //- ownerSegment->sizez + 1;
+
+	correctBlockForSegmetOffset( drawx, drawy, drawz);
+	drawx *= TILEWIDTH;
+	drawy *= TILEWIDTH;
+	pointToScreen((int*)&drawx, (int*)&drawy, drawz * (WALLHEIGHT + FLOORHEIGHT));
+	drawx -= TILEWIDTH>>1;
+
+    sheetOffsetX = SPRITEWIDTH * ramp.index;
+    sheetOffsetY = (SPRITEHEIGHT + FLOORHEIGHT) * GetRampMaterialTypeMap(ramp.type);
+
+		masked_blit(IMGRamptopSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT + FLOORHEIGHT);
+	}
+}
 
 bool hasWall(Block* b){
   if(!b) return false;
