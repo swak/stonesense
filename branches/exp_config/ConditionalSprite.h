@@ -8,11 +8,11 @@ private:
 
 public:
   vector<t_SpriteWithOffset> sprites;
-  vector<BlockCondition> conditions;
+  vector<BlockCondition*> conditions;
+  bool continuesearch;
   
-
   ConditionalSprite(void);
-  ~ConditionalSprite(void){}
+  ~ConditionalSprite(void){};
 
   bool BlockMatches(Block* b);
 };
