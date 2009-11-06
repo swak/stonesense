@@ -210,6 +210,21 @@ void ReadCellToSegment(DFHackAPI& DF, WorldSegment& segment, int CellX, int Cell
 	}
 }
 
+bool checkFloorBorderRequirement(WorldSegment* segment, int x, int y, int z)
+{
+	Block* bHigh = segment->getBlock(x,y,z);
+	if (bHigh && (bHigh->floorType > 0 || bHigh->ramp.type > 0 || bHigh->wallType > 0))
+	{
+		return false;
+	}
+	Block* bLow = segment->getBlock(x,y,z-1);
+	if (bLow == NULL || bLow->ramp.type == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
 WorldSegment* ReadMapSegment(int x, int y, int z, int sizex, int sizey, int sizez){
   uint32_t index;
 
@@ -328,12 +343,8 @@ WorldSegment* ReadMapSegment(int x, int y, int z, int sizex, int sizey, int size
 
       //add edges to blocks and floors  
       if( b->floorType > 0 ){
-        Block* westBlock = segment->getBlock(b->x - 1, b->y, b->z);
-        Block* northBlock = segment->getBlock(b->x, b->y - 1, b->z);
-        if(!segment->getBlock(b->x - 1, b->y, b->z)) 
-          b->depthBorderWest = true;
-        if(!segment->getBlock(b->x, b->y - 1, b->z)) 
-          b->depthBorderNorth = true;
+          b->depthBorderWest = checkFloorBorderRequirement(segment,b->x - 1, b->y, b->z);
+          b->depthBorderNorth = checkFloorBorderRequirement(segment,b->x, b->y - 1, b->z);
       }else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false ){
         Block* westBlock = segment->getBlock(b->x - 1, b->y, b->z);
         Block* northBlock = segment->getBlock(b->x, b->y - 1, b->z);
