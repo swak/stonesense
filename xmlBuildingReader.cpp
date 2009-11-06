@@ -8,113 +8,49 @@
 #include "dfhack/library/tinyxml/tinyxml.h"
 
 
-void parseConditionToSprite(ConditionalSprite& sprite, const char* strType, const char* strValue){
+void parseConditionToSprite(ConditionalSprite& sprite, TiXmlElement* elemCondition){
+   const char* strType = elemCondition->Attribute("type");
+   BlockCondition* cond = NULL;
+	
   if( strcmp(strType, "NeighbourWall") == 0){
-    BlockCondition cond( Cond_NeighbourWall );
-    if( strcmp(strValue, "None") == 0)
-      cond.value = eSimpleSingle;
-    if( strcmp(strValue, "North") == 0)
-      cond.value = eSimpleN;
-    if( strcmp(strValue, "South") == 0)
-      cond.value = eSimpleS;
-    if( strcmp(strValue, "West") == 0)
-      cond.value = eSimpleW;
-    if( strcmp(strValue, "East") == 0)
-      cond.value = eSimpleE;
-
-    sprite.conditions.push_back( cond );
-  }
-
-  if( strcmp(strType, "MaterialType") == 0){
-    BlockCondition cond( Cond_MaterialType );
-    if( strcmp(strValue, "Wood") == 0)
-      cond.value = Mat_Wood;
-    if( strcmp(strValue, "Stone") == 0)
-      cond.value = Mat_Stone;
-    if( strcmp(strValue, "Metal") == 0)
-      cond.value = Mat_Metal;
-    if( strcmp(strValue, "Leather") == 0)
-      cond.value = Mat_Leather;
-    if( strcmp(strValue, "Silk") == 0)
-      cond.value = Mat_SilkCloth;
-    if( strcmp(strValue, "PlantCloth") == 0)
-      cond.value = Mat_PlantCloth;
-    if( strcmp(strValue, "GreenGlass") == 0)
-      cond.value = Mat_GreenGlass;
-    if( strcmp(strValue, "ClearGlass") == 0)
-      cond.value = Mat_ClearGlass;
-    if( strcmp(strValue, "CrystalGlass") == 0)
-      cond.value = Mat_CrystalGlass;
-      
-    sprite.conditions.push_back( cond );
-  }
-
-  if( strcmp(strType, "PositionIndex") == 0){
-    BlockCondition cond( Cond_PositionIndex );
-     cond.value = atoi( strValue );
-
-     sprite.conditions.push_back( cond );
-  }
-
-    if( strcmp(strType, "BuildingOccupancy") == 0){
-    BlockCondition cond( Cond_BuildingOcc );
-     cond.value = atoi( strValue );
-
-     sprite.conditions.push_back( cond );
+     cond = new NeighbourWallCondition( elemCondition->Attribute("dir") );
+     		// for some reason I dont seem to need to delete these myself
+     		// must investigate further
   }
   
-    if( strcmp(strType, "NeighbourSameBuilding") == 0){
-    BlockCondition cond( Cond_NeighbourSameBuilding );
-    if( strcmp(strValue, "None") == 0)
-      cond.value = eSimpleSingle;
-    if( strcmp(strValue, "North") == 0)
-      cond.value = eSimpleN;
-    if( strcmp(strValue, "South") == 0)
-      cond.value = eSimpleS;
-    if( strcmp(strValue, "West") == 0)
-      cond.value = eSimpleW;
-    if( strcmp(strValue, "East") == 0)
-      cond.value = eSimpleE;
-     
-    sprite.conditions.push_back( cond );
+  else if( strcmp(strType, "PositionIndex") == 0){
+     cond = new PositionIndexCondition( elemCondition->Attribute("value") );
+  } 
+  
+  else if( strcmp(strType, "MaterialType") == 0){
+     cond = new MaterialTypeCondition( elemCondition->Attribute("value") );
+  }   
+  
+  else if( strcmp(strType, "BuildingOccupancy") == 0){
+     cond = new BuildingOccupancyCondition( elemCondition->Attribute("value") );
+  } 
+  
+  else if( strcmp(strType, "NeighbourSameBuilding") == 0){
+    cond = new NeighbourSameBuildingCondition( elemCondition->Attribute("dir") );
+  }     
+  
+  else if( strcmp(strType, "NeighbourSameType") == 0){
+    cond = new NeighbourSameTypeCondition( elemCondition->Attribute("dir") );
   }
   
-    if( strcmp(strType, "NeighbourIdentical") == 0){
-    BlockCondition cond( Cond_NeighbourIdentical );
-    if( strcmp(strValue, "None") == 0)
-      cond.value = eSimpleSingle;
-    if( strcmp(strValue, "North") == 0)
-      cond.value = eSimpleN;
-    if( strcmp(strValue, "South") == 0)
-      cond.value = eSimpleS;
-    if( strcmp(strValue, "West") == 0)
-      cond.value = eSimpleW;
-    if( strcmp(strValue, "East") == 0)
-      cond.value = eSimpleE;
-     
-    sprite.conditions.push_back( cond );
+  else if( strcmp(strType, "NeighbourOfType") == 0){
+    cond = new NeighbourOfTypeCondition( elemCondition->Attribute("dir") , elemCondition->Attribute("value") );
   }
   
-    if( strcmp(strType, "NeighbourSameIndex") == 0){
-    BlockCondition cond( Cond_NeighbourSameIndex );
-    if( strcmp(strValue, "None") == 0)
-      cond.value = eSimpleSingle;
-    if( strcmp(strValue, "North") == 0)
-      cond.value = eSimpleN;
-    if( strcmp(strValue, "South") == 0)
-      cond.value = eSimpleS;
-    if( strcmp(strValue, "West") == 0)
-      cond.value = eSimpleW;
-    if( strcmp(strValue, "East") == 0)
-      cond.value = eSimpleE;
-     
-    sprite.conditions.push_back( cond );
+  else if( strcmp(strType, "NeighbourIdentical") == 0){
+    cond = new NeighbourIdenticalCondition( elemCondition->Attribute("dir") );
+  }   
+  
+  if (cond != NULL)
+  {
+	  sprite.conditions.push_back( cond );
   }
 }
-
-
-
-
 
 bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* knownBuildings ){
   TiXmlDocument doc( filename );
@@ -155,10 +91,16 @@ bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* know
       elemSprite = elemSprite->NextSiblingElement("Sprite");
     }
 
+    const char* strCont = elemTile->Attribute("continue");
+    if (strCont != NULL && strCont[0] != 0) //quick nonempty check
+    {
+	    tile.continuesearch=true;
+    }
+    
     //load conditions
     TiXmlElement* elemCondition = elemTile->FirstChildElement("Condition");
     while( elemCondition ){
-      parseConditionToSprite( tile, elemCondition->Attribute("type"), elemCondition->Attribute("value") );
+      parseConditionToSprite( tile, elemCondition );
       elemCondition = elemCondition->NextSiblingElement("Condition");
     }
     //add copy of sprite to building

@@ -1,33 +1,46 @@
 #include "BlockCondition.h"
 #include "GameBuildings.h"
 #include "WorldSegment.h"
+#include <iostream>
 
-BlockCondition::BlockCondition(BlockConditionTypes type)
+int getDirectionFromString(const char* strDir)
 {
-  this->type = type;
-  this->value = INVALID_INDEX;
+	if (strDir == NULL)
+		return INVALID_INDEX;
+	if( strcmp(strDir, "None") == 0)
+	  return eSimpleSingle;
+	if( strcmp(strDir, "North") == 0)
+	  return eSimpleN;
+	if( strcmp(strDir, "South") == 0)
+	  return eSimpleS;
+	if( strcmp(strDir, "West") == 0)
+	  return eSimpleW;
+	if( strcmp(strDir, "East") == 0)
+	  return eSimpleE;
+	return INVALID_INDEX;	
 }
 
+int getBuildingFromString(const char* strType)
+{
+	for (uint32_t i=0; i<v_buildingtypes.size(); i++){
+		cout << v_buildingtypes[i] << " <- " << i << endl;
+		if (v_buildingtypes[i].compare(strType) == 0)
+		{
+			return i;
+		}
+	}
+	return INVALID_INDEX;	
+}
 
+NeighbourWallCondition::NeighbourWallCondition(const char* strDir)
+	: BlockCondition()
+{
+	this->value = getDirectionFromString(strDir);
+}
 
-bool BlockCondition::Matches(Block* b){
-  if(type == Cond_PositionIndex){
-    int x = b->x - b->building.info.x1;
-    int y = b->y - b->building.info.y1;
-    int w = b->building.info.x2 - b->building.info.x1 + 1 ;
-    int pos = y * w + x;
-
-    return pos == this->value;
-  }
-
-  if(type == Cond_MaterialType){
-    return b->building.info.material.type == this->value;
-  }
-  
-  if(type == Cond_NeighbourWall){
-    //dirTypes closebyWalls = findWallCloseTo(b->ownerSegment,b);    
-
-    bool n = hasWall( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ) );
+bool NeighbourWallCondition::Matches(Block* b)
+{
+	bool n = hasWall( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ) );
     bool s = hasWall( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ) );
     bool w = hasWall( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ) );
     bool e = hasWall( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ) );
@@ -40,16 +53,69 @@ bool BlockCondition::Matches(Block* b){
     if( value == eSimpleSingle && !n && !s && !w && !e) return true;
 
     return false;
-  }
+}
 
-  if(type == Cond_NeighbourSameBuilding){
-    int blocksBuildingID = b->building.info.type;
 
-    bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), blocksBuildingID );
-    bool s = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), blocksBuildingID );
-    bool w = hasBuildingOfID( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), blocksBuildingID);
-    bool e = hasBuildingOfID( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), blocksBuildingID );
-    
+PositionIndexCondition::PositionIndexCondition(const char* strValue)
+	: BlockCondition()
+{
+    this->value = atoi( strValue );
+}
+
+bool PositionIndexCondition::Matches(Block* b)
+{
+    int x = b->x - b->building.info.x1;
+    int y = b->y - b->building.info.y1;
+    int w = b->building.info.x2 - b->building.info.x1 + 1 ;
+    int pos = y * w + x;
+
+    return pos == this->value;
+}
+
+
+
+
+MaterialTypeCondition::MaterialTypeCondition(const char* strValue)
+	: BlockCondition()
+{
+    this->value = atoi( strValue );
+}
+
+bool MaterialTypeCondition::Matches(Block* b)
+{
+    return b->building.info.material.type == this->value;
+}
+
+
+
+BuildingOccupancyCondition::BuildingOccupancyCondition(const char* strValue)
+	: BlockCondition()
+{
+    this->value = atoi( strValue );
+}
+
+bool BuildingOccupancyCondition::Matches(Block* b)
+{
+    return b->occ.bits.building == this->value;
+}
+
+
+
+NeighbourSameBuildingCondition::NeighbourSameBuildingCondition(const char* strDir)
+	: BlockCondition()
+{
+	this->value = getDirectionFromString(strDir);
+}
+
+bool NeighbourSameBuildingCondition::Matches(Block* b)
+{
+    int blocksBuildingIndex = b->building.index;
+
+    bool n = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), blocksBuildingIndex );
+    bool s = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), blocksBuildingIndex );
+    bool w = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), blocksBuildingIndex );
+    bool e = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), blocksBuildingIndex );
+
     if( value == eSimpleN && n) return true;
     if( value == eSimpleS && s) return true;
     if( value == eSimpleW && w) return true;
@@ -58,10 +124,18 @@ bool BlockCondition::Matches(Block* b){
     if( value == eSimpleSingle && !n && !s && !w && !e) return true;
     
     return false;
-  }
-  
-   if(type == Cond_NeighbourIdentical){
-	   
+}
+
+
+
+NeighbourIdenticalCondition::NeighbourIdenticalCondition(const char* strDir)
+	: BlockCondition()
+{
+	this->value = getDirectionFromString(strDir);
+}
+
+bool NeighbourIdenticalCondition::Matches(Block* b)
+{
     int blocksBuildingIndex = b->building.index;
     int blocksBuildingOcc = b->occ.bits.building;
 
@@ -78,30 +152,54 @@ bool BlockCondition::Matches(Block* b){
     if( value == eSimpleSingle && !n && !s && !w && !e) return true;
     
     return false;
-  }
+}
 
-    if(type == Cond_NeighbourSameIndex){
-	   
-    int blocksBuildingIndex = b->building.index;
 
-    bool n = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), blocksBuildingIndex );
-    bool s = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), blocksBuildingIndex );
-    bool w = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), blocksBuildingIndex );
-    bool e = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), blocksBuildingIndex );
+NeighbourOfTypeCondition::NeighbourOfTypeCondition(const char* strDir, const char* strType)
+	: BlockCondition()
+{
+	this->direction = getDirectionFromString(strDir);
+	this->value = getBuildingFromString(strType);
+}
 
-    if( value == eSimpleN && n) return true;
-    if( value == eSimpleS && s) return true;
-    if( value == eSimpleW && w) return true;
-    if( value == eSimpleE && e) return true;
+bool NeighbourOfTypeCondition::Matches(Block* b)
+{
+    bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), value );
+    bool s = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), value );
+    bool w = hasBuildingOfID( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), value );
+    bool e = hasBuildingOfID( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), value );
     
-    if( value == eSimpleSingle && !n && !s && !w && !e) return true;
+    if( direction == eSimpleN && n) return true;
+    if( direction == eSimpleS && s) return true;
+    if( direction == eSimpleW && w) return true;
+    if( direction == eSimpleE && e) return true;
+    
+    if( direction == eSimpleSingle && !n && !s && !w && !e) return true;
     
     return false;
-  }
-  
-    if(type == Cond_BuildingOcc){
-	   return b->occ.bits.building == this->value;
-    }
+}
+
+NeighbourSameTypeCondition::NeighbourSameTypeCondition(const char* strDir)
+	: BlockCondition()
+{
+	this->direction = getDirectionFromString(strDir);
+}
+
+bool NeighbourSameTypeCondition::Matches(Block* b)
+{
+	int value = b->building.info.type;
+	
+    bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), value );
+    bool s = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), value );
+    bool w = hasBuildingOfID( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), value );
+    bool e = hasBuildingOfID( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), value );
     
-  return false;
+    if( direction == eSimpleN && n) return true;
+    if( direction == eSimpleS && s) return true;
+    if( direction == eSimpleW && w) return true;
+    if( direction == eSimpleE && e) return true;
+    
+    if( direction == eSimpleSingle && !n && !s && !w && !e) return true;
+    
+    return false;
 }
