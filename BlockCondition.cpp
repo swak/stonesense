@@ -116,6 +116,17 @@ bool MaterialTypeCondition::Matches(Block* b)
 }
 
 
+AnimationFrameCondition::AnimationFrameCondition(const char* strValue)
+	: BlockCondition()
+{
+	this->value = atoi( strValue );
+}
+
+bool AnimationFrameCondition::Matches(Block* b)
+{
+    return this->value == currentAnimationFrame;
+}
+
 
 BuildingOccupancyCondition::BuildingOccupancyCondition(const char* strValue)
 	: BlockCondition()

@@ -66,6 +66,16 @@ class MaterialTypeCondition : public BlockCondition
   bool Matches(Block* b);
 };
 
+class AnimationFrameCondition : public BlockCondition
+{
+  public:
+  AnimationFrameCondition(const char* strValue);
+  ~AnimationFrameCondition(void){};
+
+  int value;
+  bool Matches(Block* b);
+};
+
 
 class BuildingOccupancyCondition : public BlockCondition
 {

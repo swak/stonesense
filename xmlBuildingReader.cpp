@@ -66,6 +66,10 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
   else if( strcmp(strType, "NeighbourIdentical") == 0){
     cond = new NeighbourIdenticalCondition( elemCondition->Attribute("dir") );
   }    
+  
+  else if( strcmp(strType, "AnimationFrame") == 0){
+    cond = new AnimationFrameCondition( elemCondition->Attribute("value") );
+  }  
 
   else if( strcmp(strType, "and") == 0){
 	AndConditionalNode* andNode = new AndConditionalNode();
