@@ -23,6 +23,8 @@ int keyoffset=0;
 
 GameConfiguration config;
 bool timeToReloadSegment;
+char currentAnimationFrame;
+bool animationFrameShown;
 
 vector<t_matgloss> v_stonetypes;
 
@@ -62,6 +64,18 @@ void benchmark(){
   fclose(fp);
 }
 
+void animUpdateProc()
+{
+	if (animationFrameShown)
+	{
+		// check before setting, or threadsafety will be borked
+		if (currentAnimationFrame > 4) // ie ends up 0-5
+			currentAnimationFrame = 0;
+		else
+			currentAnimationFrame = currentAnimationFrame + 1;
+		animationFrameShown = false;
+	}	
+}
 
 int main(void)
 {	
@@ -76,6 +90,7 @@ int main(void)
   config.load_ground_materials = true;
   config.automatic_reload_time = 0;
   config.automatic_reload_step = 500;
+  config.animation_step = 300;
   config.Fullscreen = FULLSCREEN;
   config.screenHeight = RESOLUTION_HEIGHT;
   config.screenWidth = RESOLUTION_WIDTH;
@@ -159,7 +174,7 @@ int main(void)
 	if(!viewedSegment) return 1;
 
 //  benchmark();
-
+	install_int( animUpdateProc, config.animation_step );
 	paintboard();
 	while(!key[KEY_ESC]){
 		rest(30);
@@ -167,6 +182,12 @@ int main(void)
       reloadDisplayedSegment();
       paintboard();
       timeToReloadSegment = false;
+      animationFrameShown = true;
+    }
+    else if (animationFrameShown == false)
+    {
+	 	paintboard();
+	 	animationFrameShown = true;
     }
 		doKeys();
 	}
