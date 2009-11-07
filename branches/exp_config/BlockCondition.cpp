@@ -17,6 +17,15 @@ int getDirectionFromString(const char* strDir)
 	  return eSimpleW;
 	if( strcmp(strDir, "East") == 0)
 	  return eSimpleE;
+	 //these will change when rotation is available
+	if( strcmp(strDir, "TopRight") == 0)
+	  return eSimpleN;
+	if( strcmp(strDir, "BottomLeft") == 0)
+	  return eSimpleS;
+	if( strcmp(strDir, "TopLeft") == 0)
+	  return eSimpleW;
+	if( strcmp(strDir, "BottomRight") == 0)
+	  return eSimpleE;
 	return INVALID_INDEX;	
 }
 
@@ -78,7 +87,27 @@ bool PositionIndexCondition::Matches(Block* b)
 MaterialTypeCondition::MaterialTypeCondition(const char* strValue)
 	: BlockCondition()
 {
-    this->value = atoi( strValue );
+	// is there a better way to handle this?
+	// seems non-extensible
+	value = -1;
+	if( strcmp(strValue, "Wood") == 0)
+      value = Mat_Wood;
+    else if( strcmp(strValue, "Stone") == 0)
+      value = Mat_Stone;
+    else if( strcmp(strValue, "Metal") == 0)
+      value = Mat_Metal;
+    else if( strcmp(strValue, "Leather") == 0)
+      value = Mat_Leather;
+    else if( strcmp(strValue, "Silk") == 0)
+      value = Mat_SilkCloth;
+    else if( strcmp(strValue, "PlantCloth") == 0)
+      value = Mat_PlantCloth;
+    else if( strcmp(strValue, "GreenGlass") == 0)
+      value = Mat_GreenGlass;
+    else if( strcmp(strValue, "ClearGlass") == 0)
+      value = Mat_ClearGlass;
+    else if( strcmp(strValue, "CrystalGlass") == 0)
+      value = Mat_CrystalGlass;
 }
 
 bool MaterialTypeCondition::Matches(Block* b)
