@@ -227,8 +227,7 @@ cout << "i" << endl;
 	cout << "i ok" << endl;
 	return true;
 }
-
-void AndConditionalNode::addChild(BlockCondition* cond)
+void AndConditionalNode::addCondition(BlockCondition* cond)
 {
 	children.push_back(cond);
 }
@@ -246,8 +245,16 @@ cout << "j" << endl;
 	cout << "j ok" << endl;
 	return false;
 }
-
-void OrConditionalNode::addChild(BlockCondition* cond)
+void OrConditionalNode::addCondition(BlockCondition* cond)
 {
 	children.push_back(cond);
+}
+
+bool AlwaysCondition::Matches(Block* b)
+{
+	return true;
+}
+bool NeverCondition::Matches(Block* b)
+{
+	return false;
 }
