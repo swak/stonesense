@@ -131,15 +131,14 @@ void MergeBuildingsToSegment(vector<t_building>* buildings, WorldSegment* segmen
 
 
 void loadBuildingSprites ( Block* b){
-  uint32_t i,j;
   bool foundBlockBuildingInfo = false;
-  uint32_t numBuildings = (uint32_t)buildingTypes.size();
 	if (b == NULL)
 	{
 		WriteErr("Null Block skipped in loadBuildingSprites\n");
 		return;
 	}
-  for(i = 0; i < numBuildings; i++){
+  uint32_t numBuildings = (uint32_t)buildingTypes.size();
+  for(uint32_t i = 0; i < numBuildings; i++){
     BuildingConfiguration& conf = buildingTypes[i];
     if(b->building.info.type != conf.gameID) continue;
 
