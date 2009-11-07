@@ -7,21 +7,23 @@
 #include "BlockCondition.h"
 #include "dfhack/library/tinyxml/tinyxml.h"
 
-void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition);
+bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition);
 
-void parseRecursiveNodes (ConditionalNode& pnode, TiXmlElement* pelem)
+bool parseRecursiveNodes (ConditionalNode* pnode, TiXmlElement* pelem)
 {
-	TiXmlElement* elemCondition = pelem->FirstChildElement("Condition");
-    while( elemCondition ){
-      parseConditionToSprite( pnode, elemCondition );
-      elemCondition = elemCondition->NextSiblingElement("Condition");
-    }
+	TiXmlElement* elemCondition = pelem->FirstChildElement();
+	while( elemCondition )
+	{
+		if (!parseConditionNode( pnode, elemCondition ))
+			return false;
+		elemCondition = elemCondition->NextSiblingElement();
+	}
+	return true;
 }
 
-void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition){
-   const char* strType = elemCondition->Attribute("type");
+bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
+   const char* strType = elemCondition->Value();
    BlockCondition* cond = NULL;	
-   
   if( strcmp(strType, "NeighbourWall") == 0){
      cond = new NeighbourWallCondition( elemCondition->Attribute("dir") );
   }
@@ -33,7 +35,14 @@ void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition
   else if( strcmp(strType, "MaterialType") == 0){
      cond = new MaterialTypeCondition( elemCondition->Attribute("value") );
   }   
+  else if( strcmp(strType, "always") == 0){
+     cond = new AlwaysCondition();
+  } 
   
+  else if( strcmp(strType, "never") == 0){
+    cond = new NeverCondition();
+  }     
+ 
   else if( strcmp(strType, "BuildingOccupancy") == 0){
      cond = new BuildingOccupancyCondition( elemCondition->Attribute("value") );
   } 
@@ -56,26 +65,86 @@ void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition
   
   else if( strcmp(strType, "NeighbourIdentical") == 0){
     cond = new NeighbourIdenticalCondition( elemCondition->Attribute("dir") );
-  }     
-  
-  else if( strcmp(strType, "And") == 0){
+  }    
+
+  else if( strcmp(strType, "and") == 0){
 	AndConditionalNode* andNode = new AndConditionalNode();
 	cond = andNode;
-	parseRecursiveNodes(*andNode, elemCondition);
+	if (!parseRecursiveNodes(andNode, elemCondition))
+		return false;
   }
   
-   else if( strcmp(strType, "Or") == 0){
+   else if( strcmp(strType, "or") == 0){
 	OrConditionalNode* orNode = new OrConditionalNode();
 	cond = orNode;
-	parseRecursiveNodes(*orNode, elemCondition);
+	if (!parseRecursiveNodes(orNode, elemCondition))
+		return false;
   }
-  
-  if (cond != NULL)
-  { 
-	   //cout << "xbr.as" << endl;
-	  sprite.addChild( cond );
-	  //I believe this should be leaky. Consult memwatch
-  }
+
+	if (cond != NULL)
+	{ 
+		//cout << "xbr.as" << endl;
+		node->addCondition( cond );
+		//I believe this should be leaky. Consult memwatch
+		return true;
+	}
+	else
+	{
+		WriteErr("Misplaced or invalid element in Condition: %s\n",strType);
+		return false;		  
+  	}
+}
+
+bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
+{
+	SpriteBlock* oldSibling = NULL;
+	TiXmlElement* elemNode =  elemParent->FirstChildElement();
+	if ( strcmp(elemParent->Value(),"building") != 0)
+	{
+		// cast should be safe, because only spriteblocks
+		// should get here
+		if (!parseConditionNode((SpriteBlock *)node,elemNode))
+			return false;
+		elemNode = elemNode->NextSiblingElement();
+	}
+	while (elemNode)
+	{
+		bool match = false;
+		const char* strType = elemNode->Value();
+		if (strcmp(strType, "if") == 0 || strcmp(strType, "else") == 0)
+		{
+			SpriteBlock* block = new SpriteBlock();
+			if (!parseSpriteNode(block,elemNode))
+				return false;
+			if (oldSibling && (elemNode->Attribute("else") || strcmp(strType, "else") == 0))
+			{
+				oldSibling->addElse(block);	
+			}
+			else
+			{
+				node->addChild(block);
+			}
+			oldSibling = block;
+		}
+		else if ((strcmp(strType, "sprite") == 0) || (strcmp(strType, "empty") == 0))
+		{
+			SpriteElement* sprite = new SpriteElement();
+			const char* strSheetIndex = elemNode->Attribute("index");
+			const char* strOffsetX = elemNode->Attribute("offsetx");
+			const char* strOffsetY = elemNode->Attribute("offsety");
+			sprite->sprite.sheetIndex = (strSheetIndex != 0 ? atoi(strSheetIndex) : -1);
+			sprite->sprite.x    = (strOffsetX    != 0 ? atoi(strOffsetX)    : 0);
+			sprite->sprite.y    = (strOffsetY    != 0 ? atoi(strOffsetY)    : 0);
+			node->addChild(sprite);
+		}
+		else
+		{
+			WriteErr("Misplaced or invalid element in SpriteNode: %s\n",strType);
+			return false;
+		}		
+		elemNode = elemNode->NextSiblingElement();
+	}
+	return true;
 }
 
 bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* knownBuildings ){
@@ -84,60 +153,34 @@ bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* know
   TiXmlHandle hDoc(&doc);
   TiXmlElement* elemBuilding;
   if(!loadOkay)
-    return false;
-  
+  {
+	WriteErr("File load failed\n");
+	WriteErr("Line %d: %s\n",doc.ErrorRow(),doc.ErrorDesc());
+	return false;
+  }
 
-  elemBuilding = hDoc.FirstChildElement("Building").Element();
+  elemBuilding = hDoc.FirstChildElement("building").Element();
   if( elemBuilding == 0)
+  {
+	  WriteErr("Main <building> node not present\n");
     return false;
+  }
 
-  
   const char* strName = elemBuilding->Attribute("name");
   const char* strGameID = elemBuilding->Attribute("gameID");
   
-  BuildingConfiguration building(strName, (char*) strGameID );
-
-  //for every Tile this building has
-  TiXmlElement* elemTile =  elemBuilding->FirstChildElement("Tile");
-  while ( elemTile ){
-    
-    ConditionalSprite tile;
-    //Add all the sprites that compose this tile
-    TiXmlElement* elemSprite =  elemTile->FirstChildElement("Sprite");
-    while( elemSprite ){
-      const char* strSheetIndex = elemSprite->Attribute("sheetIndex");
-      const char* strOffsetX = elemSprite->Attribute("offsetx");
-      const char* strOffsetY = elemSprite->Attribute("offsety");
-      int sheetIndex = (strSheetIndex != 0 ? atoi(strSheetIndex) : 0);
-      int offsetX    = (strOffsetX    != 0 ? atoi(strOffsetX)    : 0);
-      int offsetY    = (strOffsetY    != 0 ? atoi(strOffsetY)    : 0);
-
-      t_SpriteWithOffset sprite = { sheetIndex, offsetX, offsetY };
-      tile.sprites.push_back( sprite );
-      elemSprite = elemSprite->NextSiblingElement("Sprite");
-    }
-
-    const char* strCont = elemTile->Attribute("continue");
-    if (strCont != NULL && strCont[0] != 0) //quick nonempty check
-    {
-	    tile.continuesearch=true;
-    }
-
-    //load conditions
-    TiXmlElement* elemCondition = elemTile->FirstChildElement("Condition");
-    while( elemCondition ){
-	  tile.BlockMatches(NULL); 
-      parseConditionToSprite( tile, elemCondition );
-      elemCondition = elemCondition->NextSiblingElement("Condition");
-      tile.BlockMatches(NULL);
-    }
-
-    //add copy of sprite to building
-    building.sprites.push_back( tile );
-
-    elemTile = elemTile->NextSiblingElement("Tile");
+  if (strName[0] == 0 || strGameID[0] == 0)
+  {
+	  WriteErr("<building> node must have name and gameID attributes\n");
+	  return false;
   }
-
+  
+  BuildingConfiguration building(strName, (char*) strGameID );
+  RootBlock* spriteroot = new RootBlock(); //leaky?
+  building.sprites = spriteroot;
+  if (!parseSpriteNode(spriteroot,elemBuilding))
+	return false;	  
+  
   //add a copy of 'building' to known buildings
   knownBuildings->push_back( building );
   return true;
@@ -165,9 +208,12 @@ bool LoadBuildingConfiguration( vector<BuildingConfiguration>* knownBuildings ){
 
     if(line.size() > 0){
       sprintf(filepath, "buildings/%s", line.c_str() );
+      WriteErr("Reading %s...\t\t", filepath);
       bool result = addSingleConfig( filepath, knownBuildings );
-      if( !result )
-        WriteErr("Unable to load building config %s\n", filepath);
+      if (result)
+      	WriteErr("ok\n");
+      else
+        WriteErr("Unable to load building config %s\n(Will ignore building and continue)\n", filepath);
     }
   }
   myfile.close();

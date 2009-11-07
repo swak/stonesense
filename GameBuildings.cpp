@@ -134,29 +134,19 @@ void loadBuildingSprites ( Block* b){
   uint32_t i,j;
   bool foundBlockBuildingInfo = false;
   uint32_t numBuildings = (uint32_t)buildingTypes.size();
+	if (b == NULL)
+	{
+		WriteErr("Null Block skipped in loadBuildingSprites\n");
+		return;
+	}
   for(i = 0; i < numBuildings; i++){
     BuildingConfiguration& conf = buildingTypes[i];
     if(b->building.info.type != conf.gameID) continue;
 
     //check all sprites for one that matches all conditions
-    uint32_t numSprites = (uint32_t)conf.sprites.size();
-    for(j = 0; j < numSprites; j++){
-	    //cout << "lbs 0" << endl;
-	    //conf.sprites[j];
-	    //cout << "lbs 0a" << endl;
-	    //cout << "lbs ?" << b << endl;
-	   // conf.sprites[j].BlockMatches(b);
-	   // cout << "lbs 0b" << endl;
-	     
-      if(conf.sprites[j].BlockMatches(b)){
-	        	//cout << "lbs 1" << endl;	 
-        b->building.sprites = conf.sprites[j].sprites;
-	        	//cout << "lbs 2" << endl;    
-	      foundBlockBuildingInfo = true;
-	        	//cout << "lbs 3" << endl;
-	        break;
-      }
-      //cout << "lbs f" << endl;	
+    if (conf.sprites != NULL && conf.sprites->BlockMatches(b))
+    {
+	    foundBlockBuildingInfo = true;
     }
     break;
   }
