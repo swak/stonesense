@@ -17,6 +17,8 @@ http://stonesense.googlecode.com/svn/wiki/img/tiletree.png
 ===Sprite Index (Sheet Index)===
 Sprite Index is a concept for referring to a specific sprite on a sheet. The index starts with the upper left sprite which has index zero. It then increments to the right. Stonesense is hardcoded to 20 sprites wide sheets, this means that the last sprite to the right in the first row has Sprite Index 19. The first sprite on the second row has index 20. This boundary is hardcoded and changing the size of the sheet will not affect it.
 
+*NOTE: Pressing F10 in Stonesense will display the objects sheet with sprite indexes.*
+
 This image shows how sprites are indexed. Note: Grid added for readability.
 http://stonesense.googlecode.com/svn/wiki/img/sheets_index_objects.png
 
