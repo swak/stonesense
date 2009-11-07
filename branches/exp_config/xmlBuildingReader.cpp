@@ -71,19 +71,24 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 	AndConditionalNode* andNode = new AndConditionalNode();
 	cond = andNode;
 	if (!parseRecursiveNodes(andNode, elemCondition))
+	{
+		delete(andNode);
 		return false;
+	}
   }
   
    else if( strcmp(strType, "or") == 0){
 	OrConditionalNode* orNode = new OrConditionalNode();
 	cond = orNode;
 	if (!parseRecursiveNodes(orNode, elemCondition))
+	{
+		delete(orNode);
 		return false;
+	}
   }
 
 	if (cond != NULL)
 	{ 
-		//cout << "xbr.as" << endl;
 		node->addCondition( cond );
 		//I believe this should be leaky. Consult memwatch
 		return true;
@@ -115,7 +120,10 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 		{
 			SpriteBlock* block = new SpriteBlock();
 			if (!parseSpriteNode(block,elemNode))
+			{
+				delete(block);
 				return false;
+			}
 			if (oldSibling && (elemNode->Attribute("else") || strcmp(strType, "else") == 0))
 			{
 				oldSibling->addElse(block);	
@@ -179,7 +187,10 @@ bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* know
   RootBlock* spriteroot = new RootBlock(); //leaky?
   building.sprites = spriteroot;
   if (!parseSpriteNode(spriteroot,elemBuilding))
-	return false;	  
+  {
+	delete(spriteroot);
+	return false;
+  }
   
   //add a copy of 'building' to known buildings
   knownBuildings->push_back( building );
@@ -195,6 +206,16 @@ bool LoadBuildingConfiguration( vector<BuildingConfiguration>* knownBuildings ){
     return false;
   }
 
+  // clean up building data trees before deleting them
+  // a nasty cludge that only works cause knownbuildings
+  // isnt modified anywhere else
+  // TODO: look into smart pointers or something
+	uint32_t numBuildings = (uint32_t)knownBuildings->size();
+	for(uint32_t i = 0; i < numBuildings; i++)
+	{
+		delete(knownBuildings->at(i).sprites);
+		//should set to null, but we will nuke the lot in a second
+	}
   knownBuildings->clear();
 
   while ( !myfile.eof() )

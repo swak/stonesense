@@ -21,6 +21,7 @@ BuildingConfiguration::BuildingConfiguration(string name, char* IDstring)
 
 BuildingConfiguration::~BuildingConfiguration(void)
 {
+	//cant delete bc.sprites here- screws up BCs copy semantics
 }
 
 

@@ -4,12 +4,64 @@
 #include "GameBuildings.h"
 
 
+/* RootBlock */
+
+RootBlock::RootBlock()
+	: SpriteNode()
+{
+	//cout << "RootBlock +" << endl;
+}
+
+RootBlock::~RootBlock(void)
+{
+	//cout << "RootBlock -" << endl;
+	uint32_t max = children.size();
+	for(uint32_t i=0; i<max; i++)
+	{
+		delete(children[i]);
+	}
+}
+
+bool RootBlock::BlockMatches(Block* b)
+{
+	bool haveMatch = false;
+	uint32_t max = children.size();
+	
+	for(uint32_t i=0; i<max; i++)
+	{
+		if (children[i]->BlockMatches(b))
+		{
+			haveMatch = true;	
+		}
+	}
+	return haveMatch;
+}
+
+void RootBlock::addChild(SpriteNode* child){
+	children.push_back(child);
+}
+
+/* SpriteBlock */
+
 SpriteBlock::SpriteBlock()
 	: ConditionalNode(), SpriteNode()
 {
+	//cout << "SpriteBlock +" << endl;
 	conditions = NULL;
 	elsenode = NULL;
 }
+
+SpriteBlock::~SpriteBlock(void)
+{
+	//cout << "SpriteBlock -" << endl;
+	delete(elsenode);
+	delete(conditions);
+	uint32_t max = children.size();
+	for(uint32_t i=0; i<max; i++)
+	{
+		delete(children[i]);
+	}
+};
 
 bool SpriteBlock::BlockMatches(Block* b)
 {
@@ -45,35 +97,21 @@ bool SpriteBlock::BlockMatches(Block* b)
 void SpriteBlock::addCondition(BlockCondition* cond){
 	conditions = cond;
 }
+
 void SpriteBlock::addChild(SpriteNode* child){
 	children.push_back(child);
 }
+
 void SpriteBlock::addElse(SpriteNode* child){
 	elsenode = child;
 }
 
-bool RootBlock::BlockMatches(Block* b)
-{
-	bool haveMatch = false;
-	uint32_t max = children.size();
-	
-	for(uint32_t i=0; i<max; i++)
-	{
-		if (children[i]->BlockMatches(b))
-		{
-			haveMatch = true;	
-		}
-	}
-	return haveMatch;
-}
-void RootBlock::addChild(SpriteNode* child){
-	children.push_back(child);
-}
-
+/* SpriteElement */
 
 SpriteElement::SpriteElement()
 	: SpriteNode()
 {
+	//cout << "SpriteElement +" << endl;
 	sprite.sheetIndex = -1;
 	sprite.x = 0;
 	sprite.y = 0;

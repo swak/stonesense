@@ -7,7 +7,7 @@ class SpriteNode
 {
 	public:
 		SpriteNode(void){};
-		~SpriteNode(void){};
+		virtual ~SpriteNode(void){};
 	
 	// this returns true if the sprite matched, and also adds
 	// sprites to the block as required
@@ -22,8 +22,8 @@ class RootBlock : public SpriteNode
 	vector<SpriteNode*> children;
 	  
 	public:
-		RootBlock(void){};
-		~RootBlock(void){}; //probably leaky
+		RootBlock(void);
+		~RootBlock(void); 
 	
     bool BlockMatches(Block* b);
     void addChild(SpriteNode* child);	
@@ -38,7 +38,7 @@ class SpriteBlock : public ConditionalNode, public SpriteNode
 	  
 	public:
 		SpriteBlock(void);
-		~SpriteBlock(void){}; //probably leaky
+		~SpriteBlock(void);
 	
     bool BlockMatches(Block* b);	
     void addCondition(BlockCondition* cond);

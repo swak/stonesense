@@ -19,7 +19,7 @@ class BlockCondition
 {
 public:
   BlockCondition(){};
-  ~BlockCondition(void){};
+  virtual ~BlockCondition(void){};
 
   virtual bool Matches(Block* b) = 0;
 };
@@ -28,7 +28,7 @@ class ConditionalNode
 {
 	public:
   ConditionalNode(){};
-  ~ConditionalNode(void){};
+  virtual ~ConditionalNode(void){};
 
   virtual void addCondition(BlockCondition* cond) = 0;
 };
@@ -124,7 +124,7 @@ class AndConditionalNode : public BlockCondition, public ConditionalNode
 {
   public:
   AndConditionalNode(){};
-  ~AndConditionalNode(void){}; //need to add cleanup
+  ~AndConditionalNode(void);
   
   vector<BlockCondition*> children;
 
@@ -136,7 +136,7 @@ class OrConditionalNode : public BlockCondition, public ConditionalNode
 {
   public:
   OrConditionalNode(){};
-  ~OrConditionalNode(void){}; //need to add cleanup
+  ~OrConditionalNode(void);
   
   vector<BlockCondition*> children;
 
