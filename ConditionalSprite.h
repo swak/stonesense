@@ -41,7 +41,7 @@ class SpriteBlock : public ConditionalNode, public SpriteNode
 		~SpriteBlock(void);
 	
     bool BlockMatches(Block* b);	
-    void addCondition(BlockCondition* cond);
+    bool addCondition(BlockCondition* cond);
     void addChild(SpriteNode* child);
 	void addElse(SpriteNode* child);
 };

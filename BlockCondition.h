@@ -30,7 +30,8 @@ class ConditionalNode
   ConditionalNode(){};
   virtual ~ConditionalNode(void){};
 
-  virtual void addCondition(BlockCondition* cond) = 0;
+  //false on failure
+  virtual bool addCondition(BlockCondition* cond) = 0;
 };
 
 class NeighbourWallCondition : public BlockCondition
@@ -129,7 +130,7 @@ class AndConditionalNode : public BlockCondition, public ConditionalNode
   vector<BlockCondition*> children;
 
   bool Matches(Block* b);
-  void addCondition(BlockCondition* cond);
+  bool addCondition(BlockCondition* cond);
 };
 
 class OrConditionalNode : public BlockCondition, public ConditionalNode
@@ -141,7 +142,7 @@ class OrConditionalNode : public BlockCondition, public ConditionalNode
   vector<BlockCondition*> children;
 
   bool Matches(Block* b);
-  void addCondition(BlockCondition* cond);
+  bool addCondition(BlockCondition* cond);
 };
 
 class AlwaysCondition : public BlockCondition
@@ -160,4 +161,15 @@ class NeverCondition : public BlockCondition
   ~NeverCondition(void){};
 
   bool Matches(Block* b);
+};
+
+class NotConditionalNode : public BlockCondition, public ConditionalNode
+{
+  public:
+  NotConditionalNode();
+  ~NotConditionalNode(void);
+  BlockCondition* child;
+  
+  bool Matches(Block* b);
+  bool addCondition(BlockCondition* cond);
 };

@@ -87,10 +87,23 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 	}
   }
 
+  else if( strcmp(strType, "not") == 0){
+	NotConditionalNode* notNode = new NotConditionalNode();
+	cond = notNode;
+	if (!parseRecursiveNodes(notNode, elemCondition))
+	{
+		delete(notNode);
+		return false;
+	}
+  }
+  
 	if (cond != NULL)
 	{ 
-		node->addCondition( cond );
-		//I believe this should be leaky. Consult memwatch
+		if (!node->addCondition( cond ))
+		{
+			delete(cond);
+			return false;	
+		}
 		return true;
 	}
 	else
