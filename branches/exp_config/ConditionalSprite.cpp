@@ -94,8 +94,14 @@ bool SpriteBlock::BlockMatches(Block* b)
 	return haveMatch;
 }
 
-void SpriteBlock::addCondition(BlockCondition* cond){
+bool SpriteBlock::addCondition(BlockCondition* cond){
+	if (conditions != NULL)
+	{
+		WriteErr("Too many condition elements for SpriteBlock\n");
+		return false;
+	}
 	conditions = cond;
+	return true;
 }
 
 void SpriteBlock::addChild(SpriteNode* child){

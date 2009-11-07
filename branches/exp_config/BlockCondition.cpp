@@ -252,9 +252,10 @@ bool AndConditionalNode::Matches(Block* b)
 	}
 	return true;
 }
-void AndConditionalNode::addCondition(BlockCondition* cond)
+bool AndConditionalNode::addCondition(BlockCondition* cond)
 {
 	children.push_back(cond);
+	return true;
 }
 
 OrConditionalNode::~OrConditionalNode(void)
@@ -276,9 +277,10 @@ bool OrConditionalNode::Matches(Block* b)
 	}
 	return false;
 }
-void OrConditionalNode::addCondition(BlockCondition* cond)
+bool OrConditionalNode::addCondition(BlockCondition* cond)
 {
 	children.push_back(cond);
+	return true;
 }
 
 bool AlwaysCondition::Matches(Block* b)
@@ -288,4 +290,31 @@ bool AlwaysCondition::Matches(Block* b)
 bool NeverCondition::Matches(Block* b)
 {
 	return false;
+}
+
+NotConditionalNode::NotConditionalNode(void)
+{
+	child == NULL;
+}
+
+NotConditionalNode::~NotConditionalNode(void)
+{
+	delete(child);
+}
+
+bool NotConditionalNode::Matches(Block* b)
+{	
+	if (child == NULL)
+		return true;
+	return !child->Matches( b );
+}
+bool NotConditionalNode::addCondition(BlockCondition* cond)
+{
+	if (child != NULL)
+	{
+		WriteErr("Too many condition elements for NotConditionalNode\n");
+		return false;
+	}
+	child = cond;
+	return true;
 }
