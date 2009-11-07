@@ -168,7 +168,7 @@ class NotConditionalNode : public BlockCondition, public ConditionalNode
   public:
   NotConditionalNode();
   ~NotConditionalNode(void);
-  BlockCondition* child;
+  BlockCondition* childcond;
   
   bool Matches(Block* b);
   bool addCondition(BlockCondition* cond);
