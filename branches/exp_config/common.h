@@ -17,6 +17,10 @@ using namespace std;
 #include "Block.h"
 #include <stdio.h>
 
+//TODO: clean out a ream of debugging
+#include <iostream>
+
+
 #define RELEASE
 
 #define null 0

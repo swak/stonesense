@@ -141,11 +141,22 @@ void loadBuildingSprites ( Block* b){
     //check all sprites for one that matches all conditions
     uint32_t numSprites = (uint32_t)conf.sprites.size();
     for(j = 0; j < numSprites; j++){
+	    //cout << "lbs 0" << endl;
+	    //conf.sprites[j];
+	    //cout << "lbs 0a" << endl;
+	    //cout << "lbs ?" << b << endl;
+	   // conf.sprites[j].BlockMatches(b);
+	   // cout << "lbs 0b" << endl;
+	     
       if(conf.sprites[j].BlockMatches(b)){
+	        	//cout << "lbs 1" << endl;	 
         b->building.sprites = conf.sprites[j].sprites;
-        foundBlockBuildingInfo = true;
-        break;
+	        	//cout << "lbs 2" << endl;    
+	      foundBlockBuildingInfo = true;
+	        	//cout << "lbs 3" << endl;
+	        break;
       }
+      //cout << "lbs f" << endl;	
     }
     break;
   }

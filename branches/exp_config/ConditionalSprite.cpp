@@ -5,16 +5,30 @@
 
 ConditionalSprite::ConditionalSprite(void)
 {
-  memset(this, 0, sizeof(ConditionalSprite));
   continuesearch = false;
+  conditions = NULL;
 }
 
-bool ConditionalSprite::BlockMatches(Block* b){
-  bool okSoFar = true;
+bool ConditionalSprite::BlockMatches(Block* b)
+{
+	//cout << "cs.bm +" << endl;
+	if (conditions == NULL)
+	{
+		//cout << "cs.bm - !c" << endl;	
+		return true;	
+	}
+	if (b == NULL)
+	{
+		//cout << "cs.bm - !b" << endl;
+		return false;	  	
+	}	 
+	
+	//cout << "cs.bm .." << endl;	 
+	bool t = conditions->Matches( b );
+	cout << "cs.bm - " << t << endl;	 
+	return t;
+}
 
-  for(uint32_t i=0; i<conditions.size(); i++){
-    okSoFar &= conditions[i]->Matches( b );
-  }
-
-  return okSoFar;
+void ConditionalSprite::addChild(BlockCondition* cond){
+	conditions = cond;
 }

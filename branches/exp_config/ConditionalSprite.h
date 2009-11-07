@@ -2,17 +2,18 @@
 
 #include "BlockCondition.h"
 
-class ConditionalSprite
+class ConditionalSprite : public ConditionalNode
 {
 private:
 
 public:
   vector<t_SpriteWithOffset> sprites;
-  vector<BlockCondition*> conditions;
+  BlockCondition* conditions;
   bool continuesearch;
   
   ConditionalSprite(void);
   ~ConditionalSprite(void){};
 
   bool BlockMatches(Block* b);
+  void addChild(BlockCondition* cond);
 };

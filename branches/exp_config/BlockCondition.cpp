@@ -35,15 +35,18 @@ int getBuildingFromString(const char* strType)
 NeighbourWallCondition::NeighbourWallCondition(const char* strDir)
 	: BlockCondition()
 {
+	cout << "nwall " << strDir << endl;
 	this->value = getDirectionFromString(strDir);
 }
 
 bool NeighbourWallCondition::Matches(Block* b)
 {
+cout << "a" << endl;	
 	bool n = hasWall( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ) );
     bool s = hasWall( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ) );
     bool w = hasWall( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ) );
     bool e = hasWall( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ) );
+    cout << value << " to  : " << " " << n << " " << s << " " << e << " " << w << endl;	
     
     if( value == eSimpleN && n) return true;
     if( value == eSimpleS && s) return true;
@@ -64,6 +67,7 @@ PositionIndexCondition::PositionIndexCondition(const char* strValue)
 
 bool PositionIndexCondition::Matches(Block* b)
 {
+cout << "b" << endl;	
     int x = b->x - b->building.info.x1;
     int y = b->y - b->building.info.y1;
     int w = b->building.info.x2 - b->building.info.x1 + 1 ;
@@ -83,6 +87,7 @@ MaterialTypeCondition::MaterialTypeCondition(const char* strValue)
 
 bool MaterialTypeCondition::Matches(Block* b)
 {
+cout << "c" << endl;
     return b->building.info.material.type == this->value;
 }
 
@@ -96,6 +101,7 @@ BuildingOccupancyCondition::BuildingOccupancyCondition(const char* strValue)
 
 bool BuildingOccupancyCondition::Matches(Block* b)
 {
+cout << "d" << endl;	
     return b->occ.bits.building == this->value;
 }
 
@@ -109,6 +115,7 @@ NeighbourSameBuildingCondition::NeighbourSameBuildingCondition(const char* strDi
 
 bool NeighbourSameBuildingCondition::Matches(Block* b)
 {
+cout << "e" << endl;	
     int blocksBuildingIndex = b->building.index;
 
     bool n = hasBuildingOfIndex( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), blocksBuildingIndex );
@@ -136,6 +143,7 @@ NeighbourIdenticalCondition::NeighbourIdenticalCondition(const char* strDir)
 
 bool NeighbourIdenticalCondition::Matches(Block* b)
 {
+cout << "f" << endl;	
     int blocksBuildingIndex = b->building.index;
     int blocksBuildingOcc = b->occ.bits.building;
 
@@ -164,7 +172,8 @@ NeighbourOfTypeCondition::NeighbourOfTypeCondition(const char* strDir, const cha
 
 bool NeighbourOfTypeCondition::Matches(Block* b)
 {
-    bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), value );
+ cout << "g" << endl;	
+   bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), value );
     bool s = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y + 1, b->z ), value );
     bool w = hasBuildingOfID( b->ownerSegment->getBlock( b->x - 1, b->y, b->z ), value );
     bool e = hasBuildingOfID( b->ownerSegment->getBlock( b->x + 1, b->y, b->z ), value );
@@ -187,6 +196,7 @@ NeighbourSameTypeCondition::NeighbourSameTypeCondition(const char* strDir)
 
 bool NeighbourSameTypeCondition::Matches(Block* b)
 {
+cout << "h" << endl;	
 	int value = b->building.info.type;
 	
     bool n = hasBuildingOfID( b->ownerSegment->getBlock( b->x, b->y - 1, b->z ), value );
@@ -202,4 +212,42 @@ bool NeighbourSameTypeCondition::Matches(Block* b)
     if( direction == eSimpleSingle && !n && !s && !w && !e) return true;
     
     return false;
+}
+
+bool AndConditionalNode::Matches(Block* b)
+{
+cout << "i" << endl;	
+	int max = children.size();
+	for(uint32_t i=0; i<max; i++)
+	{
+		cout << "i:" << i << " of " << max << endl;
+		if (!children[i]->Matches( b ))
+			return false;
+	}
+	cout << "i ok" << endl;
+	return true;
+}
+
+void AndConditionalNode::addChild(BlockCondition* cond)
+{
+	children.push_back(cond);
+}
+
+bool OrConditionalNode::Matches(Block* b)
+{
+cout << "j" << endl;	
+	int max = children.size();
+	for(uint32_t i=0; i<max; i++)
+	{
+		cout << "j:" << i << " of " << max << endl;
+		if (children[i]->Matches( b ))
+			return true;
+	}
+	cout << "j ok" << endl;
+	return false;
+}
+
+void OrConditionalNode::addChild(BlockCondition* cond)
+{
+	children.push_back(cond);
 }

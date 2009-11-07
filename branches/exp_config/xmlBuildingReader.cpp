@@ -7,15 +7,23 @@
 #include "BlockCondition.h"
 #include "dfhack/library/tinyxml/tinyxml.h"
 
+void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition);
 
-void parseConditionToSprite(ConditionalSprite& sprite, TiXmlElement* elemCondition){
+void parseRecursiveNodes (ConditionalNode& pnode, TiXmlElement* pelem)
+{
+	TiXmlElement* elemCondition = pelem->FirstChildElement("Condition");
+    while( elemCondition ){
+      parseConditionToSprite( pnode, elemCondition );
+      elemCondition = elemCondition->NextSiblingElement("Condition");
+    }
+}
+
+void parseConditionToSprite(ConditionalNode& sprite, TiXmlElement* elemCondition){
    const char* strType = elemCondition->Attribute("type");
-   BlockCondition* cond = NULL;
-	
+   BlockCondition* cond = NULL;	
+   
   if( strcmp(strType, "NeighbourWall") == 0){
      cond = new NeighbourWallCondition( elemCondition->Attribute("dir") );
-     		// for some reason I dont seem to need to delete these myself
-     		// must investigate further
   }
   
   else if( strcmp(strType, "PositionIndex") == 0){
@@ -46,9 +54,27 @@ void parseConditionToSprite(ConditionalSprite& sprite, TiXmlElement* elemConditi
     cond = new NeighbourIdenticalCondition( elemCondition->Attribute("dir") );
   }   
   
+  else if( strcmp(strType, "NeighbourIdentical") == 0){
+    cond = new NeighbourIdenticalCondition( elemCondition->Attribute("dir") );
+  }     
+  
+  else if( strcmp(strType, "And") == 0){
+	AndConditionalNode* andNode = new AndConditionalNode();
+	cond = andNode;
+	parseRecursiveNodes(*andNode, elemCondition);
+  }
+  
+   else if( strcmp(strType, "Or") == 0){
+	OrConditionalNode* orNode = new OrConditionalNode();
+	cond = orNode;
+	parseRecursiveNodes(*orNode, elemCondition);
+  }
+  
   if (cond != NULL)
-  {
-	  sprite.conditions.push_back( cond );
+  { 
+	   //cout << "xbr.as" << endl;
+	  sprite.addChild( cond );
+	  //I believe this should be leaky. Consult memwatch
   }
 }
 
@@ -96,13 +122,16 @@ bool addSingleConfig( const char* filename,  vector<BuildingConfiguration>* know
     {
 	    tile.continuesearch=true;
     }
-    
+
     //load conditions
     TiXmlElement* elemCondition = elemTile->FirstChildElement("Condition");
     while( elemCondition ){
+	  tile.BlockMatches(NULL); 
       parseConditionToSprite( tile, elemCondition );
       elemCondition = elemCondition->NextSiblingElement("Condition");
+      tile.BlockMatches(NULL);
     }
+
     //add copy of sprite to building
     building.sprites.push_back( tile );
 

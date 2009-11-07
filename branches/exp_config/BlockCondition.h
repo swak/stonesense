@@ -24,6 +24,14 @@ public:
   virtual bool Matches(Block* b) = 0;
 };
 
+class ConditionalNode
+{
+	public:
+  ConditionalNode(){};
+  ~ConditionalNode(void){};
+
+  virtual void addChild(BlockCondition* cond) = 0;
+};
 
 class NeighbourWallCondition : public BlockCondition
 {
@@ -110,5 +118,29 @@ class NeighbourSameTypeCondition : public BlockCondition
 
   int direction;
   bool Matches(Block* b);
+};
+
+class AndConditionalNode : public BlockCondition, public ConditionalNode
+{
+  public:
+  AndConditionalNode(){};
+  ~AndConditionalNode(void){}; //need to add cleanup
+  
+  vector<BlockCondition*> children;
+
+  bool Matches(Block* b);
+  void addChild(BlockCondition* cond);
+};
+
+class OrConditionalNode : public BlockCondition, public ConditionalNode
+{
+  public:
+  OrConditionalNode(){};
+  ~OrConditionalNode(void){}; //need to add cleanup
+  
+  vector<BlockCondition*> children;
+
+  bool Matches(Block* b);
+  void addChild(BlockCondition* cond);
 };
 
