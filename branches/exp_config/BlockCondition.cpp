@@ -294,27 +294,28 @@ bool NeverCondition::Matches(Block* b)
 
 NotConditionalNode::NotConditionalNode(void)
 {
-	child == NULL;
+	childcond = NULL;
+	WriteErr("ncn %d %d\n",this,childcond);
 }
 
 NotConditionalNode::~NotConditionalNode(void)
 {
-	delete(child);
+	delete(childcond);
 }
 
 bool NotConditionalNode::Matches(Block* b)
 {	
-	if (child == NULL)
+	if (childcond == NULL)
 		return true;
-	return !child->Matches( b );
+	return !childcond->Matches( b );
 }
 bool NotConditionalNode::addCondition(BlockCondition* cond)
 {
-	if (child != NULL)
+	if (childcond != NULL)
 	{
 		WriteErr("Too many condition elements for NotConditionalNode\n");
 		return false;
 	}
-	child = cond;
+	childcond = cond;
 	return true;
 }
