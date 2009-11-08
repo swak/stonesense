@@ -306,7 +306,6 @@ bool NeverCondition::Matches(Block* b)
 NotConditionalNode::NotConditionalNode(void)
 {
 	childcond = NULL;
-	WriteErr("ncn %d %d\n",this,childcond);
 }
 
 NotConditionalNode::~NotConditionalNode(void)

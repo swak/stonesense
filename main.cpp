@@ -22,9 +22,10 @@ uint32_t DebugInt1;
 int keyoffset=0;
 
 GameConfiguration config;
-bool timeToReloadSegment;
-char currentAnimationFrame;
-bool animationFrameShown;
+bool timeToReloadSegment = true;
+char currentAnimationFrame = 0;
+bool animationFrameShown = false;
+bool haveDfLoaded = false;
 
 vector<t_matgloss> v_stonetypes;
 
@@ -172,6 +173,12 @@ int main(void)
   //while(1)
 	reloadDisplayedSegment();
 	if(!viewedSegment) return 1;
+	// on initial map load, reinitialize building config to
+	// allow building name matching
+	if (haveDfLoaded)
+	{
+		LoadBuildingConfiguration( &buildingTypes );
+	}
 
 //  benchmark();
 	install_int( animUpdateProc, config.animation_step );
@@ -179,7 +186,14 @@ int main(void)
 	while(!key[KEY_ESC]){
 		rest(30);
     if( timeToReloadSegment ){
+	  bool tempHaveMap = haveDfLoaded;
       reloadDisplayedSegment();
+	  // on initial map load, reinitialize building config to
+	  // allow building name matching
+      if (!tempHaveMap && haveDfLoaded)
+      {
+	      LoadBuildingConfiguration( &buildingTypes );
+      }
       paintboard();
       timeToReloadSegment = false;
       animationFrameShown = true;

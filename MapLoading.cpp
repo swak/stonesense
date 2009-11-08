@@ -220,7 +220,9 @@ WorldSegment* ReadMapSegment(int x, int y, int z, int sizex, int sizey, int size
 	{
     //return new blank segment
 		return new WorldSegment(x,y,z,sizex,sizey,sizez);
+		haveDfLoaded=false;
 	}
+		haveDfLoaded=true;
 
 	//Read Number of cells
 	int celldimX, celldimY, celldimZ;
