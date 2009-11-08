@@ -70,6 +70,10 @@ int parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition, bool 
   else if( strcmp(strType, "AnimationFrame") == 0){
     cond = new AnimationFrameCondition( elemCondition->Attribute("value") );
   }  
+  
+  else if( strcmp(strType, "HaveFloor") == 0){
+     cond = new HaveFloorCondition();
+  }
 
   else if( strcmp(strType, "and") == 0){
 	AndConditionalNode* andNode = new AndConditionalNode();
@@ -123,6 +127,11 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 	SpriteBlock* oldSibling = NULL;
 	TiXmlElement* elemNode =  elemParent->FirstChildElement();
 	const char* strParent = elemParent->Value();
+	if (elemNode == NULL)
+	{
+		WriteErr("Empty SpriteNode Element: %s (Line %d)\n",strParent,elemParent->Row());
+		return false;		
+	}
 	if ( strcmp(strParent,"building") != 0)
 	{
 		//flag to allow else statements to be empty, rather than needing an "always" tag

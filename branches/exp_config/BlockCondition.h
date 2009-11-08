@@ -34,6 +34,8 @@ class ConditionalNode
   virtual bool addCondition(BlockCondition* cond) = 0;
 };
 
+//TODO: sort these (alpha order?)
+
 class NeighbourWallCondition : public BlockCondition
 {
   public:
@@ -183,3 +185,13 @@ class NotConditionalNode : public BlockCondition, public ConditionalNode
   bool Matches(Block* b);
   bool addCondition(BlockCondition* cond);
 };
+
+class HaveFloorCondition : public BlockCondition
+{
+  public:
+  HaveFloorCondition(){};
+  ~HaveFloorCondition(void){};
+
+  bool Matches(Block* b);
+};
+
