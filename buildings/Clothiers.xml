@@ -55,29 +55,39 @@
 	<!-- contents -->
 	
 	<if>
-		<PositionIndex value=0 />
-		<sprite index = 271 />
+		<BuildingOccupancy value="3" />
+		<if>
+			<PositionIndex value=0 />
+			<sprite index = 271 />
+		</if>
+		<else>
+			<PositionIndex value=7 />
+			<sprite index = 270 />
+		</else>
 	</if>
+	
 	<else>
 		<PositionIndex value=2 />
 		<sprite index = 240 />
 		<sprite index = 304 />
 		<sprite index = 247 />
 	</else>	
-	<else>
-		<PositionIndex value=7 />
-		<sprite index = 270 />
-	</else>
+
 	<else>
 		<PositionIndex value=8 />
 		<sprite index = 303 />
 		<sprite index = 246 />
 	</else>		
-	
-
 		
 	<!-- generic border -->
 
+	<else>
+		<and>
+			<BuildingOccupancy value="1" />
+			<PositionIndex value=4 />
+		</and>
+		<sprite index = 321 />
+	</else>	
 	<else>
 		<PositionIndex value=0 />
 		<sprite index = 244 />
