@@ -17,7 +17,7 @@
 			<MaterialType value="Wood" />
 			<sprite index=44/>
 		</if>
-		<else><always/>
+		<else>
 			<sprite index=43 />
 		</else>
 	</else>
@@ -25,7 +25,7 @@
 		<MaterialType value="Wood" />
 		<sprite index = 41 />
 	</else>
-	<else><always/>
+	<else>
 		<sprite index = 40 />
 	</else>
 </building> 

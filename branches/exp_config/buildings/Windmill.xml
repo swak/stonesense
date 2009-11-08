@@ -33,7 +33,7 @@
 		</else>	
 	</if>
 	<else>
-		<always/>
+		
 		<if>
 			<PositionIndex value=1 />
 			<sprite index = 376 />

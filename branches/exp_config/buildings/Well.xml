@@ -25,7 +25,7 @@
 		<MaterialType value="Metal"/>
 		<sprite index = 254 />
 	</else>
-	<else><always/>
+	<else>
 		<sprite index = 273 />
 	</else>
 	<sprite index = 281 />
