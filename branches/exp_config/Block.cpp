@@ -72,7 +72,12 @@ void Block::Draw(BITMAP* target){
 		masked_blit(IMGRampSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT);
 	}
 
-
+	// draw objects
+	if (config.show_objects && occ.bits.item)
+	{
+		DrawSpriteFromSheet( OBJECT_SPRITE, target, IMGObjectSheet, drawx, drawy );	
+	}
+	
 	//vegitation
 	if(tree.index > 0 || tree.type > 0){
     int spriteNum =  GetWallSpriteVegitation( (VegetationType) getVegetationType( this->floorType ), tree.index );
@@ -95,8 +100,6 @@ void Block::Draw(BITMAP* target){
         drawy + building.sprites[i].y);
     }
 	}
-
-
 
 	//Draw Stairs
 	if(stairType > 0){

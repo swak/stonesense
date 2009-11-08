@@ -74,6 +74,11 @@ void doKeys(){
     timeToReloadSegment = true;
 		while(key[KEY_I]);
 	}
+   if(key[KEY_O]){
+		config.show_objects = !config.show_objects;
+    timeToReloadSegment = true;
+		while(key[KEY_O]);
+	}
   if(key[KEY_1]){
     config.segmentSize.z--;
     if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
