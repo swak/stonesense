@@ -10,12 +10,18 @@
 	</if>
 	
 	<else>
-		<PositionIndex value=8 />
+		<and>
+			<PositionIndex value=8 />
+			<BuildingOccupancy value="2" />
+		</and>
 		<sprite index = 107 />
 	</else>
 	
 	<else>
-		<PositionIndex value=16 />
+		<and>
+			<PositionIndex value=16 />
+			<BuildingOccupancy value="2" />
+		</and>
 		<sprite index = 312 />
 	</else>
 	

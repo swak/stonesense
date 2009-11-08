@@ -4,10 +4,25 @@
 
 <building name="Kitchen" gameID="kitchen"> 
 
+	<if>
+		<and>
+			<BuildingOccupancy value="3" />
+			<PositionIndex value=1 />
+		</and>
+		<if>
+			<MaterialType value="Metal"/>
+			<sprite index = 257 />
+		</if>
+		<else>
+			<sprite index = 272 />
+		</else>
+		<sprite index = 256 />
+	</if>
+
 	<!-- benches block -->
-	<if> 
+	<if else=1> 
 		<!-- replace this with position index if required -->
-		<BuildingOccupancy value="3" />	
+		<BuildingOccupancy value="3" />
 		<!-- benches -->
 		<if>
 			<MaterialType value="Wood" />
@@ -57,7 +72,22 @@
 	
 	<if>
 		<BuildingOccupancy value="3" />
+		<if>
+			<PositionIndex value=2 />
+			<sprite index = 278 />
+		</if>	
+		<else>
+			<PositionIndex value=5 />
+			<sprite index = 277 />
+		</else>
 	</if>		
+	
+	<else>
+		<PositionIndex value=6 />
+		<sprite index = 241 />
+		<sprite index = 245 />	
+		<sprite index = 311 offsetx=2 offsety=-1/>
+	</else>
 		
 	<!-- generic border -->
 
