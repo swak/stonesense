@@ -3,16 +3,18 @@
 
 
 <building name="Forge" gameID="metalsmiths_workshop"> 
+
 	<!-- benches block -->
 	<if> 
 		<!-- replace this with position index if required -->
 		<BuildingOccupancy value="3" />	
 		<!-- benches -->
-		<if>
+		<if><never>
 			<MaterialType value="Wood" />
 			<sprite index = 274 />
+			</never>
 		</if>
-		<else>
+		<!--else>
 			<MaterialType value="Metal"/>
 			<sprite index = 254 />
 		</else>
@@ -26,7 +28,7 @@
 				<MaterialType value="CrystalGlass"/>
 			</or>
 			<sprite index = 283 />
-		</else>
+		</else -->
 		<else>
 			<sprite index = 273 />
 		</else>
@@ -56,8 +58,41 @@
 	
 	<if>
 		<BuildingOccupancy value="3" />
-	</if>		
-		
+		<if>
+			<PositionIndex value=3 />
+			<sprite index=264/>
+		</if>
+		<if>
+			<PositionIndex value=5 />
+			<sprite index=278/>
+		</if>		
+	</if>
+	<else>
+		<and>
+			<not><BuildingOccupancy value="1" /></not>
+			<PositionIndex value=7 />
+		</and>
+		<if>
+			<HaveFloor/>
+			<sprite index=253/>
+			<sprite index=242/>
+		</if>
+		<else>
+			<sprite index=383/>
+			<sprite index=253 offsetx=2 />
+		</else>
+	</else>		
+	<else>
+		<not><HaveFloor/></not>
+		<empty/>
+	</else>
+	<else>
+		<PositionIndex value=0 />
+		<sprite index = 244 />
+		<sprite index = 267 />
+	</else>
+	
+	
 	<!-- generic border -->
 
 	<else>

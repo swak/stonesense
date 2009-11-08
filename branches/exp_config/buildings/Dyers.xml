@@ -65,8 +65,8 @@
 		<else>
 			<PositionIndex value=6 />
 			<sprite index = 358 />
-		</if>
 		</else>
+		<else>
 			<PositionIndex value=8 />
 			<sprite index = 357 />
 		</else>
