@@ -63,8 +63,7 @@ SET(PROJECT_SRCS
     WorldSegment.cpp
     main.cpp
     xmlBuildingReader.cpp
-    
-    memwatch.c
+
 )
 #linux
 IF(UNIX)
