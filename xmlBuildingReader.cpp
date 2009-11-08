@@ -7,21 +7,21 @@
 #include "BlockCondition.h"
 #include "dfhack/library/tinyxml/tinyxml.h"
 
-bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition);
+int parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition, bool silent);
 
 bool parseRecursiveNodes (ConditionalNode* pnode, TiXmlElement* pelem)
 {
 	TiXmlElement* elemCondition = pelem->FirstChildElement();
 	while( elemCondition )
 	{
-		if (!parseConditionNode( pnode, elemCondition ))
+		if (!parseConditionNode( pnode, elemCondition, false ))
 			return false;
 		elemCondition = elemCondition->NextSiblingElement();
 	}
 	return true;
 }
 
-bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
+int parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition, bool silent){
    const char* strType = elemCondition->Value();
    BlockCondition* cond = NULL;	
   if( strcmp(strType, "NeighbourWall") == 0){
@@ -77,7 +77,7 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 	if (!parseRecursiveNodes(andNode, elemCondition))
 	{
 		delete(andNode);
-		return false;
+		return 0;
 	}
   }
   
@@ -87,7 +87,7 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 	if (!parseRecursiveNodes(orNode, elemCondition))
 	{
 		delete(orNode);
-		return false;
+		return 0;
 	}
   }
 
@@ -97,7 +97,7 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 	if (!parseRecursiveNodes(notNode, elemCondition))
 	{
 		delete(notNode);
-		return false;
+		return 0;
 	}
   }
   
@@ -106,28 +106,34 @@ bool parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition){
 		if (!node->addCondition( cond ))
 		{
 			delete(cond);
-			return false;	
+			return 0;	
 		}
-		return true;
+		return 1;
 	}
-	else
+	else if (!silent)
 	{
-		WriteErr("Misplaced or invalid element in Condition: %s\n",strType);
-		return false;		  
+		WriteErr("Misplaced or invalid element in Condition: %s (Line %d)\n",strType,elemCondition->Row());
+		return 0;		  
   	}
+  	return -1;
 }
 
 bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 {
 	SpriteBlock* oldSibling = NULL;
 	TiXmlElement* elemNode =  elemParent->FirstChildElement();
-	if ( strcmp(elemParent->Value(),"building") != 0)
+	const char* strParent = elemParent->Value();
+	if ( strcmp(strParent,"building") != 0)
 	{
+		//flag to allow else statements to be empty, rather than needing an "always" tag
+		bool allowBlank = (strcmp(strParent,"else") == 0 || elemParent->Attribute("else"));
 		// cast should be safe, because only spriteblocks
 		// should get here
-		if (!parseConditionNode((SpriteBlock *)node,elemNode))
+		int retvalue =parseConditionNode((SpriteBlock *)node,elemNode,allowBlank);
+		if (retvalue == 0)
 			return false;
-		elemNode = elemNode->NextSiblingElement();
+		if (retvalue > 0)
+			elemNode = elemNode->NextSiblingElement();
 	}
 	while (elemNode)
 	{
@@ -164,7 +170,7 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 		}
 		else
 		{
-			WriteErr("Misplaced or invalid element in SpriteNode: %s\n",strType);
+			WriteErr("Misplaced or invalid element in SpriteNode: %s (Line %d)\n",strType,elemNode->Row());
 			return false;
 		}		
 		elemNode = elemNode->NextSiblingElement();
