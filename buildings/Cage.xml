@@ -19,7 +19,7 @@
 		<MaterialType value="CrystalGlass"/>
 		<sprite index = 294 />
 	</else>
-	<else><always/>
+	<else>
 		<sprite index = 312 />
 	</else>
 	

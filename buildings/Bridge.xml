@@ -30,7 +30,7 @@
 					<sprite index=368 />
 				</if>
 			</if>
-			<else><always/>
+			<else>
 				<sprite index=369 />
 				<if>
 					<not><NeighbourIdentical dir="North" /></not>
@@ -42,7 +42,7 @@
 				</if>				
 			</else>
 		</if>
-		<else><always/>
+		<else>
 			<!-- flat -->
 			<sprite index=360 />
 			<if>
@@ -92,7 +92,7 @@
 				<sprite index=332 />
 			</if>
 		</if>
-		<else><always/>
+		<else>
 			<sprite index=333 />
 			<if>
 				<not><NeighbourIdentical dir="North" /></not>
@@ -104,7 +104,7 @@
 			</if>				
 		</else>
 	</else>
-	<else><always/>
+	<else>
 		<!-- flat -->
 		<sprite index=324 />
 		<if>
@@ -131,7 +131,7 @@
 			<sprite index = 328 />
 		</if>		
 	</else>	
-	
+
 	<!-- edging on flat bridges -->
 	<if>
 		<not><or>
@@ -147,5 +147,5 @@
 			<sprite index = 280 offsety=8/>
 		</if>		
 	</if>
-	
+
 </building> 

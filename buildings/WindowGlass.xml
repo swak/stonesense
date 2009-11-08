@@ -19,7 +19,7 @@
 			<MaterialType value="CrystalGlass"/>
 			<sprite index=65/>
 		</else>
-		<else><always/>
+		<else>
 			<sprite index=61/>
 		</else>
 	</if>
@@ -31,7 +31,7 @@
 		<MaterialType value="CrystalGlass"/>
 		<sprite index=64/>
 	</else>
-	<else><always/>
+	<else>
 		<sprite index=60/>
 	</else>
 

@@ -48,7 +48,7 @@
 		</or>
 		<sprite index = 109 />
 	</else>	
-	<else><always/>
+	<else>
 		<sprite index = 110 />
 	</else>
 		

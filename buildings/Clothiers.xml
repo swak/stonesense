@@ -27,7 +27,7 @@
 			</or>
 			<sprite index = 283 />
 		</else>
-		<else><always/>
+		<else>
 			<sprite index = 273 />
 		</else>
 		<!-- borders -->
@@ -115,7 +115,7 @@
 		<sprite index = 246 />
 	</else>	
 	
-	<else><always/>
+	<else>
 		<empty/>
 	</else>	
 	<!-- end generic block -->
