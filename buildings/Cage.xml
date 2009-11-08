@@ -6,7 +6,7 @@
 	<if>
 		<MaterialType value="Wood" />
 		<sprite index = 313 />
-	</else>
+	</if>
 	<else>
 		<MaterialType value="GreenGlass"/>
 		<sprite index = 314 />

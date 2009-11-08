@@ -2,9 +2,8 @@
 
 
 
-<Building name="Gear Assembly" gameID="gear_assembly">
-	<Tile>
-		<Sprite sheetIndex = 112 />
-	</Tile>
-	
-</Building> 
+<building name="Gear Assembly" gameID="gear_assembly">
+
+		<sprite index = 112 />
+
+</building> 
