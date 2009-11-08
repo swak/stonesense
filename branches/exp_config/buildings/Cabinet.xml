@@ -9,5 +9,5 @@
 	</if>
 	<else><always/>
 		<sprite index = 87 />
-	</if>
+	</else>
 </building> 

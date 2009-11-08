@@ -67,7 +67,7 @@
 			<if>
 				<not><NeighbourSameBuilding dir="East" /></not>
 				<sprite index = 364 />
-			</if>
+			</if>	
 		</else>	
 	</else>
 	
@@ -129,7 +129,23 @@
 		<if>
 			<not><NeighbourSameBuilding dir="East" /></not>
 			<sprite index = 328 />
-		</if>
+		</if>		
 	</else>	
+	
+	<!-- edging on flat bridges -->
+	<if>
+		<not><or>
+			<BuildingOccupancy value="6" />
+			<BuildingOccupancy value="2" />
+		</or></not>
+		<if>
+			<not><NeighbourSameBuilding dir="North" /></not>
+			<sprite index = 282 offsety=8/>
+		</if>
+		<if>
+			<not><NeighbourSameBuilding dir="West" /></not>
+			<sprite index = 280 offsety=8/>
+		</if>		
+	</if>
 	
 </building> 
