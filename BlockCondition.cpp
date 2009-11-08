@@ -329,3 +329,8 @@ bool NotConditionalNode::addCondition(BlockCondition* cond)
 	childcond = cond;
 	return true;
 }
+
+bool HaveFloorCondition::Matches(Block* b)
+{	
+	return (b->floorType > 0);
+}
