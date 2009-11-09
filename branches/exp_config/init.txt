@@ -7,7 +7,7 @@ Sets the width and height of the application in pixels.
 
 Sets the color depth used by the program. valid values are 8, 15, 16, 24, and 32.
 Defaults to 16 if an invalid value is given.
-32 is needed for keepinng the window transparency in win7 and vista.
+32 is needed for keeping the window transparency in win7 and vista.
 [COLOR_DEPTH:16]
 
 To launch the application in windowed mode, set this to YES. 
@@ -22,18 +22,18 @@ One entry for each axis, and each expects the number of tiles to load.
 [SEGMENTY:25]
 [SEGMENTZ:5]
 
-
 Lifts the segment up to the top off the screen. 
 Use this with a large segment size to get blocks covering the entire screen.
-[LIFTSEGMENT:NO]
+Hitting 3 and 4 will increase and decrease this while the program is running.
+[LIFTSEGMENT:0]
 
-
-Set the time in ms to increase the automatic reload time by, a lower step reloads more frequently
+Set the time in ms to increase the automatic reload time by:
+a lower step reloads more frequently
+Use NumPad +/- to alter reload rate by this step
 [AUTO_RELOAD_STEP:200]
 
 Sets Stonesense in debug mode. Used for developing
 [DEBUGMODE:YES]
-
 
 Shows all creatures, for debuging. Living, dead, kidnapped, caged, EVERY single one.
 [ALLCREATURES:NO]

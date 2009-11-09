@@ -110,8 +110,10 @@ void parseConfigLine( string line ){
     config.debug_mode = (result == "YES");
   }
   if( line.find("LIFTSEGMENT") != -1){
-    string result = parseStrFromLine( "LIFTSEGMENT", line );
-    config.lift_segment_offscreen = (result == "YES");
+    int value = parseIntFromLine( "LIFTSEGMENT", line );
+    if(value > 10) value = 10;
+    if(value < -5) value = -5;
+    config.lift_segment_offscreen = value;
   }
   if( line.find("ANIMATION_RATE") != -1){
     int value = parseIntFromLine( "ANIMATION_RATE", line );

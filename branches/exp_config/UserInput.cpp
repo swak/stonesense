@@ -89,6 +89,14 @@ void doKeys(){
     //add a limit?
     timeToReloadSegment = true;
 	}
+  if(key[KEY_3]){
+    config.lift_segment_offscreen++;
+    timeToReloadSegment = true;
+	}
+  if(key[KEY_4]){
+    config.lift_segment_offscreen--;
+    timeToReloadSegment = true;
+	}
   if(key[KEY_S]){
 		config.single_layer_view = !config.single_layer_view;
     timeToReloadSegment = true;
