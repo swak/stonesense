@@ -23,6 +23,7 @@ typedef struct {
   bool show_zones;
   bool show_stockpiles;
   bool show_objects;
+  bool show_osd;
   bool single_layer_view;
   bool shade_hidden_blocks;
   bool show_hidden_blocks;

@@ -89,6 +89,7 @@ int main(void)
   config.hide_outer_blocks = false;
   config.shade_hidden_blocks = true;
   config.load_ground_materials = true;
+  config.lift_segment_offscreen = 0;
   config.automatic_reload_time = 0;
   config.automatic_reload_step = 500;
   config.animation_step = 300;
@@ -99,6 +100,7 @@ int main(void)
   config.segmentSize.x = DEFAULT_SEGMENTSIZE_X;
   config.segmentSize.y = DEFAULT_SEGMENTSIZE_Y;
   config.segmentSize.z = DEFAULT_SEGMENTSIZE_Z;
+  config.show_osd = true;
   loadConfigFile();
   
   //set debug cursor

@@ -218,14 +218,16 @@ void paintboard(){
   //clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
 	
 
-	DrawCurrentLevelOutline(buffer, true);
+	if (config.show_osd) DrawCurrentLevelOutline(buffer, true);
   viewedSegment->drawAllBlocks(buffer);
-	DrawCurrentLevelOutline(buffer, false);
+	if (config.show_osd) DrawCurrentLevelOutline(buffer, false);
 
   DebugInt1 = viewedSegment->getNumBlocks();
 	
   ClockedTime2 = clock() - starttime;
   
+  if (config.show_osd)
+  {
 	textprintf_ex(buffer, font, 10,10, 0xFFFFFF,0, "%i, %i, %i (%i x %i x %i, lifted %d)", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ,config.segmentSize.x,config.segmentSize.y,config.segmentSize.z,config.lift_segment_offscreen);
   
   if(config.debug_mode){
@@ -235,14 +237,15 @@ void paintboard(){
 
     drawDebugCursorAndInfo(buffer);
   }
-
+  
+  
   if(config.single_layer_view)
     textprintf_centre_ex(buffer, font, config.screenWidth/2,20, 0xFFFFFF,0, "Single layer view");
   if(config.automatic_reload_time)
     textprintf_centre_ex(buffer, font, config.screenWidth/2,30, 0xFFFFFF,0, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
-
-  DrawMinimap(buffer);
-
+	
+     if (config.show_osd) DrawMinimap(buffer);
+   }
 	acquire_screen();
 	draw_sprite(screen,buffer,0,0);
 	release_screen();
