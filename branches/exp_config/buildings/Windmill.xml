@@ -7,8 +7,8 @@
 	<if>
 		<or>
 			<AnimationFrame value=0 />
-			<AnimationFrame value=1 />
 			<AnimationFrame value=2 />
+			<AnimationFrame value=4 />
 		</or>
 		<if>
 			<PositionIndex value=0 />
