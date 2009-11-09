@@ -226,7 +226,7 @@ void paintboard(){
 	
   ClockedTime2 = clock() - starttime;
   
-	textprintf_ex(buffer, font, 10,10, 0xFFFFFF,0, "%i,%i,%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ);
+	textprintf_ex(buffer, font, 10,10, 0xFFFFFF,0, "%i, %i, %i (%i x %i x %i, lifted %d)", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ,config.segmentSize.x,config.segmentSize.y,config.segmentSize.z,config.lift_segment_offscreen);
   
   if(config.debug_mode){
 	  textprintf_ex(buffer, font, 10,20, 0xFFFFFF,0, "Timer1: %ims", ClockedTime);
