@@ -4,8 +4,16 @@
 
 <building name="Tannery" gameID="tanners_shop"> 
 
+	<if>
+		<and>
+			<BuildingOccupancy value="3" />
+			<PositionIndex value=5 />
+		</and>
+		<sprite index = 315 />
+	</if>
+	
 	<!-- benches block -->
-	<if> 
+	<if else=1> 
 		<!-- replace this with position index if required -->
 		<BuildingOccupancy value="3" />	
 		<!-- benches -->
@@ -57,8 +65,16 @@
 	
 	<if>
 		<BuildingOccupancy value="3" />
+		<if>
+			<PositionIndex value=0 />
+			<sprite index = 266 />
+		</if>		
+		<else>
+			<PositionIndex value=6 />
+			<sprite index = 265 />
+		</else>		
 	</if>		
-		
+	
 	<!-- generic border -->
 
 	<else>

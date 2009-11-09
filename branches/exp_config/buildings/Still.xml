@@ -9,27 +9,28 @@
 		<!-- replace this with position index if required -->
 		<BuildingOccupancy value="3" />	
 		<!-- benches -->
+		<!-- could cause problems with transparent floors -->
 		<if>
 			<MaterialType value="Wood" />
-			<sprite index = 274 />
+			<sprite index = 274 offsety=5/>
 		</if>
 		<else>
 			<MaterialType value="Metal"/>
-			<sprite index = 254 />
+			<sprite index = 254 offsety=5/>
 		</else>
 		<else>
 			<MaterialType value="GreenGlass"/>
-			<sprite index = 285 />
+			<sprite index = 285 offsety=5/>
 		</else>
 		<else>
 			<or>
 				<MaterialType value="ClearGlass"/>
 				<MaterialType value="CrystalGlass"/>
 			</or>
-			<sprite index = 283 />
+			<sprite index = 283 offsety=5/>
 		</else>
 		<else>
-			<sprite index = 273 />
+			<sprite index = 273 offsety=5/>
 		</else>
 		<!-- borders -->
 		<if>
@@ -39,7 +40,7 @@
 					<NeighbourWall dir="TopRight"/>
 				</or>
 			</not>
-			<sprite index = 282 />
+			<sprite index = 282 offsety=5/>
 		</if>
 		<if>
 			<not>
@@ -48,17 +49,44 @@
 					<NeighbourWall dir="TopLeft"/>
 				</or>
 			</not>
-			<sprite index = 280 />
+			<sprite index = 280 offsety=5/>
 		</if>	
+		<sprite index = 308/>
+		
 	</if>
 	<!-- end benches block -->
  
 	<!-- contents -->
 	
-	<if>
-		<BuildingOccupancy value="3" />
-	</if>		
-		
+	<else>
+		<and>
+			<not><BuildingOccupancy value="1" /></not>
+			<PositionIndex value=1 />
+		</and>
+		<sprite index = 240 />
+		<sprite index = 309 />
+	</else>		
+	<else>
+		<and>
+			<not><BuildingOccupancy value="1" /></not>
+			<PositionIndex value=2 />
+		</and>
+		<sprite index = 240 />
+		<sprite index = 310 />
+		<sprite index = 247 />
+	</else>		
+
+	<else>
+		<PositionIndex value=3 />
+		<sprite index = 241 />
+		<sprite index = 311 />
+	</else>
+	<else>
+		<PositionIndex value=8 />
+		<sprite index = 311 offsety = -5 />
+		<sprite index = 246 />
+	</else>	
+			
 	<!-- generic border -->
 
 	<else>

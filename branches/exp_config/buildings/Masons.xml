@@ -56,9 +56,24 @@
 	<!-- contents -->
 	
 	<if>
-		<BuildingOccupancy value="3" />
+		<BuildingOccupancy value="3" />		
+		<if>
+			<PositionIndex value=2 />
+			<sprite index = 262 offsetx=-3 offsety=-8/>
+		</if>		
+		<else>
+			<PositionIndex value=5 />
+			<sprite index = 279 offsetx=2 offsety=-2 />
+			<sprite index = 291 offsetx=-3 offsety=-2 />
+		</else>		
 	</if>		
 		
+	<else>
+		<PositionIndex value=7 />
+		<sprite index = 262 offsetx=2 offsety=-1/>
+		<sprite index = 242 />
+	</else>	
+	
 	<!-- generic border -->
 
 	<else>
