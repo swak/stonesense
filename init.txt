@@ -5,6 +5,10 @@ Sets the width and height of the application in pixels.
 [WIDTH:800]
 [HEIGHT:600]
 
+Sets the color depth used by the program. valid values are 8, 15, 16, 24, and 32.
+Defaults to 16 if an invalid value is given.
+32 is needed for keepinng the window transparency in win7 and vista.
+[COLOR_DEPTH:16]
 
 To launch the application in windowed mode, set this to YES. 
 Setting it to NO makes the program attempt to launch fullscreen mode,

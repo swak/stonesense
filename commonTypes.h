@@ -37,6 +37,7 @@ typedef struct {
 
   int screenWidth;
   int screenHeight;
+  int colorDepth;
   bool Fullscreen;
 
   Crd3D segmentSize;

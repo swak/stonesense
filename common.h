@@ -32,6 +32,7 @@ using namespace std;
 #define FULLSCREEN false
 #define RESOLUTION_WIDTH 800
 #define RESOLUTION_HEIGHT 600
+#define COLOR_DEPTH 16
 #define TILEWIDTH 32
 #define TILEHEIGHT 16
 #define WALLHEIGHT 16
