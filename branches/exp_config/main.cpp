@@ -95,6 +95,7 @@ int main(void)
   config.Fullscreen = FULLSCREEN;
   config.screenHeight = RESOLUTION_HEIGHT;
   config.screenWidth = RESOLUTION_WIDTH;
+  config.colorDepth = COLOR_DEPTH;
   config.segmentSize.x = DEFAULT_SEGMENTSIZE_X;
   config.segmentSize.y = DEFAULT_SEGMENTSIZE_Y;
   config.segmentSize.z = DEFAULT_SEGMENTSIZE_Z;
@@ -109,7 +110,7 @@ int main(void)
   LoadCreatureConfiguration( &creatureTypes );
   LoadGroundMaterialConfiguration( );
 
-	set_color_depth(16);
+  set_color_depth(config.colorDepth);
   int gfxMode = config.Fullscreen ? GFX_AUTODETECT : GFX_AUTODETECT_WINDOWED;
   if( set_gfx_mode(gfxMode, config.screenWidth, config.screenHeight, 0,0) != 0 ){
     allegro_message("unable to set graphics mode.");

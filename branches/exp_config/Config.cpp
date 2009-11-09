@@ -61,6 +61,18 @@ void parseConfigLine( string line ){
     int height = parseIntFromLine( "HEIGHT", line );
     config.screenHeight = height;
   }
+  if( line.find("COLOR_DEPTH") != -1){
+    int depth = parseIntFromLine( "COLOR_DEPTH", line );
+	if (
+		depth == 8 ||
+		depth == 15 ||
+		depth == 16 ||
+		depth == 24 ||
+		depth == 32
+		)
+		config.colorDepth = depth;
+	else config.colorDepth = 16;
+  }
   if( line.find("WINDOWED") != -1){
     string result = parseStrFromLine( "WINDOWED", line );
     config.Fullscreen = (result == "NO");
