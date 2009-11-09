@@ -156,8 +156,13 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 				delete(block);
 				return false;
 			}
-			if (oldSibling && (elemNode->Attribute("else") || strcmp(strType, "else") == 0))
+			if (elemNode->Attribute("else") || strcmp(strType, "else") == 0)
 			{
+				if (!oldSibling)
+				{
+					WriteErr("Misplaced or invalid element in SpriteNode: %s (Line %d)\n",strType,elemNode->Row());
+					return false;						
+				}
 				oldSibling->addElse(block);	
 			}
 			else
