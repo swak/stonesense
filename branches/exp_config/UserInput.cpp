@@ -97,6 +97,26 @@ void doKeys(){
     config.lift_segment_offscreen--;
     timeToReloadSegment = true;
 	}
+  if(key[KEY_5]){
+    config.segmentSize.y++;
+    //add a limit?
+    timeToReloadSegment = true;
+	}
+  if(key[KEY_6]){
+    config.segmentSize.y--;
+    if(config.segmentSize.y <= 0) config.segmentSize.y = 1;
+    timeToReloadSegment = true;
+	}
+  if(key[KEY_7]){
+    config.segmentSize.x--;
+    if(config.segmentSize.x <= 0) config.segmentSize.x = 1;
+    timeToReloadSegment = true;
+	}
+  if(key[KEY_8]){
+    config.segmentSize.x++;
+    //add a limit?
+    timeToReloadSegment = true;
+	}
   if(key[KEY_S]){
 		config.single_layer_view = !config.single_layer_view;
     timeToReloadSegment = true;
