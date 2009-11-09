@@ -38,6 +38,8 @@ using namespace std;
 #define WALLHEIGHT 16
 #define SPRITEWIDTH TILEWIDTH
 #define SPRITEHEIGHT (TILEHEIGHT + WALLHEIGHT)
+//for future compatibility
+#define FLOORHEIGHT 0
 #define MAPSIZE 25
 
 #define OBJECT_SPRITE 28
