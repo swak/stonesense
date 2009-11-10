@@ -171,6 +171,10 @@ int GetWallSpriteMap(int in, int matIndex)
         case 304: //featstone wall ld
         case 305: //featstone wall ud
         case 306: //featstone wall lr
+        case 79: //stone pillar
+        case 80: //lavastone pillar
+        case 81: //featstone pillar
+        case 82: //minstone pillar        
           return SPRITEOBJECT_WALL_STONE_SMOOTH;
           break;
 
@@ -202,10 +206,6 @@ int GetWallSpriteMap(int in, int matIndex)
           return SPRITEOBJECT_WALL_CONSTR;
           break;
 
-        case 79: //stone pillar
-        case 80: //lavastone pillar
-        case 81: //featstone pillar
-        case 82: //minstone pillar        
         case 495: //constructed pillar
           return SPRITEOBJECT_WALL_PILLAR;
           break;
@@ -328,8 +328,9 @@ int GetFloorSpriteMap(int in, int matIndex){
 			case 44: //lavastone floor detailed
 			case 45: //featstone? floor detailed
 			case 46: //minstone? floor detailed [calcite]
+				return SPRITEFLOOR_DETAILED;			
 			case 493: //constructed floor detailed
-				return SPRITEFLOOR_DETAILED;
+				return SPRITEFLOOR_CONSTRUCTED;
 
       case 2:   //murky pool
 			case 365: //river n
