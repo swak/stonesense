@@ -348,9 +348,9 @@ WorldSegment* ReadMapSegment(int x, int y, int z, int sizex, int sizey, int size
       }else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false ){
         Block* westBlock = segment->getBlock(b->x - 1, b->y, b->z);
         Block* northBlock = segment->getBlock(b->x, b->y - 1, b->z);
-        if(westBlock && !westBlock->wallType && !westBlock->ramp.type) 
+        if(!westBlock || (!westBlock->wallType && !westBlock->ramp.type) )
           b->depthBorderWest = true;
-        if(northBlock && !northBlock->wallType && !northBlock->ramp.type) 
+        if(!northBlock || (!northBlock->wallType && !northBlock->ramp.type) )
           b->depthBorderNorth = true;
       }
 	}
