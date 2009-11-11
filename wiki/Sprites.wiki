@@ -1,3 +1,4 @@
+#summary Overview of how sprites are handled by Stonesense
 #labels Featured
 =Sprites=
 Understanding how Stonesense deals with sprites is central to anyone who wishes to modify the content. The scheme is not very complicated, and this guide will give a short introduction to how they work.
