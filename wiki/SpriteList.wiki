@@ -10,8 +10,10 @@ I am absolutely not sure this is the best way of distributing the sprite work, b
 || Smooth Ice floor ||  ||
 || Eerie pit floor ||  ||
 || Ash floor ||  ||
-||  ||  || 
-||  ||  || 
+|| Olivine wall ||  || 
+|| Olivine floor ||  || 
+|| Gabbro wall ||  || 
+|| Gabbro floor ||  || 
 
 === Buildings ===
 || *Sprite Description* || *Assigned To* ||
