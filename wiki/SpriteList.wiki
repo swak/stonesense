@@ -12,3 +12,13 @@ I am absolutely not sure this is the best way of distributing the sprite work, b
 || Ash floor ||  ||
 ||  ||  || 
 ||  ||  || 
+
+=== Buildings ===
+|| *Sprite Description* || *Assigned To* ||
+||  ||  || 
+||  ||  || 
+
+=== Creatures ===
+|| *Sprite Description* || *Assigned To* ||
+|| Dwarfs in general || Awaiting info from Solifuge || 
+||  ||  || 
