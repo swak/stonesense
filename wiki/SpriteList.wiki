@@ -1,0 +1,14 @@
+#List of sprites currently needed
+
+= Introduction =
+
+I am absolutely not sure this is the best way of distributing the sprite work, but we're gonna give it a try :)
+
+
+|| *Sprite Description* || *Assigned To* ||
+||  ||  ||
+||  ||  ||
+||  ||  ||
+||  ||  ||
+||  ||  || 
+||  ||  || 
