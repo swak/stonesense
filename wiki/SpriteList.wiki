@@ -1,14 +1,14 @@
-#List of sprites currently needed
+#summary List of sprites currently needed
 
 = Introduction =
 
 I am absolutely not sure this is the best way of distributing the sprite work, but we're gonna give it a try :)
 
-
+=== World Geometry ===
 || *Sprite Description* || *Assigned To* ||
-||  ||  ||
-||  ||  ||
-||  ||  ||
-||  ||  ||
+|| Smooth Ice wall ||  ||
+|| Smooth Ice floor ||  ||
+|| Eerie pit floor ||  ||
+|| Ash floor ||  ||
 ||  ||  || 
 ||  ||  || 
