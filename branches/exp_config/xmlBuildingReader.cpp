@@ -6,6 +6,7 @@
 #include "BuildingConfiguration.h"
 #include "BlockCondition.h"
 #include "dfhack/library/tinyxml/tinyxml.h"
+#include "GUI.h"
 
 int parseConditionNode(ConditionalNode* node, TiXmlElement* elemCondition, bool silent);
 
@@ -177,9 +178,15 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 			const char* strSheetIndex = elemNode->Attribute("index");
 			const char* strOffsetX = elemNode->Attribute("offsetx");
 			const char* strOffsetY = elemNode->Attribute("offsety");
+			const char* filename = elemNode->Attribute("file");
 			sprite->sprite.sheetIndex = (strSheetIndex != 0 ? atoi(strSheetIndex) : -1);
 			sprite->sprite.x    = (strOffsetX    != 0 ? atoi(strOffsetX)    : 0);
-			sprite->sprite.y    = (strOffsetY    != 0 ? atoi(strOffsetY)    : 0);
+			sprite->sprite.y   = (strOffsetY    != 0 ? atoi(strOffsetY)    : 0);
+			sprite->sprite.fileIndex = -1;
+			if (filename != NULL)
+			{
+			  sprite->sprite.fileIndex = loadImgFile((char*)filename);
+			}
 			node->addChild(sprite);
 		}
 		else
