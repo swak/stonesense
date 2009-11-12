@@ -107,11 +107,6 @@ int main(void)
   debugCursor.x = config.segmentSize.x / 2;
   debugCursor.y = config.segmentSize.y / 2;
 
-  //load building configuration information from xml files
-  LoadBuildingConfiguration( &buildingTypes );
-  LoadCreatureConfiguration( &creatureTypes );
-  LoadGroundMaterialConfiguration( );
-
   set_color_depth(config.colorDepth);
   int gfxMode = config.Fullscreen ? GFX_AUTODETECT : GFX_AUTODETECT_WINDOWED;
   if( set_gfx_mode(gfxMode, config.screenWidth, config.screenHeight, 0,0) != 0 ){
@@ -144,6 +139,11 @@ int main(void)
 	
 #endif
   loadGraphicsFromDisk();
+  //load building configuration information from xml files
+  LoadBuildingConfiguration( &buildingTypes );
+  LoadCreatureConfiguration( &creatureTypes );
+  LoadGroundMaterialConfiguration( );
+  
 #ifdef RELEASE
 	while(!key[KEY_F9]) readkey();
 #endif
