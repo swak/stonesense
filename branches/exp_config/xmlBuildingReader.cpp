@@ -152,6 +152,10 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 		if (strcmp(strType, "if") == 0 || strcmp(strType, "else") == 0)
 		{
 			SpriteBlock* block = new SpriteBlock();
+			if (!elemNode->Attribute("file") && elemParent->Attribute("file"))
+			{
+				elemNode->SetAttribute("file",elemParent->Attribute("file"));
+			}
 			if (!parseSpriteNode(block,elemNode))
 			{
 				delete(block);
@@ -186,6 +190,14 @@ bool parseSpriteNode(SpriteNode* node, TiXmlElement* elemParent)
 			if (filename != NULL)
 			{
 			  sprite->sprite.fileIndex = loadImgFile((char*)filename);
+			}
+			else
+			{
+			  const char* pfilename = elemParent->Attribute("file");
+			  if (pfilename)
+			  {
+				sprite->sprite.fileIndex = loadImgFile((char*)pfilename);
+			  }
 			}
 			node->addChild(sprite);
 		}
