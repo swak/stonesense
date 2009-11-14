@@ -31,6 +31,8 @@ I am absolutely not sure this is the best way of distributing the sprite work, b
 || Mill ||  || 
 || Quern ||  || 
 || Still ||  ||
+|| Catapult || ||
+|| Ballista || ||
 
 === Creatures ===
 || *Sprite Description* || *Assigned To* ||
