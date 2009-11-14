@@ -30,6 +30,7 @@ I am absolutely not sure this is the best way of distributing the sprite work, b
 || Cage Trap ||  || 
 || Mill ||  || 
 || Quern ||  || 
+|| Still ||  ||
 
 === Creatures ===
 || *Sprite Description* || *Assigned To* ||
