@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Windmill" gameID="windmill" file="mechanics.png">
+
+	<include file="sBlueprint.xml" />
+	
+	<else>
+		<or>
+			<AnimationFrame value=0 />
+			<AnimationFrame value=2 />
+			<AnimationFrame value=4 />
+		</or>
+		<if>
+			<PositionIndex value=0 />
+			<rotate>
+				<sprite index = 30 />
+				<sprite index = 28 />				
+				<sprite index = 29 />
+				<sprite index = 26 />
+			</rotate>
+		</if>
+		<else>
+			<PositionIndex value=2 />
+			<rotate>
+				<sprite index = 28 />				
+				<sprite index = 29 />
+				<sprite index = 26 />
+				<sprite index = 30 />
+			</rotate>
+		</else>
+		<else>
+			<PositionIndex value=6 />
+			<rotate>
+				<sprite index = 26 />
+				<sprite index = 30 />
+				<sprite index = 28 />				
+				<sprite index = 29 />
+			</rotate>
+		</else>
+		<else>
+			<PositionIndex value=8 />
+			<rotate>
+				<sprite index = 29 />
+				<sprite index = 26 />
+				<sprite index = 30 />
+				<sprite index = 28 />				
+			</rotate>
+		</else>	
+		<else>
+			<PositionIndex value=4 />
+			<sprite index = 20 />
+			<sprite index = 27 />
+		</else>	
+	</else>
+	<else>
+		<if>
+			<PositionIndex value=1 />
+			<rotate>
+				<sprite index = 24 />
+				<sprite index = 22 />
+				<sprite index = 23 />
+				<sprite index = 25 />
+			</rotate>
+		</if>
+		<else>
+			<PositionIndex value=3 />
+			<rotate>
+				<sprite index = 25 />
+				<sprite index = 24 />
+				<sprite index = 22 />
+				<sprite index = 23 />
+			</rotate>
+		</else>
+		<else>
+			<PositionIndex value=5 />
+			<rotate>
+				<sprite index = 22 />
+				<sprite index = 23 />
+				<sprite index = 25 />
+				<sprite index = 24 />
+			</rotate>
+		</else>
+		<else>
+			<PositionIndex value=7 />
+			<rotate>
+				<sprite index = 23 />
+				<sprite index = 25 />
+				<sprite index = 24 />
+				<sprite index = 22 />
+			</rotate>
+		</else>
+		<else>
+			<PositionIndex value=4 />
+			<sprite index = 20 />
+			<sprite index = 21 />
+		</else>	
+	</else>
+	<empty/>
+	
+</building> 

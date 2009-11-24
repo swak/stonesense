@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Gear Assembly" gameID="gear_assembly" file="mechanics.png">
+
+	<include file="sBlueprint.xml" />
+
+	<else>
+		<or>
+			<AnimationFrame value=0 />
+			<AnimationFrame value=2 />
+			<AnimationFrame value=4 />
+		</or>
+		<sprite index = 0 />
+	</else>
+	<else>
+		<sprite index = 1 />
+	</else>
+</building> 
