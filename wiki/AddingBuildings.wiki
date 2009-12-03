@@ -140,7 +140,7 @@ Note that an *else* needs to be hooked up to an *if*, but an *if* can stand alon
 <HaveFloor/>
 }}}
 
-  * *!HaveFloor*: Returns true if the tile *below* this one contains the value or more of fluid.
+  * *!FluidBelow*: Returns true if the tile *below* this one contains the value or more of fluid.
 
 {{{
 <FluidBelow value=4 />
