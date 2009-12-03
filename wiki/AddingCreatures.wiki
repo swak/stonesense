@@ -3,15 +3,42 @@
 =Adding Creatures to Stonesense=
 Adding new creatures to Stonesense is fairly easy, but before reading this guide I suggest you familiarize yourself with how Stonesense deals with creature [Sprites].
 
+==Creatures.xml==
+Stonesense is fully configurable in the way it renders creatures. No information is hardcoded, but rather loaded from the creature databases found in the creatures directory.
+
+==index.txt==
+
+The first thing the game does is look in the index.txt file. It uses this file to tell it what configuration files are available, and in what order to load them (this becomes important later)
 
 ==Creatures.xml==
-Stonesense is fully configurable in the way it renders creatures. No information is hardcoded, but rather loaded from the creature database found in *Creatures.xml*.
 
-The structure of this file is fairly simple:
+The index file identifies a number of xml files
+
+The structure of this file is ~~fairly simple~~ rapidly becoming rather convoluted as we add features:
 {{{
-<Creature gameID="dwarf" 	sheetIndex = 1  /> 
-<Creature gameID="cat" 		sheetIndex = 20 /> 
-<Creature gameID="dog" 		sheetIndex = 21 /> 
+<?xml version="1.0" ?> <!-- this lets the xml parser know that your file is xml -->
+<creatures> 
+<!-- this helps to identify the xml file, and allows it to contain
+multiple creature definitions while remaining valid xml -->
+
+	<creature gameID="CAT" 		sheetIndex = 20 /> 
+	<creature gameID="DOG" 		sheetIndex = 21 />
+	<!-- Simple creature definitions just match a creature type name (as in the
+	raws) to its sprite index -->
+
+	<creature gameID="DWARF" sheetIndex = 180 file="creatures/dwarves.png" >
+		<Profession name="Miner" sex="M" sheetIndex = 181/>
+	</creature>
+	<!-- More complex creatures use a number of Profession options
+	(expect this to be renamed) to describe variant sprites -->
+
+	<!-- animation wont work yet in A4, but I thought I'd add an example anyway
+	<creature gameID="BAT" 		sheetIndex = 40 > 
+		<Profession sheetIndex=41 frames="12"/>
+		<Profession sheetIndex=42 frames="45"/>
+	</creature> -->
+</creatures>
+
 }}}
 
 As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress, see [AddingCreatures#List_of_Creatures List of Creatures]. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
