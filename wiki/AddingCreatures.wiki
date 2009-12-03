@@ -65,7 +65,27 @@ Now all we have to do is add the following line to Creatures.xml (inside the cre
 
 ==More Advanced Sprites==
 ===Variants===
+
+The Profession element encompasses anything more specific than the creature type. We need to do some renaming here. Currently supported:
+
+ * *name* of the profession. Picks out an actual profession, rather than the myriad other variants supported by the tag.
+
+ * *custom* If this attribute is present and non-empty, the profession name is matched against custom professions you give your dwarves rather than the built in types. Use sparingly, as string matches can be rather slow.
+
+ * *special* checks some unusual conditions. Currently checks for "Normal", "Zombie" or "Skeleton"
+
+ * *sex* checks against "M" for male or "F" for female.
+
+ * *frames* you cant use this yet, but I'm going to taunt you with it. You can define animations by setting variants with frames attributes. The attribute should contain a list of the frames 0-5 that the sprite should be used for eg frames="012" for the first half of the animation sequence.
+
 ===Multiple Definition Files==
+
+Stonesense searches for images in the order that they are found top to bottom in the index file, then in the definition files. So if you are adding a custom set of sprites for something already in the system, you need to add it to the *top* of the index file.
+
 ===Multiple Image Files===
+
+You can make use of image files other than the default by adding a file attribute to either the creature or creatures element. (Putting it on the creatures element will change the default for the tile, but each creature element can still select its own).
+
 ===Tricks===
+
 While simple creature definitions arent much use without a sheetIndex attribute, it can be useful to define variants without giving the base creature a sprite. This would cause the game to keep looking for creature definitions, allowing you to, for example, define custom professions in one file while still using the basic definitions.
