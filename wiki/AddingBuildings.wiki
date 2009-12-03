@@ -37,7 +37,7 @@ Here is an annotated sample of the XML format used in the building.xml
 		<!-- In this case, it matches on the type of material being wood -->
 		<!-- More on these below -->
 
-		<sprite sheetIndex = 88 />
+		<sprite index= 88 />
 		<!-- And here's what you were waiting for -->
 		<!-- This Sprite node tells Stonesense to use graphic 88 for the
 		wooden (remember the 'if' statement?) cabinet -->
@@ -49,7 +49,7 @@ Here is an annotated sample of the XML format used in the building.xml
 	<!-- else nodes dont *have* to have a condition- without one they will 
 	match anything left over (you can also keep chaining up elses after an if
 	till you match every possibility you need) -->
-		<sprite sheetIndex = 87 />
+		<sprite index= 87 />
 		<!-- So without a condition tag, this tile will make any cabinet that
 		isn't wood use graphic #87 -->
 	</else> 
@@ -121,8 +121,7 @@ Note that an *else* needs to be hooked up to an *if*, but an *if* can stand alon
 <NeighbourOfType dir="West" value="gear_assembly" />
 }}}
 
-  * *!BuildingOccupancy*: Detects the building occupancy value of the building. The building occupancy value can be useful in determining orientation and state of buildings.
-eg 3 means the solid part of a workshop, 6 means the raised part of a bridge, 2 means under construction...
+  * *!BuildingOccupancy*: Detects the building occupancy value of the building. The building occupancy value can be useful in determining orientation and state of buildings. eg 3 means the solid part of a workshop, 6 means the raised part of a bridge, 2 means under construction...
 
 {{{
 <BuildingOccupancy value=1 />
@@ -193,4 +192,30 @@ A tile can also contain no sprites, which is how you get an undrawn tile instead
 
 To assist in combining sprites, it is possible to offset the sprites before they are drawn. Adding an offsetx and offsety attribute with appropriate integer values to the Sprite tag will achieve this.
 
+{{{
+<sprite index=43 offsetx=4 offsety=5 />
+}}}
+
 _hacky trick:_ Sprites with offsets are clipped *before* the offset is applied, of course. This means that they can be drawn outside the boundaries of the original sprite. So if you *really* needed a tile to be drawn taller than 32 pixels, you could draw the lower part with one sprite, and the upper part with another, offset, sprite. Of course, it wouldn't *really* be taller, and thus might interact with the rest of the terrain in strange ways.
+
+= Sprite image files =
+
+Any of the building, if/else or sprite tags may have a file attribute, that loads an alternative image file to the default.
+
+{{{
+<building name="Magma Forge" gameID="magma_forge" file="workshop.png">
+}}}
+
+This applies to all sprites within that element (unless a child overrides it with its own file declaration).
+
+= Include files =
+
+Anywhere you could have an if/else node or sprite, you can have an include element
+
+{{{
+<include file="wsUpperBorder.xml"/>
+}}}
+
+This will swap in the contents of the include file for that element.
+
+Note that for predictability, the include file has its own image file hierarchy, so will not change the sprites drawn regardless of what file choices the includer makes.
