@@ -28,24 +28,31 @@ Here is an annotated sample of the XML format used in the building.xml
 <!-- The name attribute doesnt do much yet, but may be used for UI stuff later -->
 <!-- the gameID must match what the debug interface on stonesense returns -->
 
-	<Tile>
-	<!-- Each potential display element is a Tile node -->
+	<if>
+	<!-- The sprites for the building are now chosen using an if/else based
+	decision tree.-->
 
-		<Condition type="MaterialType" value="Wood" />
-		<!-- A tile can have conditions that determine whether to use that tile -->
-		<!-- The first tile with all matching conditions is the one displayed -->
+		<MaterialType value="Wood" />
+		<!-- The first element of an if or else node is the condition to match-->
+		<!-- In this case, it matches on the type of material being wood -->
 		<!-- More on these below -->
 
-		<Sprite sheetIndex = 88 />
+		<sprite sheetIndex = 88 />
 		<!-- And here's what you were waiting for -->
-		<!-- This Sprite node tells Stonesense to use graphic 88 for the cabinet -->
+		<!-- This Sprite node tells Stonesense to use graphic 88 for the
+		wooden (remember the 'if' statement?) cabinet -->
 		<!-- More tricks to use on this below, too -->
 
-	</Tile> <!-- The end of this tile node -->
+	</if> <!-- The end of this if node -->
 
-	<Tile> <!-- Another tile element -->
-		<Sprite sheetIndex = 87 />
-	</Tile> <!-- Without a condition tag, this tile will make anything that isnt already drawn use graphic #87 -->
+	<else> <!-- Another conditional node, 'else' this time -->
+	<!-- else nodes dont *have* to have a condition- without one they will 
+	match anything left over (you can also keep chaining up elses after an if
+	till you match every possibility you need) -->
+		<sprite sheetIndex = 87 />
+		<!-- So without a condition tag, this tile will make any cabinet that
+		isn't wood use graphic #87 -->
+	</else> 
 	
 </Building> <!-- any xml tag needs a closing tag to match, or to have its own closing slash before the right angle bracket -->
 
@@ -53,27 +60,130 @@ Here is an annotated sample of the XML format used in the building.xml
 
 = Tile Conditions =
 
-A tile must match all the condition entries to be displayed (There's no OR style syntax. Yet). The first matching tile is displayed, so put more complex conditions above and more generic conditions below.
+There are two ways to get more complex conditions.
 
-A side benefit of this is used in workshops: We wrote the 'border' tiles and put them unchanged a the bottom of each workshop. Then we put the actual workshop graphics above. Only the tiles that we dont otherwise specify get the generic border.
+Firstly, anywhere you can put a *sprite*, you could put an *if*/*else* group (or several).
+
+Secondly, some of the condition options can contain children within them, allowing boolean logic
+{{{
+<and>
+	<PositionIndex value=1 />
+	<MaterialType value="Wood" />
+</and>
+}}}
+
+Note that an *else* needs to be hooked up to an *if*, but an *if* can stand alone.
 
 == List of Condition Options ==
 
-  * *!PositionIndex*: Matches on the location of a tile within a building. Used in multitile buildings such as workshops. Less effective on anything with non-fixed dimensions. The index is from west to east then north to south, and is zero based, eg:
+  * *!PositionIndex*: Matches on the location of a tile within a building. Used in multitile buildings such as workshops. Less effective on anything with non-fixed dimensions. The index given by the value attribute is from west to east then north to south, and is zero based, eg:
   || 0 || 1 || 2 ||
   || 3 || 4 || 5 ||
   || 6 || 7 || 8 ||
 
+{{{
+<PositionIndex value=1 />
+}}}
+
   * *!MaterialType*: Name of a type of material that the construction is made from. This is general material only, not specific subtype. Sometimes the material may be surprising, such as all forges are considered 'metal' because it takes the material type from the anvil.
-  || Wood || Stone || Metal || Leather || Slik ^1^ || 
+  || Wood || Stone || Metal || Leather || Silk || 
   || !PlantCloth || !GreenGlass || !ClearGlass || !CrystalGlass || 
-  ^1^ until a bugfix release...
 
-  * *!NeighbourWall*: Detects whether one of the cells neighbors is solid rock or constructed wall. Good for determining orientations of doors and similar. Remember that you can use multiple conditions to eg search for a wall the the north and one to the west.
+{{{
+<MaterialType value="stone" />
+}}}
+
+  * *!NeighbourWall*: Detects whether one of the cells neighbors is solid rock or constructed wall. Good for determining orientations of doors and similar. Remember that you can use boolean logic to eg search for a wall the the north *and* one to the west.
   || None || North || South || West || East ||
 
-  * *!NeighbourSameBuilding*: Detects whether one of the cells neighbors is of the same type of building. Note that it does *not* pay any attention to whether is is actually part of the same building, or just another built alongside. Useful for edges of buildings that should merge with their neighbors, or where !PositionIndex wont work due to changing shape. Use multiple entries for more complex neighbor arrangements
+{{{
+<NeighbourWall dir="West" />
+}}}
+
+  * *!NeighbourSameType*: Detects whether one of the cells neighbors is of the same type of building. Note that it does *not* pay any attention to whether is is actually part of the same building, or just another built alongside. Useful for edges of buildings that should merge with their neighbors, or where !PositionIndex wont work due to changing shape. Use boolean logic for more complex neighbor arrangements.
   || None || North || South || West || East ||
+
+{{{
+<NeighbourSameType dir="West" />
+}}}
+
+  * *!NeighbourSameBuilding*: Detects whether one of the cells neighbors is another part of the same (multitile) building. Mostly useful when trying to figure out the orientation of the building. Use boolean logic for more complex neighbor arrangements.
+  || None || North || South || West || East ||
+
+{{{
+<NeighbourSameBuilding dir="West" />
+}}}
+
+  * *!NeighbourOfType*: Detects whether one of the cells neighbors is of a given type of building. Use boolean logic for more complex neighbor arrangements. 
+  || None || North || South || West || East ||
+
+{{{
+<NeighbourOfType dir="West" value="gear_assembly" />
+}}}
+
+  * *!BuildingOccupancy*: Detects the building occupancy value of the building. The building occupancy value can be useful in determining orientation and state of buildings.
+eg 3 means the solid part of a workshop, 6 means the raised part of a bridge, 2 means under construction...
+
+{{{
+<BuildingOccupancy value=1 />
+}}}
+
+  * *!NeighbourIdentical*: Ensures a neighbor is part of the same building, and has the same Occupancy flags.
+  || None || North || South || West || East ||
+
+{{{
+<NeighbourIdentical dir="West" />
+}}}
+
+  * *!HaveFloor*: Some rare buildings may not have a floor underneath. This will detect that condition
+
+{{{
+<HaveFloor/>
+}}}
+
+  * *!HaveFloor*: Returns true if the tile *below* this one contains the value or more of fluid.
+
+{{{
+<FluidBelow value=4 />
+}}}
+
+  * *always*: Pretty straightforward. May seem redundant, but can occasionally be useful, especially when leading up to included files.
+
+{{{
+<always />
+}}}
+
+  * *never*: Pretty straightforward. May seem redundant, but can occasionally be useful, especially when leading up to included files.
+
+{{{
+<never />
+}}}
+
+  * *and*: Returns true if all of its children are true.
+
+{{{
+<and>
+  ...More conditions...
+</and>
+}}}
+
+  * *or*: Returns true if any of its children are true.
+
+{{{
+<or>
+  ...More conditions...
+</or>
+}}}
+
+  * *not*: Returns the opposite of its child.
+
+{{{
+<not>a condition</not>
+}}}
+
+  * *!MaterialIndexCondition*: Currently based on index, this one needs more work.
+
+  * *!AnimationFrame*: Used for A4, but being phased out now.
 
 = Advanced Sprites =
 
