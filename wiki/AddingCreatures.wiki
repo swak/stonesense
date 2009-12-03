@@ -33,7 +33,7 @@ multiple creature definitions while remaining valid xml -->
 	(expect this to be renamed) to describe variant sprites -->
 
 	<!-- animation wont work yet in A4, but I thought I'd add an example anyway
-	<creature gameID="BAT" 		sheetIndex = 40 > 
+	<creature gameID="BAT_GIANT" 		sheetIndex = 40 > 
 		<Profession sheetIndex=41 frames="12"/>
 		<Profession sheetIndex=42 frames="45"/>
 	</creature> -->
@@ -41,27 +41,31 @@ multiple creature definitions while remaining valid xml -->
 
 }}}
 
-As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress, see [AddingCreatures#List_of_Creatures List of Creatures]. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
+As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress, as defined in the {{{[CREATURE:critter_name]}}} part of the raws. This gameID tag is case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
 
 When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the matching *Sheet Index*.
 
 Now there is nothing wrong with reusing a sprite. Consider this:
 {{{
-<Creature gameID="GIBBON_WHITE_HANDED" 	sheetIndex = 42  /> 
-<Creature gameID="GIBBON_BLACK_HANDED" 	sheetIndex = 42 /> 
+<creature gameID="GIBBON_WHITE_HANDED" 	sheetIndex = 42  /> 
+<creature gameID="GIBBON_BLACK_HANDED" 	sheetIndex = 42 /> 
 }}}
-
 
 ===Example:===
-We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be *'camel_1_hump'*. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
+We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be *'CAMEL_1_HUMP'*. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
 
-This means we have to draw our camel at this location (the grid was added for readability): 
+This means we have to draw our camel at this location (the grid was added for readability):
+
 http://stonesense.googlecode.com/svn/wiki/img/creature_newcre_pos.png
 
-Now all we have to do is add the following line to Creatures.xml:
+Now all we have to do is add the following line to Creatures.xml (inside the creatures tag):
 {{{
-<Creature gameID="camel_1_hump"      sheetIndex = 18 /> 
+<creature gameID="CAMEL_1_HUMP"      sheetIndex = 18 /> 
 }}}
 
-==List of Creatures==
-[http://stonesense.googlecode.com/svn/wiki/CreatureList.txt List for .40d]
+==More Advanced Sprites==
+===Variants===
+===Multiple Definition Files==
+===Multiple Image Files===
+===Tricks===
+While simple creature definitions arent much use without a sheetIndex attribute, it can be useful to define variants without giving the base creature a sprite. This would cause the game to keep looking for creature definitions, allowing you to, for example, define custom professions in one file while still using the basic definitions.
