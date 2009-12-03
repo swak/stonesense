@@ -1,7 +1,45 @@
-#summary A quick guide to adding creatures to Stonesense
+#summary A guide to adding creatures to Stonesense
 #labels Featured
 =Adding Creatures to Stonesense=
 Adding new creatures to Stonesense is fairly easy, but before reading this guide I suggest you familiarize yourself with how Stonesense deals with creature [Sprites].
+
+==Old Creature Config==
+
+==Creatures.xml==
+Stonesense is fully configurable in the way it renders creatures. No information is hardcoded, but rather loaded from the creature database found in *Creatures.xml*.
+
+The structure of this file is fairly simple:
+{{{
+<Creature gameID="dwarf"        sheetIndex = 1  /> 
+<Creature gameID="cat"          sheetIndex = 20 /> 
+<Creature gameID="dog"          sheetIndex = 21 /> 
+}}}
+
+As you can see, each creature is identified by a *'gameID'* attribute. This has to match one of the known creature types in Dwarf Fortress, see [AddingCreatures#List_of_Creatures List of Creatures]. This gameID tag is not case sensitive. If Stonesense is unable to match your gameID with one from Dwarf Fortress, a log message will be written to _Stonesense.log_ upon loading a map.
+
+When trying to render a creature, Stonesense will look up its gameID in this table and render the sprite from the creatures sprite sheet with the matching *Sheet Index*.
+
+Now there is nothing wrong with reusing a sprite. Consider this:
+{{{
+<Creature gameID="GIBBON_WHITE_HANDED"  sheetIndex = 42  /> 
+<Creature gameID="GIBBON_BLACK_HANDED"  sheetIndex = 42 /> 
+}}}
+
+
+===Example:===
+We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be *'camel_1_hump'*. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
+
+This means we have to draw our camel at this location (the grid was added for readability): 
+http://stonesense.googlecode.com/svn/wiki/img/creature_newcre_pos.png
+
+Now all we have to do is add the following line to Creatures.xml:
+{{{
+<Creature gameID="camel_1_hump"      sheetIndex = 18 /> 
+}}}
+
+----
+
+==New Creature Config==
 
 ==Creatures.xml==
 Stonesense is fully configurable in the way it renders creatures. No information is hardcoded, but rather loaded from the creature databases found in the creatures directory.
