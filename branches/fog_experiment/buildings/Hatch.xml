@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Floor Hatch" gameID="floor_hatch">
+	<sprite index = 276 />
+</building> 

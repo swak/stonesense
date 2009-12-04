@@ -1,0 +1,313 @@
+<?xml version="1.0" ?>
+
+
+
+<floors>
+
+<Floor spriteIndex = 1>
+	<!-- constructed floor detailed -->
+	<GameID value = 493/>	
+</Floor>
+
+<Floor spriteIndex = 38>
+	<!-- brook -->
+	<GameID value = 381/>	
+</Floor>
+
+
+<Floor spriteIndex = 2>
+	<!-- grass floors -->
+	<GameID value = 348/>
+	<GameID value = 349/>
+	<GameID value = 350/>
+	<GameID value = 351/>
+	<GameID value = 398/>
+	<GameID value = 399/>
+	<GameID value = 400/>
+	<GameID value = 401/>
+</Floor>
+
+<Floor spriteIndex = 3>
+	<!-- stone floors -->
+	<GameID value = 336/>
+	<GameID value = 337/>
+	<GameID value = 338/>
+	<GameID value = 339/>
+	
+	<!-- minstone floors -->
+	<GameID value = 441/>
+	<GameID value = 442/>
+	<GameID value = 443/>
+	<GameID value = 444/>
+</Floor>
+
+<Floor spriteIndex = 4>
+	<!-- Soil floors -->
+	<GameID value = 352/>
+	<GameID value = 353/>
+	<GameID value = 354/>
+	<GameID value = 355/>
+</Floor>
+
+<Floor spriteIndex = 5>
+	<!-- stone pebbles -->
+	<GameID value = 405/>
+	<GameID value = 406/>
+	<GameID value = 407/>
+	<GameID value = 408/>
+</Floor>
+
+<Floor spriteIndex = 6>
+	<!-- Boulder -->
+	<GameID value = 402/>
+</Floor>
+
+<Floor spriteIndex = 7>
+	<!-- plants -->
+	<GameID value = 231/>
+	<GameID value = 34/>
+	<GameID value = 24/>
+</Floor>
+
+
+<Floor spriteIndex = 9>
+	<!-- Dry grass -->
+	<GameID value = 387/>
+	<GameID value = 388/>
+	<GameID value = 389/>
+	<GameID value = 390/>
+	<GameID value = 394/>
+	<GameID value = 395/>
+	<GameID value = 396/>
+	<GameID value = 397/>	
+	<!-- Dead Tree -->
+	<GameID value = 391/>
+	<!-- Dead sapling -->
+	<GameID value = 392/>
+	<!-- Dead shrub -->
+	<GameID value = 393/>
+</Floor>
+
+<Floor spriteIndex = 10>
+	<!-- Constructed Wooden floor -->
+	<GameID value = 900/>
+</Floor>
+
+<Floor spriteIndex = 11>
+	<!-- Frozen liquid floor -->
+	<GameID value = 258/>
+	<GameID value = 259/>
+	<GameID value = 260/>
+	<GameID value = 262/>
+	
+</Floor>
+
+<Floor spriteIndex = 12>
+	<!-- Metal floor -->
+	<GameID value = 1000/>
+</Floor>
+
+<Floor spriteIndex = 13>
+	<!-- Soil floors -->
+	<GameID value = 352/>
+	<GameID value = 353/>
+	<GameID value = 354/>
+	<GameID value = 355/>
+	<!-- Wet Soil floors -->
+	<GameID value = 356/>
+	<GameID value = 357/>
+	<GameID value = 358/>
+	<GameID value = 359/>	
+	<Material name="SAND_TAN" />
+	<Material name="SAND_YELLOW" />
+</Floor>
+<Floor spriteIndex = 14>
+	<!-- Soil floors -->
+	<GameID value = 352/>
+	<GameID value = 353/>
+	<GameID value = 354/>
+	<GameID value = 355/>
+	<!-- Wet Soil floors -->
+	<GameID value = 356/>
+	<GameID value = 357/>
+	<GameID value = 358/>
+	<GameID value = 359/>	
+	<Material name="SAND_RED" />
+    <Material name="SILT" />
+</Floor>
+<Floor spriteIndex = 15>
+	<!-- Soil floors -->
+	<GameID value = 352/>
+	<GameID value = 353/>
+	<GameID value = 354/>
+	<GameID value = 355/>
+	<!-- Wet Soil floors -->
+	<GameID value = 356/>
+	<GameID value = 357/>
+	<GameID value = 358/>
+	<GameID value = 359/>
+	<Material name="SAND_BLACK" />
+</Floor>
+<Floor spriteIndex = 16>
+	<!-- Soil floors -->
+	<GameID value = 352/>
+	<GameID value = 353/>
+	<GameID value = 354/>
+	<GameID value = 355/>
+	<!-- Wet Soil floors -->
+	<GameID value = 356/>
+	<GameID value = 357/>
+	<GameID value = 358/>
+	<GameID value = 359/>	
+	<Material name="SAND_WHITE" />
+</Floor>
+
+<Floor spriteIndex = 17>
+	<!-- lavastone floors -->
+	<GameID value = 340/>
+	<GameID value = 341/>
+	<GameID value = 342/>
+	<GameID value = 343/>
+</Floor>
+
+<Floor spriteIndex = 18>
+	<!-- Murky Pool -->
+	<GameID value = 2/>
+	<!-- River -->
+	<GameID value = 365/>
+	<GameID value = 366/>
+	<GameID value = 367/>
+	<GameID value = 368/>
+	<GameID value = 369/>
+	<GameID value = 370/>
+	<GameID value = 371/>
+	<GameID value = 372/>
+	
+	<!-- Stream -->
+	<GameID value = 373/>
+	<GameID value = 374/>
+	<GameID value = 375/>
+	<GameID value = 376/>
+	<GameID value = 377/>
+	<GameID value = 378/>
+	<GameID value = 379/>
+	<GameID value = 380/>
+</Floor>
+
+<!-- line 2 -------------------------------------------------------------- -->
+
+<Floor spriteIndex = 20>
+	<!-- stone floor detailed -->
+	<GameID value = 43/>
+	
+	<!-- lavastone floor detailed -->
+	<GameID value = 44/>
+	
+	<!-- minstone floor detailed -->
+	<GameID value = 46/>
+	
+	<!-- ice floor detailed -->
+	<GameID value = 47/>
+
+</Floor>
+
+<Floor spriteIndex = 23>
+        <!-- Soil floors -->
+        <GameID value = 353/>
+        <!-- Wet Soil floors -->
+        <GameID value = 357/>   
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+<Floor spriteIndex = 24>
+        <!-- Soil floors -->
+        <GameID value = 355/>
+        <!-- Wet Soil floors -->
+        <GameID value = 359/>   
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+<Floor spriteIndex = 25>
+        <!-- Soil floors -->
+        <GameID value = 354/>
+        <!-- Wet Soil floors -->
+        <GameID value = 358/>   
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+<Floor spriteIndex = 26>
+        <!-- Soil floors -->
+        <GameID value = 352/>
+        <!-- Wet Soil floors -->
+        <GameID value = 356/>
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+<Floor spriteIndex = 28>
+        <!-- Grass on clay -->
+        <GameID value = 348/>
+        <GameID value = 349/>
+        <GameID value = 350/>
+        <GameID value = 351/>
+        <!-- Darker Grass on clay -->
+        <GameID value = 398/>
+        <GameID value = 399/>
+        <GameID value = 400/>
+        <GameID value = 401/>
+                <!-- plants -->
+        <GameID value = 231/>
+        <GameID value = 34/>
+        <GameID value = 24/>
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+<Floor spriteIndex = 29>
+        <!-- Dry Grass on clay -->
+        <GameID value = 387/>
+        <GameID value = 388/>
+        <GameID value = 389/>
+        <GameID value = 390/>
+		<!-- Darker dry grass on clay -->
+        <GameID value = 394/>
+        <GameID value = 395/>
+        <GameID value = 396/>
+        <GameID value = 397/>   
+        <!-- Dead Tree -->
+        <GameID value = 391/>
+        <!-- Dead sapling -->
+        <GameID value = 392/>
+        <!-- Dead shrub -->
+        <GameID value = 393/>
+        <Material name="CLAY" />
+        <Material name="SILTY_CLAY" />
+        <Material name="CLAY_LOAM" />
+</Floor>
+
+<Floor spriteIndex = 30>
+	<!-- driftwood -->
+	<GameID value = 19/>
+</Floor>
+
+<Floor spriteIndex = 31>
+	<!-- magma flow -->
+	<GameID value = 264/>
+</Floor>
+
+<Floor spriteIndex = 32>
+	<!-- chasm -->
+	<GameID value = 35/>
+</Floor>
+
+<Floor spriteIndex = 33>
+	<!-- eerie pit -->
+	<GameID value = 42/>
+</Floor>
+
+</floors>
+
+

@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+
+<building name="Stockpile" gameID="stockpile">
+		<sprite index = 322 />
+</building> 
