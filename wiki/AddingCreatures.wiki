@@ -25,7 +25,6 @@ Now there is nothing wrong with reusing a sprite. Consider this:
 <Creature gameID="GIBBON_BLACK_HANDED"  sheetIndex = 42 /> 
 }}}
 
-
 ===Example:===
 We are going to add a new creature. A one-humped camel. The first we have to do is figure out it's gameID. Which happens to be *'camel_1_hump'*. Then we pick out an unoccupied sheet index to put your sprite in. Let's say 18.
 
@@ -37,11 +36,24 @@ Now all we have to do is add the following line to Creatures.xml:
 <Creature gameID="camel_1_hump"      sheetIndex = 18 /> 
 }}}
 
+== Professions ==
+
+Creatures elements may have a set of child Profession nodes, which define different sprites for professions and/or genders of a creature type.
+
+{{{
+<Creature gameID="DWARF" 		sheetIndex = 180 >
+	<Profession name="Miner" sheetIndex = 181/>
+	<Profession name="Woodworker" sex="M" sheetIndex = 182/>
+	<Profession sex="F" sheetIndex = 140/>
+</Creature>
+}}}
+
 ----
 
 ==New Creature Config==
 
-==Creatures.xml==
+Relevent to the next version, rather than A4.
+
 Stonesense is fully configurable in the way it renders creatures. No information is hardcoded, but rather loaded from the creature databases found in the creatures directory.
 
 ==index.txt==
@@ -65,16 +77,18 @@ multiple creature definitions while remaining valid xml -->
 	raws) to its sprite index -->
 
 	<creature gameID="DWARF" sheetIndex = 180 file="creatures/dwarves.png" >
-		<Profession name="Miner" sex="M" sheetIndex = 181/>
+		<variant name="Miner" sex="M" sheetIndex = 181/>
 	</creature>
-	<!-- More complex creatures use a number of Profession options
-	(expect this to be renamed) to describe variant sprites -->
+	<!-- More complex creatures use a number of variant elements to describe
+	multiple sprites available for different species members -->
 
-	<!-- animation wont work yet in A4, but I thought I'd add an example anyway
 	<creature gameID="BAT_GIANT" 		sheetIndex = 40 > 
-		<Profession sheetIndex=41 frames="12"/>
-		<Profession sheetIndex=42 frames="45"/>
-	</creature> -->
+		<variant sheetIndex=41 frames="12"/>
+		<variant sheetIndex=42 frames="45"/>
+	</creature>
+	<!-- another complex example, this one uses variants to display different
+	frames of animation -->
+
 </creatures>
 
 }}}
@@ -104,17 +118,17 @@ Now all we have to do is add the following line to Creatures.xml (inside the cre
 ==More Advanced Sprites==
 ===Variants===
 
-The Profession element encompasses anything more specific than the creature type. We need to do some renaming here. Currently supported:
+The variant element encompasses anything more specific than the creature type. Currently supported:
 
- * *name* of the profession. Picks out an actual profession, rather than the myriad other variants supported by the tag.
+ * *profession* This checks the creatures profession, based off the strings in Memory.xml
 
- * *custom* If this attribute is present and non-empty, the profession name is matched against custom professions you give your dwarves rather than the built in types. Use sparingly, as string matches can be rather slow.
+ * *custom* This checks against custom professions you give your dwarves rather than the built in types. Use sparingly, as string matches can be rather slow.
 
  * *special* checks some unusual conditions. Currently checks for "Normal", "Zombie" or "Skeleton"
 
  * *sex* checks against "M" for male or "F" for female.
 
- * *frames* you cant use this yet, but I'm going to taunt you with it. You can define animations by setting variants with frames attributes. The attribute should contain a list of the frames 0-5 that the sprite should be used for eg frames="012" for the first half of the animation sequence.
+ * *frames* defines animations by setting variants that are displayed at different times. The attribute should contain a list of the frames 0-5 that the sprite should be used. eg frames="012" for the first half of the animation sequence.
 
 ===Multiple Definition Files==
 
