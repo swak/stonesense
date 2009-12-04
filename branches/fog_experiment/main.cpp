@@ -42,7 +42,7 @@ int32_t viewz = 0;
 bool followmode = true;*/
 
 void WriteErr(char* msg, ...){
-  int j = 10;  
+  int j = 10;
   va_list arglist;
   va_start(arglist, msg);
 //  char buf[200] = {0};
@@ -57,7 +57,7 @@ void WriteErr(char* msg, ...){
 void LogVerbose(char* msg, ...){
 	if (!config.verbose_logging)
 		return;
-  int j = 10;  
+  int j = 10;
   va_list arglist;
   va_start(arglist, msg);
 //  char buf[200] = {0};
@@ -100,11 +100,11 @@ void animUpdateProc()
 		else
 			currentAnimationFrame = currentAnimationFrame + 1;
 		animationFrameShown = false;
-	}	
+	}
 }
 
 int main(void)
-{	
+{
     #ifdef LINUX_BUILD
     allegro_icon = stonesense_xpm;
     #endif
@@ -134,8 +134,16 @@ int main(void)
   config.animation_step = 300;
   config.follow_DFscreen = false;
   timeToReloadConfig = true;
+  config.fogr = 255;
+  config.fogg = 255;
+  config.fogb = 255;
+  config.foga = 255;
+  config.backr = 95;
+  config.backg = 95;
+  config.backb = 160;
   loadConfigFile();
-  
+  set_uformat(U_ASCII);
+  font = load_txt_font("curses_640x300.txt", NULL, NULL);
   //set debug cursor
   debugCursor.x = config.segmentSize.x / 2;
   debugCursor.y = config.segmentSize.y / 2;
@@ -155,15 +163,15 @@ int main(void)
 	}
   set_alpha_blender();
 
-  
+
 #ifdef RELEASE
   textprintf_centre(screen, font, config.screenWidth/2, 50, makecol(255,255,0), "Welcome to Stonesense!");
 	textprintf_centre(screen, font, config.screenWidth/2, 60, 0xffffff, "Stonesense is an isometric viewer for Dwarf Fortress.");
-  
-	
+
+
 	textprintf_centre(screen, font, config.screenWidth/2, 80, 0xffffff, "Programming, Jonas Ask and Kris Parker");
 	textprintf_centre(screen, font, config.screenWidth/2, 90, 0xffffff, "Lead graphics designer, Dale Holdampf");
-	
+
   textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-130, 0xffffff, "Contributors:");
 	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-120, 0xffffff, "7¢ Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
   textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-110, 0xffffff, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
@@ -174,13 +182,13 @@ int main(void)
 
 	//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
   textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-40, 0xffffff, "Press F9 to continue");
-	
+
 #endif
   loadGraphicsFromDisk();
 #ifdef RELEASE
 	while(!key[KEY_F9]) readkey();
 #endif
-  
+
 	//upper left corners
 	DisplayedSegmentX = DisplayedSegmentY = DisplayedSegmentZ = 0;
 	//Middle of fort
@@ -200,7 +208,7 @@ int main(void)
   DisplayedSegmentX = 155; DisplayedSegmentY = 177;DisplayedSegmentZ = 18;
 
   //DisplayedSegmentX = 242; DisplayedSegmentY = 345;DisplayedSegmentZ = 15;
-  
+
 
   #ifdef RELEASE
   DisplayedSegmentX = 0; DisplayedSegmentY = 0;DisplayedSegmentZ = 18;
@@ -209,14 +217,14 @@ int main(void)
   //while(1)
 	reloadDisplayedSegment();
 	//if(!viewedSegment) return 1;
-	
+
 	// we should have a dfhack attached now, load the config
 	/*LoadBuildingConfiguration( &buildingTypes );
 	LoadCreatureConfiguration( &creatureTypes );
 	LoadGroundMaterialConfiguration( );
   */
-  
-	
+
+
 	// reload now we have config
 	reloadDisplayedSegment();
 
@@ -225,7 +233,7 @@ int main(void)
 #endif
 	install_int( animUpdateProc, config.animation_step );
 	initAutoReload();
-	
+
 	paintboard();
 	while(!key[KEY_ESC]){
 		rest(30);

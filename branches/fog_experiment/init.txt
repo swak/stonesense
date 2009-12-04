@@ -3,7 +3,7 @@ Please note, these keywords are case sensitive for now.
 
 Sets the width and height of the application in pixels.
 [WIDTH:1100]
-[HEIGHT:900]
+[HEIGHT:800]
 
 
 To launch the application in windowed mode, set this to YES. 
@@ -47,3 +47,18 @@ This currently *also* requires a map reload to display the frame.
 
 Shows all creatures, for debuging. Living, dead, kidnapped, caged, EVERY single one.
 [ALLCREATURES:NO]
+
+Fog color, and alpha at the bottom z-level.
+[FOG_RED:95]
+[FOG_GREEN:95]
+[FOG_BLUE:160]
+[FOG_ALPHA:128]
+
+
+Background color. setting this the same as teh fog color produces a nice effect.
+[FOG_RED:95]
+[FOG_GREEN:95]
+[FOG_BLUE:160]
+
+Follow the center of the DF screen, rather than scaling to map edges. (useful in adventure mode)
+[TRACK_CENTER:NO]
