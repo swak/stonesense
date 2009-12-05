@@ -143,7 +143,8 @@ int main(void)
   config.backb = 160;
   loadConfigFile();
   set_uformat(U_ASCII);
-  //font = load_txt_font("curses_640x300.txt", NULL, NULL);
+  if(load_bitmap_font("font.bmp", NULL, NULL))
+  font = load_bitmap_font("font.bmp", NULL, NULL);
   //set debug cursor
   debugCursor.x = config.segmentSize.x / 2;
   debugCursor.y = config.segmentSize.y / 2;
