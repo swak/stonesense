@@ -286,7 +286,7 @@ void paintboard(){
 	if(!buffer)
 		buffer = create_bitmap(config.screenWidth, config.screenHeight);
   
-  clear_to_color(buffer,makecol(95,95,160));
+  clear_to_color(buffer,makecol(config.backr,config.backr,config.backr));
   //clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
   
   if( viewedSegment == NULL ){

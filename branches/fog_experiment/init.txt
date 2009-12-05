@@ -56,9 +56,9 @@ Fog color, and alpha at the bottom z-level.
 
 
 Background color. setting this the same as teh fog color produces a nice effect.
-[FOG_RED:95]
-[FOG_GREEN:95]
-[FOG_BLUE:160]
+[BACK_RED:95]
+[BACK_GREEN:95]
+[BACK_BLUE:160]
 
 Follow the center of the DF screen, rather than scaling to map edges. (useful in adventure mode)
 [TRACK_CENTER:NO]
