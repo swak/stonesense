@@ -148,9 +148,7 @@ void drawDebugCursorAndInfo(BITMAP* target){
     "Coord:(%i,%i,%i)", b->x,b->y,b->z);
 
   textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
-    "wall:%i floor:%i  Material:%s(%i)", b->wallType, b->floorType, 
-    (b->materialIndex != INVALID_INDEX ? v_stonetypes[b->materialIndex].id: ""),
-    b->materialIndex);
+    "wall:%i floor:%i  Material:%i/%i", b->wallType, b->floorType, b->material.type, b->material.index);
     
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
     "Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
@@ -178,6 +176,9 @@ void drawDebugCursorAndInfo(BITMAP* target){
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
       "flag1: %s ", strCreature );
   }
+  //basecon
+  //textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+   //   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
 }
 
 void DrawMinimap(BITMAP* target){

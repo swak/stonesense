@@ -4,37 +4,34 @@
 
 typedef struct OverridingMaterial{
 	int gameID;
-	int spriteIndex;
-  int fillerFloorSpriteIndex;
+	t_SpriteWithOffset sprite;
 }OverridingMaterial;
 
-class GroundMaterialConfiguration
+class TerrainMaterialConfiguration
 {
 public:
-  int defaultSprite;
-  int fillerFloorSpriteIndex;
+	t_SpriteWithOffset defaultSprite;
+	int gameID;
 	vector<OverridingMaterial> overridingMaterials;
-
-  GroundMaterialConfiguration( );
-  //GroundMaterialConfiguration(char* gameIDstr, int wallSheetIndex,int floorSheetIndex);
-  ~GroundMaterialConfiguration(){}
+	
+	TerrainMaterialConfiguration();
+	~TerrainMaterialConfiguration(){}
 };
 
-
-
-class preparseGroundMaterialConfiguration
+class TerrainConfiguration
 {
 public:
-	int spriteIndex;
-  int fillerFloorSpriteIndex;
-  vector<int> wallFloorIDs;
-	vector<string> overridingMaterials;
+	vector<TerrainMaterialConfiguration*> terrainMaterials;
+	t_SpriteWithOffset defaultSprite;
+	TerrainConfiguration();
+	~TerrainConfiguration();	
 };
 
-bool addSingleTerrainConfig( TiXmlElement* elemRoot,  vector<preparseGroundMaterialConfiguration>* rawGroundTypes );
-void TranslateGroundMaterialNames(vector<GroundMaterialConfiguration*>& configs, vector<preparseGroundMaterialConfiguration>& rawGroundConfigs);
+bool addSingleTerrainConfig( TiXmlElement* elemRoot);
 //void LoadGroundMaterialConfiguration( );
 //void TranslateGroundMaterialNames();
 
 //extern bool GroundMaterialNamesTranslatedFromGame;
 //extern vector<GroundMaterialConfiguration*> groundTypes;
+
+void flushTerrainConfig(vector<TerrainConfiguration*>& config);

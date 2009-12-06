@@ -12,6 +12,7 @@ using WIDTH and HEIGHT for resolution. Try and use resolutions compatible
 with your drivers, or the program will still load in window mode.
 [WINDOWED:YES]
 
+[TRACK_CENTER:YES]
 
 These two options set how large the cube laoaded from Dwarf Fortress is.
 Each entry expects the number of tiles to load.
@@ -47,3 +48,7 @@ This currently *also* requires a map reload to display the frame.
 
 Shows all creatures, for debuging. Living, dead, kidnapped, caged, EVERY single one.
 [ALLCREATURES:NO]
+
+
+
+[VERBOSE_LOGGING:NO]

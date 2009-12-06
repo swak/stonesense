@@ -21,20 +21,19 @@ public:
   ~ContentLoader(void);
 
   bool Load(API& DF);
-  void TranslateConfigsFromDFAPI( API& DF );
-  bool Translated(){ return translationComplete; }
   
   vector<BuildingConfiguration> buildingConfigs;
   vector<CreatureConfiguration> creatureConfigs;
   vector<VegetationConfiguration> treeConfigs;
   vector<VegetationConfiguration> shrubConfigs;
-  vector<GroundMaterialConfiguration*> groundConfigs;
+  vector<TerrainConfiguration*> terrainConfigs;
+  vector<int> terrainFloorLookup;
+  vector<int> terrainBlockLookup;
 
   vector<t_matgloss> creatureNameStrings;
   vector<t_matgloss> woodNameStrings;
   vector<t_matgloss> plantNameStrings;
   vector<string> buildingNameStrings;
-  vector<preparseGroundMaterialConfiguration> unparsedGroundConfigs;
 };
 
 //singleton instance
@@ -43,3 +42,6 @@ extern ContentLoader contentLoader;
 extern const char* getDocument(TiXmlNode* element);
 extern void contentError(const char* message, TiXmlNode* element);
 extern char getAnimFrames(const char* framestring);
+int lookupMaterialType(const char* strValue);
+int lookupMaterialType(int matType, const char* strValue);
+

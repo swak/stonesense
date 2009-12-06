@@ -14,28 +14,11 @@ memory_info dfMemoryInfo;
 bool memInfoHasBeenRead;
 
 inline bool IDisWall(int in){
-  switch( in ){
-    case ID_METALWALL:
-    case ID_WOODWALL:
-      return true;
-      break;
-  }
   //if not a custom type, do a lookup in dfHack's interface
   return isWallTerrain( in );
 }
 
 inline bool IDisFloor(int in){
-  //first consider special cases, added by me
-  switch( in ){
-    case ID_METALFLOOR:
-    case ID_WOODFLOOR:
-    case ID_WOODFLOOR_DETAIL:
-    case ID_WOODFLOOR_STAIR_UPDOWN:
-    case ID_WOODFLOOR_STAIR_DOWN:
-    case ID_WOODFLOOR_STAIR_UP:
-      return true;
-      break;
-  }
   //if not a custom type, do a lookup in dfHack's interface
   return isFloorTerrain( in );;
 }
@@ -199,7 +182,7 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 
 		//read tiletype
 		int t = tiletypes[lx][ly];
-    if(IDisWall(t)) 
+    	if(IDisWall(t)) 
 			b->wallType = t;
 		if(IDisFloor(t))
 			b->floorType = t;
@@ -236,16 +219,17 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
       for(uint32_t i=0; i<numVeins; i++){
 				//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
 
-/*        if((uint32_t)veins[i].type >= groundTypes.size())
-					continue;
+        //if((uint32_t)veins[i].type >= groundTypes.size())
+					//continue;
         uint16_t row = veins[i].assignment[ly];
         bool set = (row & (1 << lx)) != 0;
 				if(set){
 					rockIndex = veins[i].type;
 				}
-        */
+        
       }
-      b->materialIndex = rockIndex;
+      b->material.type = Mat_Stone;
+      b->material.index = rockIndex;
       //string name = v_stonetypes[j].id;
       if (createdBlock)
       {
@@ -294,8 +278,6 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   if (timeToReloadConfig)
   {
   	contentLoader.Load(DF);
-  	// until we do stuff on the fly
-    contentLoader.TranslateConfigsFromDFAPI( DF );
   	timeToReloadConfig = false;
   }
   
