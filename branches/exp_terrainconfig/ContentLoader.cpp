@@ -229,7 +229,7 @@ int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector)
 	return INVALID_INDEX;
 }
 
-int lookupMaterialType(int matType, const char* strValue)
+int lookupMaterialIndex(int matType, const char* strValue)
 {
 	vector<t_matgloss>* typeVector;
 	if (matType == Mat_Wood)
