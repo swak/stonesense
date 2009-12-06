@@ -46,7 +46,7 @@
 	<terrain value = 467/>
 	<terrain value = 468/>	
 </block>
-<block sprite = 206 fillerFloorsprite = 34>
+<block sprite = 226>
 	<terrain value = 495/>
 	<terrain value = 496/>
 	<terrain value = 497/>
@@ -220,7 +220,8 @@
 	<terrain value = 326/>		
 </block>
 
-
+<block>
+</block>
 
 
 </blocks>
