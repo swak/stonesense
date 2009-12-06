@@ -236,11 +236,11 @@ int lookupMaterialIndex(int matType, const char* strValue)
 	{
 		typeVector=&(contentLoader.woodNameStrings);
 	}
-	else if (matType == Mat_Wood)
+	else if (matType == Mat_Stone)
 	{
 		typeVector=&(contentLoader.stoneNameStrings);
 	}
-	else if (matType == Mat_Stone)
+	else if (matType == Mat_Metal)
 	{
 		typeVector=&(contentLoader.metalNameStrings);
 	}
