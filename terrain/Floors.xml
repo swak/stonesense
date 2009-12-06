@@ -4,6 +4,31 @@
 
 <floors>
 
+<floor sprite = 35>
+	<terrain value = 495/>
+	<terrain value = 496/>
+	<terrain value = 497/>
+	<terrain value = 498/>
+	<terrain value = 499/>
+	<terrain value = 500/>
+	<terrain value = 501/>
+	<terrain value = 502/>
+	<terrain value = 503/>
+	<terrain value = 504/>
+	<terrain value = 505/>
+	<terrain value = 506/>
+	<terrain value = 507/>
+	<terrain value = 508/>
+	<terrain value = 509/>
+	<terrain value = 510/>
+	<terrain value = 511/>
+	<terrain value = 512/>
+	<terrain value = 513/>
+	<terrain value = 514/>
+	<terrain value = 493/>
+	<material value="GreenGlass"/>
+</floor>
+
 <floor sprite = 1>
 	<!-- constructed floor detailed -->
 	<terrain value = 493/>	
@@ -148,6 +173,7 @@
 	<terrain value = 359/>
 	<Material name="SAND_BLACK" />
 </floor>
+
 <floor sprite = 16>
 	<!-- Soil floors -->
 	<terrain value = 352/>
@@ -159,7 +185,9 @@
 	<terrain value = 357/>
 	<terrain value = 358/>
 	<terrain value = 359/>	
-	<Material name="SAND_WHITE" />
+    <material value="Stone">
+        <subtype value="SAND_WHITE" />
+    </material>
 </floor>
 
 <floor sprite = 17>
@@ -283,9 +311,11 @@
         <terrain value = 392/>
         <!-- Dead shrub -->
         <terrain value = 393/>
-        <Material name="CLAY" />
-        <Material name="SILTY_CLAY" />
-        <Material name="CLAY_LOAM" />
+        <material value="Stone">
+	        <subtype value="CLAY" />
+    	    <subtype value="SILTY_CLAY" />
+        	<subtype value="CLAY_LOAM" />
+        </material>
 </floor>
 
 <floor sprite = 30>
