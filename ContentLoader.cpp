@@ -19,16 +19,17 @@ bool ContentLoader::Load(API& DF){
 	
   //flush old config
   flushBuildingConfig(&buildingConfigs);
+  flushTerrainConfig(terrainConfigs);
+  terrainFloorLookup.clear();
+  terrainBlockLookup.clear();
   creatureConfigs.clear();
   treeConfigs.clear();
   shrubConfigs.clear();
-  groundConfigs.clear();
   flushImgFiles();
   creatureNameStrings.clear();
   woodNameStrings.clear();
   plantNameStrings.clear();
   buildingNameStrings.clear();
-  unparsedGroundConfigs.clear();
   
   SUSPEND_DF;
   
@@ -142,13 +143,7 @@ bool ContentLoader::parseTreeContent(TiXmlElement* elemRoot, char *homefolder){
 }
 
 bool ContentLoader::parseTerrainContent(TiXmlElement* elemRoot, char *homefolder){
-  return addSingleTerrainConfig( elemRoot, &unparsedGroundConfigs );
-}
-
-void ContentLoader::TranslateConfigsFromDFAPI( API& DF ){
-  //do translations
-  TranslateGroundMaterialNames( groundConfigs, unparsedGroundConfigs );
-  translationComplete = true;
+  return addSingleTerrainConfig( elemRoot );
 }
 
 const char* getDocument(TiXmlNode* element)
@@ -189,4 +184,38 @@ char getAnimFrames(const char* framestring)
 		aframes = aframes | (1 << temp);
 	}
 	return aframes;
+}
+
+int lookupMaterialType(const char* strValue)
+{
+	if (strValue == NULL || strValue[0] == 0)
+		return INVALID_INDEX;
+	if( strcmp(strValue, "Wood") == 0)
+      return Mat_Wood;
+    else if( strcmp(strValue, "Stone") == 0)
+      return Mat_Stone;
+    else if( strcmp(strValue, "Metal") == 0)
+      return Mat_Metal;
+     //TODO this needs fixing on dfhack side
+    else if( strcmp(strValue, "Bone") == 0)
+      return Mat_Plant;
+    else if( strcmp(strValue, "Leather") == 0)
+      return Mat_Leather;
+    else if( strcmp(strValue, "Silk") == 0)
+      return Mat_SilkCloth;
+    else if( strcmp(strValue, "PlantCloth") == 0)
+      return Mat_PlantCloth;
+    else if( strcmp(strValue, "GreenGlass") == 0)
+      return Mat_GreenGlass;
+    else if( strcmp(strValue, "ClearGlass") == 0)
+      return Mat_ClearGlass;
+    else if( strcmp(strValue, "CrystalGlass") == 0)
+      return Mat_CrystalGlass;
+     return INVALID_INDEX;
+}
+
+/* TODO still need to code this! */
+int lookupMaterialType(int matType, const char* strValue)
+{
+     return INVALID_INDEX;
 }
