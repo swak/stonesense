@@ -35,7 +35,6 @@ BITMAP* IMGFloorSheet;
 BITMAP* IMGObjectSheet;
 BITMAP* IMGCreatureSheet; 
 BITMAP* IMGRampSheet; 
-BITMAP* IMGRamptopSheet; 
 BITMAP* buffer = 0;
 vector<BITMAP*> IMGFilelist;
 vector<string*> IMGFilenames;
@@ -354,15 +353,13 @@ void loadGraphicsFromDisk(){
 	IMGObjectSheet = load_bitmap_withWarning("objects.png");
 	IMGFloorSheet = load_bitmap_withWarning("floors.png");
 	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
-	IMGRampSheet = load_bitmap_withWarning("ramps.png");
-	IMGRamptopSheet = load_bitmap_withWarning("ramptops.png");	
+	IMGRampSheet = load_bitmap_withWarning("ramps.png");	
 }
 void destroyGraphics(){
   destroy_bitmap(IMGFloorSheet);
   destroy_bitmap(IMGObjectSheet);
   destroy_bitmap(IMGCreatureSheet);
   destroy_bitmap(IMGRampSheet);
-  destroy_bitmap(IMGRamptopSheet);
 }
 
 //delete and clean out the image files
