@@ -221,12 +221,15 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 
         //if((uint32_t)veins[i].type >= groundTypes.size())
 					//continue;
+					
+		// DANGER: THIS CODE MAY BE BUGGY
+		// This was apparently causing a crash in previous version
+		// But works fine for me
         uint16_t row = veins[i].assignment[ly];
         bool set = (row & (1 << lx)) != 0;
 				if(set){
 					rockIndex = veins[i].type;
 				}
-        
       }
       b->material.type = Mat_Stone;
       b->material.index = rockIndex;

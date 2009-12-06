@@ -147,7 +147,7 @@ void Block::Draw(BITMAP* target){
   if(building.info.type != BUILDINGTYPE_NA && !skipBuilding){
 
     int spriteNum =  SPRITEOBJECT_NA; //getBuildingSprite(this->building, mirroredBuilding);
-/* TODO double check this */
+
    for(uint32_t i=0; i < building.sprites.size(); i++){
 	   sprite = building.sprites[i];
 	   if (!(sprite.animFrames & (1 << currentAnimationFrame)))
@@ -160,7 +160,7 @@ void Block::Draw(BITMAP* target){
 
 
 
-/* TODO reinstate mirrored stairs */
+
 	//Draw Stairs
 	if(stairType > 0){
 		//down part
@@ -169,15 +169,16 @@ void Block::Draw(BITMAP* target){
     //DrawSpriteFromSheet( spriteNum, target, IMGObjectSheet, drawx, drawy );
 
 		//up part
-    //bool mirrored = false;
-    //if(findWallCloseTo(ownerSegment, this) == eSimpleW)
-    //  mirrored = true;
-    //int tempstair = stairType;
-    //if (mirrored)
-    //	stairType = stairType-+
+    bool mirrored = false;
+    if(findWallCloseTo(ownerSegment, this) == eSimpleW)
+      mirrored = true;
     sprite = GetBlockSpriteMap(stairType, material);
     if(sprite.sheetIndex != INVALID_INDEX)
+    {
+       if (mirrored)
+      		sprite.sheetIndex += 1;
       DrawSpriteFromSheet( sprite.sheetIndex, target, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+  }
 	}
 
   //Draw Walls
