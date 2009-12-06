@@ -4,309 +4,309 @@
 
 <floors>
 
-<Floor spriteIndex = 1>
+<floor sprite = 1>
 	<!-- constructed floor detailed -->
-	<GameID value = 493/>	
-</Floor>
+	<terrain value = 493/>	
+</floor>
 
-<Floor spriteIndex = 38>
+<floor sprite = 38>
 	<!-- brook -->
-	<GameID value = 381/>	
-</Floor>
+	<terrain value = 381/>	
+</floor>
 
 
-<Floor spriteIndex = 2>
+<floor sprite = 2>
 	<!-- grass floors -->
-	<GameID value = 348/>
-	<GameID value = 349/>
-	<GameID value = 350/>
-	<GameID value = 351/>
-	<GameID value = 398/>
-	<GameID value = 399/>
-	<GameID value = 400/>
-	<GameID value = 401/>
-</Floor>
+	<terrain value = 348/>
+	<terrain value = 349/>
+	<terrain value = 350/>
+	<terrain value = 351/>
+	<terrain value = 398/>
+	<terrain value = 399/>
+	<terrain value = 400/>
+	<terrain value = 401/>
+</floor>
 
-<Floor spriteIndex = 3>
+<floor sprite = 3>
 	<!-- stone floors -->
-	<GameID value = 336/>
-	<GameID value = 337/>
-	<GameID value = 338/>
-	<GameID value = 339/>
+	<terrain value = 336/>
+	<terrain value = 337/>
+	<terrain value = 338/>
+	<terrain value = 339/>
 	
 	<!-- minstone floors -->
-	<GameID value = 441/>
-	<GameID value = 442/>
-	<GameID value = 443/>
-	<GameID value = 444/>
-</Floor>
+	<terrain value = 441/>
+	<terrain value = 442/>
+	<terrain value = 443/>
+	<terrain value = 444/>
+</floor>
 
-<Floor spriteIndex = 4>
+<floor sprite = 4>
 	<!-- Soil floors -->
-	<GameID value = 352/>
-	<GameID value = 353/>
-	<GameID value = 354/>
-	<GameID value = 355/>
-</Floor>
+	<terrain value = 352/>
+	<terrain value = 353/>
+	<terrain value = 354/>
+	<terrain value = 355/>
+</floor>
 
-<Floor spriteIndex = 5>
+<floor sprite = 5>
 	<!-- stone pebbles -->
-	<GameID value = 405/>
-	<GameID value = 406/>
-	<GameID value = 407/>
-	<GameID value = 408/>
-</Floor>
+	<terrain value = 405/>
+	<terrain value = 406/>
+	<terrain value = 407/>
+	<terrain value = 408/>
+</floor>
 
-<Floor spriteIndex = 6>
+<floor sprite = 6>
 	<!-- Boulder -->
-	<GameID value = 402/>
-</Floor>
+	<terrain value = 402/>
+</floor>
 
-<Floor spriteIndex = 7>
+<floor sprite = 7>
 	<!-- plants -->
-	<GameID value = 231/>
-	<GameID value = 34/>
-	<GameID value = 24/>
-</Floor>
+	<terrain value = 231/>
+	<terrain value = 34/>
+	<terrain value = 24/>
+</floor>
 
 
-<Floor spriteIndex = 9>
+<floor sprite = 9>
 	<!-- Dry grass -->
-	<GameID value = 387/>
-	<GameID value = 388/>
-	<GameID value = 389/>
-	<GameID value = 390/>
-	<GameID value = 394/>
-	<GameID value = 395/>
-	<GameID value = 396/>
-	<GameID value = 397/>	
+	<terrain value = 387/>
+	<terrain value = 388/>
+	<terrain value = 389/>
+	<terrain value = 390/>
+	<terrain value = 394/>
+	<terrain value = 395/>
+	<terrain value = 396/>
+	<terrain value = 397/>	
 	<!-- Dead Tree -->
-	<GameID value = 391/>
+	<terrain value = 391/>
 	<!-- Dead sapling -->
-	<GameID value = 392/>
+	<terrain value = 392/>
 	<!-- Dead shrub -->
-	<GameID value = 393/>
-</Floor>
+	<terrain value = 393/>
+</floor>
 
-<Floor spriteIndex = 10>
+<floor sprite = 10>
 	<!-- Constructed Wooden floor -->
-	<GameID value = 900/>
-</Floor>
+	<terrain value = 900/>
+</floor>
 
-<Floor spriteIndex = 11>
+<floor sprite = 11>
 	<!-- Frozen liquid floor -->
-	<GameID value = 258/>
-	<GameID value = 259/>
-	<GameID value = 260/>
-	<GameID value = 262/>
+	<terrain value = 258/>
+	<terrain value = 259/>
+	<terrain value = 260/>
+	<terrain value = 262/>
 	
-</Floor>
+</floor>
 
-<Floor spriteIndex = 12>
+<floor sprite = 12>
 	<!-- Metal floor -->
-	<GameID value = 1000/>
-</Floor>
+	<terrain value = 1000/>
+</floor>
 
-<Floor spriteIndex = 13>
+<floor sprite = 13>
 	<!-- Soil floors -->
-	<GameID value = 352/>
-	<GameID value = 353/>
-	<GameID value = 354/>
-	<GameID value = 355/>
+	<terrain value = 352/>
+	<terrain value = 353/>
+	<terrain value = 354/>
+	<terrain value = 355/>
 	<!-- Wet Soil floors -->
-	<GameID value = 356/>
-	<GameID value = 357/>
-	<GameID value = 358/>
-	<GameID value = 359/>	
+	<terrain value = 356/>
+	<terrain value = 357/>
+	<terrain value = 358/>
+	<terrain value = 359/>	
 	<Material name="SAND_TAN" />
 	<Material name="SAND_YELLOW" />
-</Floor>
-<Floor spriteIndex = 14>
+</floor>
+<floor sprite = 14>
 	<!-- Soil floors -->
-	<GameID value = 352/>
-	<GameID value = 353/>
-	<GameID value = 354/>
-	<GameID value = 355/>
+	<terrain value = 352/>
+	<terrain value = 353/>
+	<terrain value = 354/>
+	<terrain value = 355/>
 	<!-- Wet Soil floors -->
-	<GameID value = 356/>
-	<GameID value = 357/>
-	<GameID value = 358/>
-	<GameID value = 359/>	
+	<terrain value = 356/>
+	<terrain value = 357/>
+	<terrain value = 358/>
+	<terrain value = 359/>	
 	<Material name="SAND_RED" />
     <Material name="SILT" />
-</Floor>
-<Floor spriteIndex = 15>
+</floor>
+<floor sprite = 15>
 	<!-- Soil floors -->
-	<GameID value = 352/>
-	<GameID value = 353/>
-	<GameID value = 354/>
-	<GameID value = 355/>
+	<terrain value = 352/>
+	<terrain value = 353/>
+	<terrain value = 354/>
+	<terrain value = 355/>
 	<!-- Wet Soil floors -->
-	<GameID value = 356/>
-	<GameID value = 357/>
-	<GameID value = 358/>
-	<GameID value = 359/>
+	<terrain value = 356/>
+	<terrain value = 357/>
+	<terrain value = 358/>
+	<terrain value = 359/>
 	<Material name="SAND_BLACK" />
-</Floor>
-<Floor spriteIndex = 16>
+</floor>
+<floor sprite = 16>
 	<!-- Soil floors -->
-	<GameID value = 352/>
-	<GameID value = 353/>
-	<GameID value = 354/>
-	<GameID value = 355/>
+	<terrain value = 352/>
+	<terrain value = 353/>
+	<terrain value = 354/>
+	<terrain value = 355/>
 	<!-- Wet Soil floors -->
-	<GameID value = 356/>
-	<GameID value = 357/>
-	<GameID value = 358/>
-	<GameID value = 359/>	
+	<terrain value = 356/>
+	<terrain value = 357/>
+	<terrain value = 358/>
+	<terrain value = 359/>	
 	<Material name="SAND_WHITE" />
-</Floor>
+</floor>
 
-<Floor spriteIndex = 17>
+<floor sprite = 17>
 	<!-- lavastone floors -->
-	<GameID value = 340/>
-	<GameID value = 341/>
-	<GameID value = 342/>
-	<GameID value = 343/>
-</Floor>
+	<terrain value = 340/>
+	<terrain value = 341/>
+	<terrain value = 342/>
+	<terrain value = 343/>
+</floor>
 
-<Floor spriteIndex = 18>
+<floor sprite = 18>
 	<!-- Murky Pool -->
-	<GameID value = 2/>
+	<terrain value = 2/>
 	<!-- River -->
-	<GameID value = 365/>
-	<GameID value = 366/>
-	<GameID value = 367/>
-	<GameID value = 368/>
-	<GameID value = 369/>
-	<GameID value = 370/>
-	<GameID value = 371/>
-	<GameID value = 372/>
+	<terrain value = 365/>
+	<terrain value = 366/>
+	<terrain value = 367/>
+	<terrain value = 368/>
+	<terrain value = 369/>
+	<terrain value = 370/>
+	<terrain value = 371/>
+	<terrain value = 372/>
 	
 	<!-- Stream -->
-	<GameID value = 373/>
-	<GameID value = 374/>
-	<GameID value = 375/>
-	<GameID value = 376/>
-	<GameID value = 377/>
-	<GameID value = 378/>
-	<GameID value = 379/>
-	<GameID value = 380/>
-</Floor>
+	<terrain value = 373/>
+	<terrain value = 374/>
+	<terrain value = 375/>
+	<terrain value = 376/>
+	<terrain value = 377/>
+	<terrain value = 378/>
+	<terrain value = 379/>
+	<terrain value = 380/>
+</floor>
 
 <!-- line 2 -------------------------------------------------------------- -->
 
-<Floor spriteIndex = 20>
+<floor sprite = 20>
 	<!-- stone floor detailed -->
-	<GameID value = 43/>
+	<terrain value = 43/>
 	
 	<!-- lavastone floor detailed -->
-	<GameID value = 44/>
+	<terrain value = 44/>
 	
 	<!-- minstone floor detailed -->
-	<GameID value = 46/>
+	<terrain value = 46/>
 	
 	<!-- ice floor detailed -->
-	<GameID value = 47/>
+	<terrain value = 47/>
 
-</Floor>
+</floor>
 
-<Floor spriteIndex = 23>
+<floor sprite = 23>
         <!-- Soil floors -->
-        <GameID value = 353/>
+        <terrain value = 353/>
         <!-- Wet Soil floors -->
-        <GameID value = 357/>   
+        <terrain value = 357/>   
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
-<Floor spriteIndex = 24>
+</floor>
+<floor sprite = 24>
         <!-- Soil floors -->
-        <GameID value = 355/>
+        <terrain value = 355/>
         <!-- Wet Soil floors -->
-        <GameID value = 359/>   
+        <terrain value = 359/>   
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
-<Floor spriteIndex = 25>
+</floor>
+<floor sprite = 25>
         <!-- Soil floors -->
-        <GameID value = 354/>
+        <terrain value = 354/>
         <!-- Wet Soil floors -->
-        <GameID value = 358/>   
+        <terrain value = 358/>   
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
-<Floor spriteIndex = 26>
+</floor>
+<floor sprite = 26>
         <!-- Soil floors -->
-        <GameID value = 352/>
+        <terrain value = 352/>
         <!-- Wet Soil floors -->
-        <GameID value = 356/>
+        <terrain value = 356/>
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
-<Floor spriteIndex = 28>
+</floor>
+<floor sprite = 28>
         <!-- Grass on clay -->
-        <GameID value = 348/>
-        <GameID value = 349/>
-        <GameID value = 350/>
-        <GameID value = 351/>
+        <terrain value = 348/>
+        <terrain value = 349/>
+        <terrain value = 350/>
+        <terrain value = 351/>
         <!-- Darker Grass on clay -->
-        <GameID value = 398/>
-        <GameID value = 399/>
-        <GameID value = 400/>
-        <GameID value = 401/>
+        <terrain value = 398/>
+        <terrain value = 399/>
+        <terrain value = 400/>
+        <terrain value = 401/>
                 <!-- plants -->
-        <GameID value = 231/>
-        <GameID value = 34/>
-        <GameID value = 24/>
+        <terrain value = 231/>
+        <terrain value = 34/>
+        <terrain value = 24/>
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
-<Floor spriteIndex = 29>
+</floor>
+<floor sprite = 29>
         <!-- Dry Grass on clay -->
-        <GameID value = 387/>
-        <GameID value = 388/>
-        <GameID value = 389/>
-        <GameID value = 390/>
+        <terrain value = 387/>
+        <terrain value = 388/>
+        <terrain value = 389/>
+        <terrain value = 390/>
 		<!-- Darker dry grass on clay -->
-        <GameID value = 394/>
-        <GameID value = 395/>
-        <GameID value = 396/>
-        <GameID value = 397/>   
+        <terrain value = 394/>
+        <terrain value = 395/>
+        <terrain value = 396/>
+        <terrain value = 397/>   
         <!-- Dead Tree -->
-        <GameID value = 391/>
+        <terrain value = 391/>
         <!-- Dead sapling -->
-        <GameID value = 392/>
+        <terrain value = 392/>
         <!-- Dead shrub -->
-        <GameID value = 393/>
+        <terrain value = 393/>
         <Material name="CLAY" />
         <Material name="SILTY_CLAY" />
         <Material name="CLAY_LOAM" />
-</Floor>
+</floor>
 
-<Floor spriteIndex = 30>
+<floor sprite = 30>
 	<!-- driftwood -->
-	<GameID value = 19/>
-</Floor>
+	<terrain value = 19/>
+</floor>
 
-<Floor spriteIndex = 31>
+<floor sprite = 31>
 	<!-- magma flow -->
-	<GameID value = 264/>
-</Floor>
+	<terrain value = 264/>
+</floor>
 
-<Floor spriteIndex = 32>
+<floor sprite = 32>
 	<!-- chasm -->
-	<GameID value = 35/>
-</Floor>
+	<terrain value = 35/>
+</floor>
 
-<Floor spriteIndex = 33>
+<floor sprite = 33>
 	<!-- eerie pit -->
-	<GameID value = 42/>
-</Floor>
+	<terrain value = 42/>
+</floor>
 
 </floors>
 
