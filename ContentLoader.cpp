@@ -110,7 +110,7 @@ bool ContentLoader::parseContentXMLFile( char* filepath, char* homefolder ){
     if( elementType.compare( "floors" ) == 0 )
         runningResult &= parseTerrainContent( elemRoot, homefolder );
 
-    if( elementType.compare( "walls" ) == 0 )
+    if( elementType.compare( "blocks" ) == 0 )
         runningResult &= parseTerrainContent( elemRoot, homefolder );
 
     if( elementType.compare( "shrubs" ) == 0 )
