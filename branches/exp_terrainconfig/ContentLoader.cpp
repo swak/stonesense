@@ -38,7 +38,8 @@ bool ContentLoader::Load(API& DF){
   DF.InitReadBuildings( buildingNameStrings );
   DF.FinishReadBuildings();
   //read stone material types
-  DF.ReadStoneMatgloss(v_stonetypes); 
+  DF.ReadStoneMatgloss( stoneNameStrings ); 
+  DF.ReadStoneMatgloss( metalNameStrings );
   DF.ReadWoodMatgloss( woodNameStrings );
   DF.ReadPlantMatgloss( plantNameStrings );
     
@@ -214,8 +215,39 @@ int lookupMaterialType(const char* strValue)
      return INVALID_INDEX;
 }
 
-/* TODO still need to code this! */
+int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector)
+{
+	if (indexName == NULL || indexName[0] == 0)
+	{
+		return INVALID_INDEX;	
+	}
+	uint32_t vsize = (uint32_t)typeVector.size();
+	for(uint32_t i=0; i < vsize; i++){
+	if (strcmp(indexName,typeVector[i].id) == 0)
+		return i;
+	}
+	return INVALID_INDEX;
+}
+
 int lookupMaterialType(int matType, const char* strValue)
 {
-     return INVALID_INDEX;
+	vector<t_matgloss>* typeVector;
+	if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.woodNameStrings);
+	}
+	else if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.stoneNameStrings);
+	}
+	else if (matType == Mat_Stone)
+	{
+		typeVector=&(contentLoader.metalNameStrings);
+	}
+	else
+	{
+		//maybe allow some more in later
+		return INVALID_INDEX;
+	}
+	return lookupIndexedType(strValue,*typeVector);
 }

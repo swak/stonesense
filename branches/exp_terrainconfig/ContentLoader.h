@@ -31,7 +31,9 @@ public:
   vector<int> terrainBlockLookup;
 
   vector<t_matgloss> creatureNameStrings;
+  vector<t_matgloss> stoneNameStrings;
   vector<t_matgloss> woodNameStrings;
+  vector<t_matgloss> metalNameStrings;
   vector<t_matgloss> plantNameStrings;
   vector<string> buildingNameStrings;
 };
@@ -44,4 +46,5 @@ extern void contentError(const char* message, TiXmlNode* element);
 extern char getAnimFrames(const char* framestring);
 int lookupMaterialType(const char* strValue);
 int lookupMaterialType(int matType, const char* strValue);
+int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector);
 

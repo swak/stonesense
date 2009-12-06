@@ -36,8 +36,8 @@ TerrainConfiguration::~TerrainConfiguration()
 void DumpGroundMaterialNamesToDisk(){
   FILE* fp = fopen("dump.txt", "w");
   if(!fp) return;
-  for(uint32_t j=0; j < v_stonetypes.size(); j++){
-    fprintf(fp, "%i:%s\n",j, v_stonetypes[j].id);
+  for(uint32_t j=0; j < contentLoader.stoneNameStrings.size(); j++){
+    fprintf(fp, "%i:%s\n",j, contentLoader.stoneNameStrings[j].id);
   }
   fclose(fp);
 }
@@ -86,12 +86,10 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		}
 		if (lookupTable[targetElem]!=INVALID_INDEX)
 		{
-			WriteErr("got %d: %d\n",targetElem,lookupTable[targetElem]);
 			lookupKeys.insert(lookupTable[targetElem]);
 		}
 		else
 		{
-			WriteErr("new %d: %d\n",targetElem,newLookup);
 			lookupKeys.insert(newLookup);
 			lookupTable[targetElem]=newLookup;
 			contentLoader.terrainConfigs.push_back(new TerrainConfiguration());
@@ -118,20 +116,17 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 	}
 	for( ;elemMaterial;elemMaterial = elemMaterial->NextSiblingElement("material"))
 	{
-		WriteErr("mat\n");
 		int elemIndex = lookupMaterialType(elemMaterial->Attribute("value"));
 		if (elemIndex == INVALID_INDEX)
 		{
 			contentError("Invalid or missing value attribute",elemMaterial);
 			continue;				
 		}
-		WriteErr("ei %d\n",elemIndex);
 		/* TODO handle sub material types */
 		//set default material sprites
 		for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 		{
 			int index = *it;
-			WriteErr("->%d\n",index);
 			TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
 			//if that was null we have *really* screwed up earlier
 			//create a new TerrainMaterialConfiguration if required
