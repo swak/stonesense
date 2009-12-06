@@ -89,8 +89,8 @@ using namespace DFHack;
 // this shouldn't change with mods, so should
 // be know ahead of time (especially since we
 // use it for fake terrains already)
-#define MAX_BASE_TERRAIN 550
-#define FAKE_TERRAIN_COUNT 5
+#define MAX_BASE_TERRAIN 525
+#define FAKE_TERRAIN_COUNT 0
 // we only need as many as our translation system
 // in ContentLoader/lookupMaterialType deals with
 #define MAX_MATGLOSS 24

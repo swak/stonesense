@@ -121,7 +121,7 @@ void Block::Draw(BITMAP* target){
 		sprite.fileIndex = INVALID_INDEX;
 	  }
     sheetOffsetX = SPRITEWIDTH * ramp.index;
-    sheetOffsetY = SPRITEHEIGHT * sprite.sheetIndex;
+    sheetOffsetY = ((TILEHEIGHT + FLOORHEIGHT + SPRITEHEIGHT) * sprite.sheetIndex)+(TILEHEIGHT + FLOORHEIGHT);
 	
 		masked_blit(imageSheet(sprite,IMGRampSheet), target, sheetOffsetX,sheetOffsetY, drawx,drawy - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT);
 	}
@@ -247,9 +247,6 @@ void Block::DrawRamptops(BITMAP* target){
     if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
     if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
   }*/
-	int ramptopType=ID_RAMPTOP;
-	if (ramp.type==ID_CNSTR_RAMP)
-		ramptopType = ID_CNSTR_RAMPTOP;
 	int32_t drawx = x;
 	int32_t drawy = y;
   	int32_t drawz = z+1; //- ownerSegment->sizez + 1;
@@ -259,14 +256,17 @@ void Block::DrawRamptops(BITMAP* target){
 	pointToScreen((int*)&drawx, (int*)&drawy, drawz);
 	drawx -= TILEWIDTH>>1;
 
-	t_SpriteWithOffset sprite = GetFloorSpriteMap(ramptopType,material);
-	if (sprite.sheetIndex == INVALID_INDEX)
-		return;
+	t_SpriteWithOffset sprite = GetBlockSpriteMap(ramp.type,material);
+	if (sprite.sheetIndex == -1)
+	{
+		sprite.sheetIndex = 0;
+		sprite.fileIndex = INVALID_INDEX;
+	}
 	
     sheetOffsetX = SPRITEWIDTH * ramp.index;
-    sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * sprite.sheetIndex;
+    sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT + SPRITEHEIGHT) * sprite.sheetIndex;
 
-		masked_blit( imageSheet(sprite,IMGRamptopSheet), target, sheetOffsetX,sheetOffsetY, drawx,drawy, SPRITEWIDTH, TILEHEIGHT + FLOORHEIGHT);	
+		masked_blit( imageSheet(sprite,IMGRampSheet), target, sheetOffsetX,sheetOffsetY, drawx,drawy, SPRITEWIDTH, TILEHEIGHT + FLOORHEIGHT);	
 		
 	}
 	

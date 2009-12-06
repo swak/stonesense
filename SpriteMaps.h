@@ -54,10 +54,6 @@ enum BlockIDs{
   ID_CNSTR_STAIR_DOWN = 516,
   ID_CNSTR_STAIR_UP = 517,
   ID_CNSTR_RAMP = 518,
-
-	//this works because there is only one constructed ramp type
-	ID_RAMPTOP = MAX_BASE_TERRAIN+1,
-	ID_CNSTR_RAMPTOP = MAX_BASE_TERRAIN+2,
 	
 };
 
