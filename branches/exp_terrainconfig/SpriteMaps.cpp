@@ -6,17 +6,37 @@
 
 t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<int>& lookupTable)
 {
+	//WriteErr("%d %d %d: test\n",in, material.type,material.index); 
 	t_SpriteWithOffset defaultSprite = {-1,0,0,-1,ALL_FRAMES};
-	if( in >= (int)lookupTable.size() ) 
+	if( in >= (int)lookupTable.size() )
+	{
+		//WriteErr("%d %d %d (%d): No lookup\n",in, material.type,material.index,lookupTable.size()); 
 		return defaultSprite;
-	TerrainConfiguration* terrain = contentLoader.terrainConfigs[in];
+	}
+	if (lookupTable[in] == INVALID_INDEX)
+	{
+		//WriteErr("%d %d %d (%d): No terrain\n",in, material.type,material.index,lookupTable.size()); 
+		return defaultSprite;
+	}
+	//WriteErr("lookup %d\n",lookupTable[in]);
+	TerrainConfiguration* terrain = contentLoader.terrainConfigs[lookupTable[in]];
 	if (terrain == NULL)
+	{
+		//WriteErr("%d %d %d: Null terrain\n",in, material.type,material.index); 
 		return defaultSprite;
+	}
+	//WriteErr("terrain\n");
 	if (material.type > terrain->terrainMaterials.size())
+	{
+		//WriteErr("%d %d %d: No material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
+	}
 	TerrainMaterialConfiguration* terrainMat = terrain->terrainMaterials[material.type];
 	if (terrainMat == NULL)
+	{
+		//WriteErr("%d %d %d: Null material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
+	}
 	int numMat = (int)terrainMat->overridingMaterials.size();
 	for(int i=0; i<numMat; i++)
 	{
@@ -25,6 +45,7 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 			return terrainMat->overridingMaterials[i].sprite;
 		}
 	}
+	//WriteErr("%d %d %d: Def material\n",in, material.type,material.index); 
 	return terrainMat->defaultSprite;
 }
 

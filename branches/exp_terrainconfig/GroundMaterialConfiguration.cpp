@@ -44,9 +44,13 @@ void DumpGroundMaterialNamesToDisk(){
 
 void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>& lookupTable ,int basefile)
 {
+	contentError("start",elemWallFloorSprite);
 	const char* spriteIndexStr = elemWallFloorSprite->Attribute("sprite");
 	if (spriteIndexStr == NULL || spriteIndexStr[0] == 0)
+	{
+		contentError("Invalid or missing sprite attribute",elemWallFloorSprite);
 		return; //nothing to work with
+	}
 	
 	t_SpriteWithOffset sprite;
 	sprite.sheetIndex=atoi(spriteIndexStr);
@@ -64,7 +68,9 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 	
 	int newLookup=contentLoader.terrainConfigs.size();
 	TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
-	while( elemTerrain )
+	for(TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
+		 elemTerrain;
+		 elemTerrain = elemTerrain->NextSiblingElement("terrain"))
 	{
 		int targetElem=INVALID_INDEX;
 		const char* gameIDstr = elemTerrain->Attribute("value");
@@ -80,10 +86,12 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		}
 		if (lookupTable[targetElem]!=INVALID_INDEX)
 		{
+			WriteErr("got %d: %d\n",targetElem,lookupTable[targetElem]);
 			lookupKeys.insert(lookupTable[targetElem]);
 		}
 		else
 		{
+			WriteErr("new %d: %d\n",targetElem,newLookup);
 			lookupKeys.insert(newLookup);
 			lookupTable[targetElem]=newLookup;
 			contentLoader.terrainConfigs.push_back(new TerrainConfiguration());
@@ -108,19 +116,22 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 			}
 		}
 	}
-	while( elemMaterial )
+	for( ;elemMaterial;elemMaterial = elemMaterial->NextSiblingElement("material"))
 	{
+		WriteErr("mat\n");
 		int elemIndex = lookupMaterialType(elemMaterial->Attribute("value"));
 		if (elemIndex == INVALID_INDEX)
 		{
 			contentError("Invalid or missing value attribute",elemMaterial);
 			continue;				
 		}
+		WriteErr("ei %d\n",elemIndex);
 		/* TODO handle sub material types */
 		//set default material sprites
 		for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 		{
 			int index = *it;
+			WriteErr("->%d\n",index);
 			TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
 			//if that was null we have *really* screwed up earlier
 			//create a new TerrainMaterialConfiguration if required
@@ -155,6 +166,7 @@ bool addSingleTerrainConfig( TiXmlElement* elemRoot){
 	
   string elementType = elemRoot->Value();
   if(elementType.compare( "floors" ) == 0){
+	  WriteErr("floor?\n");
     //parse floors
     TiXmlElement* elemFloor = elemRoot->FirstChildElement("floor");
     while( elemFloor ){
@@ -163,6 +175,7 @@ bool addSingleTerrainConfig( TiXmlElement* elemRoot){
     }
   }
   if(elementType.compare( "blocks" ) == 0){
+	  WriteErr("block?\n");
     //parse walls
     TiXmlElement* elemWall = elemRoot->FirstChildElement("block");
     while( elemWall ){
