@@ -10,7 +10,7 @@
 #include "dfhack/library/DFTypes.h"
 
 
-BITMAP* temptile=0;
+
 
 
 
@@ -70,7 +70,7 @@ void Block::Draw(BITMAP* target){
     //If tile has no floor, look for a Filler Floor from it's wall
     if(floorSpriteIndex == SPRITEFLOOR_NA)
       floorSpriteIndex = GetWallSpriteMap(this->wallType, this->materialIndex, true);
-    
+
     //TODO: need configurable Filler Floors for ramps as well
 	  if(floorSpriteIndex == SPRITEFLOOR_NA && (ramp.type > 0))
 		  floorSpriteIndex = 3;
@@ -117,12 +117,12 @@ void Block::Draw(BITMAP* target){
 	{
 		DrawSpriteFromSheet( BASE_SHADOW_TILE + shadow - 1, target, IMGObjectSheet, drawx, (ramp.type > 0)?(drawy - (WALLHEIGHT/2)):drawy );
 	}
-	
+
 	//Building
-  bool skipBuilding = 
+  bool skipBuilding =
     (building.info.type == BUILDINGTYPE_STOCKPILE && !config.show_stockpiles) ||
     (building.info.type == BUILDINGTYPE_ZONE && !config.show_zones);
-  
+
   if(building.info.type != BUILDINGTYPE_NA && !skipBuilding){
 
     int spriteNum =  SPRITEOBJECT_NA; //getBuildingSprite(this->building, mirroredBuilding);
@@ -140,7 +140,7 @@ void Block::Draw(BITMAP* target){
 	    {
 	    	objectSheet = getImgFile(building.sprites[i].fileIndex);
     	}
-      DrawSpriteFromSheet(spriteNum , target, objectSheet, 
+      DrawSpriteFromSheet(spriteNum , target, objectSheet,
         drawx + building.sprites[i].x,
         drawy + building.sprites[i].y);
     }
@@ -192,7 +192,7 @@ void Block::Draw(BITMAP* target){
       //Western border
       if(this->depthBorderWest)
         line(target, drawx, drawy+(TILEHEIGHT>>1)-1, drawx+(TILEWIDTH>>1)-1, drawy, tileBorderColor);
-      
+
       drawy += (WALLHEIGHT);
     }
 	}
@@ -220,7 +220,7 @@ void Block::Draw(BITMAP* target){
 void Block::DrawRamptops(BITMAP* target){
 	if (ramp.type > 0)
 	{
-	
+
 	int sheetOffsetX, sheetOffsetY;
   /*if(config.hide_outer_blocks){
     if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
@@ -239,8 +239,8 @@ void Block::DrawRamptops(BITMAP* target){
     sheetOffsetX = SPRITEWIDTH * ramp.index;
     sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * GetRampMaterialTypeMap(ramp.type);
 
-		masked_blit(IMGRamptopSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy, SPRITEWIDTH, TILEHEIGHT + FLOORHEIGHT);	
-		
+		masked_blit(IMGRamptopSheet, target, sheetOffsetX,sheetOffsetY, drawx,drawy, SPRITEWIDTH, TILEHEIGHT + FLOORHEIGHT);
+
 	}
 }
 

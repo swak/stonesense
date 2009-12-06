@@ -40,6 +40,13 @@ vector<t_matgloss> v_stonetypes;
 int32_t viewy = 0;
 int32_t viewz = 0;
 bool followmode = true;*/
+volatile int close_button_pressed = FALSE;
+
+void close_button_handler(void)
+{
+    close_button_pressed = TRUE;
+}
+END_OF_FUNCTION(close_button_handler)
 
 void WriteErr(char* msg, ...){
   int j = 10;
@@ -109,6 +116,8 @@ int main(void)
     allegro_icon = stonesense_xpm;
     #endif
 	allegro_init();
+	LOCK_FUNCTION(close_button_handler);
+    set_close_button_callback(close_button_handler);
   install_keyboard();
   install_mouse();
   enable_hardware_cursor();
@@ -236,7 +245,7 @@ int main(void)
 	initAutoReload();
 
 	paintboard();
-	while(!key[KEY_ESC]){
+	while(!key[KEY_ESC] && !close_button_pressed){
 		rest(30);
     if( timeToReloadSegment ){
       reloadDisplayedSegment();
