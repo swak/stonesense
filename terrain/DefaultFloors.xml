@@ -4,6 +4,7 @@
 
 <floors>
 
+<!-- default floor -->
 <floor sprite = 0>
 	<terrain value="2"/>
 	

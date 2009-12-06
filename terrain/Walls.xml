@@ -1,6 +1,15 @@
 <?xml version="1.0" ?>
 
 <blocks> 
+
+<block sprite=1>
+	<terrain value="233"/>
+	<terrain value="234"/>
+	<terrain value="235"/>
+	<terrain value="236"/>
+	<terrain value="241"/>
+</block>
+	
 <block sprite = 201 fillerFloorsprite = 3>
 	<!-- Raw Stone block -->
 	<terrain value = 219/>
