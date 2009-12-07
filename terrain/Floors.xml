@@ -46,7 +46,7 @@
 	<!-- shrub -->
 	<terrain value= 34 />
 	<!-- sapling -->
-	<terrain value= 31 />
+	<terrain value= 231 />
 	<!-- grass -->
 	<terrain value= 348 />
 	<terrain value= 349 />
@@ -79,8 +79,6 @@
 <floor sprite= 34 >
 	<!-- below stair -->
 	<terrain value= 27 />
-	<!-- below pillar -->
-	<terrain value= 83 />
 	<!-- below ramp -->
 	<terrain value= 245 />
 	<!-- floor -->
@@ -105,8 +103,6 @@
 <floor sprite= 17 >	
 	<!-- below stair -->
 	<terrain value= 38 />
-	<!-- below pillar -->
-	<terrain value= 80 />
 	<!-- below ramp -->
 	<terrain value= 238 />
 	<!-- wall -->
@@ -172,6 +168,10 @@
 	<terrain value= 65 />	
 	<terrain value= 327 />
 	<terrain value= 436 />
+	<!-- below pillar -->
+	<terrain value= 79 />
+	<terrain value= 81 />
+	<terrain value= 82 />
 	<!-- feat wall -->
 	<terrain value= 288 />
 	<terrain value= 289 />
@@ -238,6 +238,8 @@
 <floor sprite = 17 >
 	<!-- floor -->
 	<terrain value= 44 />
+	<!-- below pillar -->
+	<terrain value= 80 />
 	<!-- wall -->
 	<terrain value= 269 />
 	<terrain value= 270 />
@@ -265,6 +267,8 @@
 <!-- sm ice -->
 <floor sprite = 34 >
 	<terrain value= 47 />
+	<!-- below pillar -->
+	<terrain value= 83 />
 	<!-- fort -->
 	<terrain value= 360 />
 	<!-- sm wall -->
@@ -295,10 +299,6 @@
 	<terrain value= 57 />
 	<terrain value= 60 />
 	<terrain value= 63 />
-	<!-- below pillar -->
-	<terrain value= 79 />
-	<terrain value= 81 />
-	<terrain value= 82 />
 	<!-- below wall -->
 	<terrain value= 176 />
 	<terrain value= 177 />

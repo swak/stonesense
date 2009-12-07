@@ -6,7 +6,7 @@
 
 <!-- fortifications -->
 
-<block sprite=225>
+<block sprite=201>
 	<terrain value="65"/>
 	
 	<terrain value="326"/>
@@ -38,7 +38,7 @@
 
 <!-- stairs -->
 
-<block sprite=181>
+<block sprite=202>
 		<!-- ice -->
 	<terrain value="25"/>
 	<terrain value="27"/>
@@ -68,7 +68,7 @@
 </block>
 
 <!-- walls -->
-<block sprite=0 >
+<block sprite=200 >
 		<!-- pillars -->
 	<terrain value="79"/>
 	<terrain value="80"/>
