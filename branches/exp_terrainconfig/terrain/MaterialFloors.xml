@@ -43,6 +43,51 @@
 	<material value="Wood"/>
 </floor>
 
+<floor sprite = 23>
+    <!-- Soil floors -->
+    <terrain value = 353/>
+    <!-- Wet Soil floors -->
+    <terrain value = 357/>   
+    <material value="Stone">
+        <subtype value="CLAY" />
+	    <subtype value="SILTY_CLAY" />
+    	<subtype value="CLAY_LOAM" />
+    </material>
+</floor>
+<floor sprite = 24>
+    <!-- Soil floors -->
+    <terrain value = 355/>
+    <!-- Wet Soil floors -->
+    <terrain value = 359/>   
+    <material value="Stone">
+        <subtype value="CLAY" />
+        <subtype value="SILTY_CLAY" />
+        <subtype value="CLAY_LOAM" />
+    </material>
+</floor>
+<floor sprite = 25>
+    <!-- Soil floors -->
+    <terrain value = 354/>
+    <!-- Wet Soil floors -->
+    <terrain value = 358/>   
+    <material value="Stone">
+        <subtype value="CLAY" />
+        <subtype value="SILTY_CLAY" />
+        <subtype value="CLAY_LOAM" />
+    </material>
+</floor>
+<floor sprite = 26>
+    <!-- Soil floors -->
+    <terrain value = 352/>
+    <!-- Wet Soil floors -->
+    <terrain value = 356/>
+    <material value="Stone">
+        <subtype value="CLAY" />
+        <subtype value="SILTY_CLAY" />
+        <subtype value="CLAY_LOAM" />
+    </material>
+</floor>
+
 </floors>
 
 
