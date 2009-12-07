@@ -275,6 +275,8 @@ void DoSpriteIndexOverlay(){
 	index++;
 	if (index >= max)
 		index = -1;
+	//debounce f10
+	while(key[KEY_F10]) rest(50);
   }
   //redraw screen again
   paintboard();
