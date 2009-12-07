@@ -26,12 +26,15 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 		return defaultSprite;
 	}
 	//WriteErr("terrain\n");
-	if (material.type > terrain->terrainMaterials.size())
+	if (material.type >= terrain->terrainMaterials.size())
 	{
 		//WriteErr("%d %d %d: No material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
 	}
+	//WriteErr("->\n");
 	TerrainMaterialConfiguration* terrainMat = terrain->terrainMaterials[material.type];
+	//WriteErr("->\n");
+	//WriteErr("terrain: %d\n",terrainMat);
 	if (terrainMat == NULL)
 	{
 		//WriteErr("%d %d %d: Null material\n",in, material.type,material.index); 
@@ -42,6 +45,7 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 	{
 		if(terrainMat->overridingMaterials[i].gameID == material.index)
 		{
+			//WriteErr("%d %d %d: Got material\n",in, material.type,material.index);
 			return terrainMat->overridingMaterials[i].sprite;
 		}
 	}
@@ -50,11 +54,17 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 }
 
 t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material){
-	return GetTerrainSpriteMap(in, material, contentLoader.terrainFloorLookup);
+	//WriteErr("gfsm+\n");
+	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainFloorLookup);
+	//WriteErr("gfsm-\n");
+	return temp;
 }
 
 t_SpriteWithOffset GetBlockSpriteMap(int in, t_matglossPair material){
-	return GetTerrainSpriteMap(in, material, contentLoader.terrainBlockLookup);
+	//WriteErr("gbsm+\n");
+	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainBlockLookup);
+	//WriteErr("gfsm-\n");
+	return temp;
 }
 
 t_SpriteWithOffset GetSpriteVegetation( TileClass type, int index)
