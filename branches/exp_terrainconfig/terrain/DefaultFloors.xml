@@ -2,7 +2,7 @@
 
 <!-- this is a fallback catch-all for any floors not defined elsewhere -->
 
-<floors>
+<floors file="terrain/floors.png">
 
 <!-- default floor -->
 <floor sprite = 0>
