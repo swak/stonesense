@@ -40,17 +40,18 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 		//WriteErr("%d %d %d: Null material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
 	}
-	int numMat = (int)terrainMat->overridingMaterials.size();
-	for(int i=0; i<numMat; i++)
+	map<int,t_SpriteWithOffset>::iterator it = terrainMat->overridingMaterials.find(material.index);
+	if (it != terrainMat->overridingMaterials.end())
 	{
-		if(terrainMat->overridingMaterials[i].gameID == material.index)
-		{
-			//WriteErr("%d %d %d: Got material\n",in, material.type,material.index);
-			return terrainMat->overridingMaterials[i].sprite;
-		}
+		//WriteErr("%d %d %d: Got material\n",in, material.type,material.index);
+		return it->second;
 	}
 	//WriteErr("%d %d %d: Def material\n",in, material.type,material.index); 
-	return terrainMat->defaultSprite;
+	if (terrainMat->defaultSprite.sheetIndex != INVALID_INDEX)
+	{
+		return terrainMat->defaultSprite;
+	}
+	return terrain->defaultSprite;
 }
 
 t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material){
