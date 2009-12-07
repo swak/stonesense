@@ -44,7 +44,7 @@ void DumpGroundMaterialNamesToDisk(){
 
 void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>& lookupTable ,int basefile)
 {
-	contentError("start",elemWallFloorSprite);
+	//contentError("start",elemWallFloorSprite);
 	const char* spriteIndexStr = elemWallFloorSprite->Attribute("sprite");
 	if (spriteIndexStr == NULL || spriteIndexStr[0] == 0)
 	{
@@ -116,34 +116,43 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 	}
 	for( ;elemMaterial;elemMaterial = elemMaterial->NextSiblingElement("material"))
 	{
+		//WriteErr("mat\n");
 		int elemIndex = lookupMaterialType(elemMaterial->Attribute("value"));
 		if (elemIndex == INVALID_INDEX)
 		{
 			contentError("Invalid or missing value attribute",elemMaterial);
 			continue;				
 		}
+		//WriteErr("mat: %d\n", elemIndex);
 		/* TODO handle sub material types */
 		//set default material sprites
-		TiXmlElement* elemSubtype = elemWallFloorSprite->FirstChildElement("subtype");
+		TiXmlElement* elemSubtype = elemMaterial->FirstChildElement("subtype");
 		if (elemSubtype == NULL)
 		{
+			//WriteErr("nosub: %d\n", elemIndex);
 			for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 			{
 				int index = *it;
+				//WriteErr("index: %d / %d\n", index,contentLoader.terrainConfigs.size());
 				TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
+				//WriteErr("tc\n");
+				//WriteErr("tc: %d\n", tConfig);
+				//WriteErr("tcs: %d\n", tConfig->terrainMaterials.size());
 				//if that was null we have *really* screwed up earlier
 				//create a new TerrainMaterialConfiguration if required
 					//make sure we have room for it first
-				if (tConfig->terrainMaterials.size() < elemIndex)
+				if (tConfig->terrainMaterials.size() <= elemIndex)
 				{
 					//dont make a full size vector in advance- we wont need it except
 					//for those who insist on Soap Fortresses
 					tConfig->terrainMaterials.resize(elemIndex+1,NULL);
 				}
+				//WriteErr("tc e\n");
 				if (tConfig->terrainMaterials[elemIndex] == NULL)
 				{
 					tConfig->terrainMaterials[elemIndex] = new TerrainMaterialConfiguration();
 				}
+				//WriteErr("tc i\n");
 				//only update if not set earlier
 				if (tConfig->terrainMaterials[elemIndex]->defaultSprite.sheetIndex == INVALID_INDEX)
 				{
@@ -153,12 +162,14 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		}
 		for (;elemSubtype; elemSubtype = elemSubtype ->NextSiblingElement("subtype"))
 		{
+			//WriteErr("nosub\n");
 			int subtypeId = lookupMaterialIndex(elemIndex,elemSubtype->Attribute("value"));
 			if (subtypeId == INVALID_INDEX)
 			{
 				contentError("Invalid or missing value attribute",elemMaterial);
 				continue;				
 			}
+			//WriteErr("nosub: %d\n", subtypeId);
 			for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 			{
 				int index = *it;
@@ -166,7 +177,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 				//if that was null we have *really* screwed up earlier
 				//create a new TerrainMaterialConfiguration if required
 					//make sure we have room for it first
-				if (tConfig->terrainMaterials.size() < elemIndex)
+				if (tConfig->terrainMaterials.size() <= elemIndex)
 				{
 					//dont make a full size vector in advance- we wont need it except
 					//for those who insist on Soap Fortresses
