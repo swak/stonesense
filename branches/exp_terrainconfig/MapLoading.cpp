@@ -536,6 +536,7 @@ void FollowCurrentDFCenter( ){
 
 void reloadDisplayedSegment(){
   //create handle to dfHack API
+  bool firstLoad = (pDFApiHandle == 0);
   if(pDFApiHandle == 0){
     memInfoHasBeenRead = false;
     pDFApiHandle = new API("Memory.xml");
@@ -558,7 +559,7 @@ void reloadDisplayedSegment(){
   
   SUSPEND_DF;
 
-  if (config.follow_DFscreen)
+  if (firstLoad || config.follow_DFscreen)
   {
   	if (config.track_center)
   	{
