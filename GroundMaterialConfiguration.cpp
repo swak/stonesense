@@ -67,6 +67,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 	set<int> lookupKeys;
 	
 	int newLookup=contentLoader.terrainConfigs.size();
+	//WriteErr("nL: %d\n",newLookup);
 	TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
 	for(TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
 		 elemTerrain;
@@ -86,17 +87,23 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		}
 		if (lookupTable[targetElem]!=INVALID_INDEX)
 		{
+			//WriteErr("K %d\n",lookupTable[targetElem]);
 			lookupKeys.insert(lookupTable[targetElem]);
 		}
 		else
 		{
 			lookupKeys.insert(newLookup);
 			lookupTable[targetElem]=newLookup;
-			contentLoader.terrainConfigs.push_back(new TerrainConfiguration());
+			//WriteErr("K %d\n",lookupTable[targetElem]);
+			if (contentLoader.terrainConfigs.size() == newLookup)
+			{
+				contentLoader.terrainConfigs.push_back(new TerrainConfiguration());
+			}
 		}
 	}
+	//WriteErr("nL: %d %d\n",newLookup,contentLoader.terrainConfigs.size());
 	if (lookupKeys.size() == 0)
-	return; //nothing to link to
+		return; //nothing to link to
 	
 	TiXmlElement* elemMaterial = elemWallFloorSprite->FirstChildElement("material");
 	if (elemMaterial == NULL)
@@ -105,12 +112,18 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 		{
 			int index = *it;
+			//WriteErr("index: %d / %d\n", index,contentLoader.terrainConfigs.size());
 			TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
 			//if that was null we have *really* screwed up earlier
 			//only update if not set earlier
 			if (tConfig->defaultSprite.sheetIndex == INVALID_INDEX)
 			{
 				tConfig->defaultSprite = sprite;
+				//WriteErr("def\n");	
+			}
+			else
+			{
+				//WriteErr("nodef\n");	
 			}
 		}
 	}
@@ -173,6 +186,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 			for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
 			{
 				int index = *it;
+				//WriteErr("index @ %d : %d / %d\n", subtypeId, index,contentLoader.terrainConfigs.size());
 				TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
 				//if that was null we have *really* screwed up earlier
 				//create a new TerrainMaterialConfiguration if required
@@ -188,10 +202,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 					tConfig->terrainMaterials[elemIndex] = new TerrainMaterialConfiguration();
 				}
 				// add to list
-				OverridingMaterial om;
-				om.gameID=subtypeId;
-				om.sprite=sprite;
-				tConfig->terrainMaterials[elemIndex]->overridingMaterials.push_back(om);
+				tConfig->terrainMaterials[elemIndex]->overridingMaterials[subtypeId]=sprite;
 			} 			
 		}
 	}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dfhack/library/tinyxml/tinyxml.h"
+#include <map>
 
 typedef struct OverridingMaterial{
 	int gameID;
@@ -12,7 +13,7 @@ class TerrainMaterialConfiguration
 public:
 	t_SpriteWithOffset defaultSprite;
 	int gameID;
-	vector<OverridingMaterial> overridingMaterials;
+	map<int,t_SpriteWithOffset> overridingMaterials;
 	
 	TerrainMaterialConfiguration();
 	~TerrainMaterialConfiguration(){}
