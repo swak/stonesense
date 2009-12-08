@@ -207,6 +207,8 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
       b->building.info.type = BUILDINGTYPE_BLACKBOX;
       t_SpriteWithOffset sprite = {SPRITEOBJECT_BLACK, 0, 0,-1,ALL_FRAMES};
       b->building.sprites.push_back( sprite );
+      sprite.y=-4;
+      b->building.sprites.push_back( sprite );
       shouldBeIncluded= true;
     }
     
