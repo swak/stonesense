@@ -179,7 +179,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 			int subtypeId = lookupMaterialIndex(elemIndex,elemSubtype->Attribute("value"));
 			if (subtypeId == INVALID_INDEX)
 			{
-				contentError("Invalid or missing value attribute",elemMaterial);
+				contentError("Invalid or missing value attribute",elemSubtype);
 				continue;				
 			}
 			//WriteErr("nosub: %d\n", subtypeId);
@@ -201,8 +201,12 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 				{
 					tConfig->terrainMaterials[elemIndex] = new TerrainMaterialConfiguration();
 				}
-				// add to list
-				tConfig->terrainMaterials[elemIndex]->overridingMaterials[subtypeId]=sprite;
+				// add to list (if not already present)
+				map<int,t_SpriteWithOffset>::iterator it = tConfig->terrainMaterials[elemIndex]->overridingMaterials.find(subtypeId);
+				if (it == tConfig->terrainMaterials[elemIndex]->overridingMaterials.end())
+				{
+					tConfig->terrainMaterials[elemIndex]->overridingMaterials[subtypeId]=sprite;
+				}			
 			} 			
 		}
 	}
