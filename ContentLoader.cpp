@@ -39,10 +39,10 @@ bool ContentLoader::Load(API& DF){
   DF.FinishReadBuildings();
   //read stone material types
   DF.ReadStoneMatgloss( stoneNameStrings ); 
-  DF.ReadStoneMatgloss( metalNameStrings );
+  DF.ReadMetalMatgloss( metalNameStrings );
   DF.ReadWoodMatgloss( woodNameStrings );
   DF.ReadPlantMatgloss( plantNameStrings );
-    
+  
   RESUME_DF;
   
   bool buildingResult = parseContentIndexFile( "buildings/index.txt", "buildings" );
@@ -212,6 +212,12 @@ int lookupMaterialType(const char* strValue)
       return Mat_ClearGlass;
     else if( strcmp(strValue, "CrystalGlass") == 0)
       return Mat_CrystalGlass;
+    else if( strcmp(strValue, "Ice") == 0)
+      return Mat_Ice;
+    else if( strcmp(strValue, "Charcoal") == 0)
+      return Mat_Charcoal;
+    else if( strcmp(strValue, "Soap") == 0) //you know you want it
+      return Mat_Soap;
      return INVALID_INDEX;
 }
 
