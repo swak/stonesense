@@ -55,6 +55,218 @@
 	<material value="Wood"/>
 </block>
 
+<!-- construct -->
+<block sprite= 26 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="GreenGlass"/>
+</block>
+
+<!-- construct -->
+<block sprite= 25 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="ClearGlass"/>
+	<material value="CrystalGlass"/>
+</block>
+
+<!-- construct -->
+<block sprite= 9 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="Stone">
+		<subtype value="OBSIDIAN"/>
+	</material>
+</block>
+
+<!-- construct -->
+<block sprite= 6 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="Ice"/>
+	<material value="Metal">
+		<subtype value="ADAMANTINE"/>
+	</material>
+</block>
+
+<!-- construct -->
+<block sprite= 7 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="Metal"/>
+</block>
+
+<!-- construct -->
+<block sprite= 27 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="Metal">
+		<subtype value="GOLD"/>
+		<subtype value="BRONZE"/>
+		<subtype value="COPPER"/>
+		<subtype value="BISMUTH_BRONZE"/>
+		<subtype value="ROSE_GOLD"/>
+		<subtype value="BRASS"/>
+	</material>
+</block>
+
+<!-- construct -->
+<block sprite= 28 >
+	<!-- pillar -->
+	<terrain value= 495 />
+	<!-- wall -->
+	<terrain value= 496 />
+	<terrain value= 497 />
+	<terrain value= 498 />
+	<terrain value= 499 />
+	<terrain value= 500 />
+	<terrain value= 501 />
+	<terrain value= 502 />
+	<terrain value= 503 />
+	<terrain value= 504 />
+	<terrain value= 505 />
+	<terrain value= 506 />
+	<terrain value= 507 />
+	<terrain value= 508 />
+	<terrain value= 509 />
+	<terrain value= 510 />
+	<terrain value= 511 />
+	<terrain value= 512 />
+	<terrain value= 513 />
+	<terrain value= 514 />
+	<material value="Metal">
+		<subtype value="SILVER"/>
+		<subtype value="PLATINUM"/>
+		<subtype value="ELECTRUM"/>
+		<subtype value="PEWTER_FINE"/>
+		<subtype value="PEWTER_TRIFLE"/>
+		<subtype value="PEWTER_LAY"/>
+		<subtype value="ALUMINUM"/>
+		<subtype value="NICKEL_SILVER"/>
+		<subtype value="STERLING_SILVER"/>
+	</material>
+</block>
+
 </blocks>
 
 
