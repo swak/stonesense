@@ -6,42 +6,37 @@
 
 t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<TerrainConfiguration*>& configTable)
 {
-	//WriteErr("%d %d %d: test\n",in, material.type,material.index); 
+	// in case we need to return nothing
 	t_SpriteWithOffset defaultSprite = {-1,0,0,-1,ALL_FRAMES};
-	if( in >= (int)configTable.size() )
+	// first check the input is sane
+	if( in < 0 || in >= (int)configTable.size() )
 	{
-		//WriteErr("%d %d %d (%d): No lookup\n",in, material.type,material.index,lookupTable.size()); 
 		return defaultSprite;
 	}
-	//WriteErr("lookup %d\n",lookupTable[in]);
+	// find a matching terrainConfig
 	TerrainConfiguration* terrain = configTable[in];
 	if (terrain == NULL)
 	{
-		//WriteErr("%d %d %d: Null terrain\n",in, material.type,material.index); 
 		return defaultSprite;
 	}
-	//WriteErr("terrain\n");
-	if (material.type >= terrain->terrainMaterials.size())
+	// check material sanity
+	if (material.type<0 || material.type >= terrain->terrainMaterials.size())
 	{
-		//WriteErr("%d %d %d: No material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
 	}
-	//WriteErr("->\n");
+	// find mat config
 	TerrainMaterialConfiguration* terrainMat = terrain->terrainMaterials[material.type];
-	//WriteErr("->\n");
-	//WriteErr("terrain: %d\n",terrainMat);
 	if (terrainMat == NULL)
 	{
-		//WriteErr("%d %d %d: Null material\n",in, material.type,material.index); 
 		return terrain->defaultSprite;
 	}
+	// return subtype, type default or terrain default as available
+	// do map lookup
 	map<int,t_SpriteWithOffset>::iterator it = terrainMat->overridingMaterials.find(material.index);
 	if (it != terrainMat->overridingMaterials.end())
 	{
-		//WriteErr("%d %d %d: Got material\n",in, material.type,material.index);
 		return it->second;
 	}
-	//WriteErr("%d %d %d: Def material\n",in, material.type,material.index); 
 	if (terrainMat->defaultSprite.sheetIndex != INVALID_INDEX)
 	{
 		return terrainMat->defaultSprite;
@@ -50,17 +45,11 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<T
 }
 
 t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material){
-	//WriteErr("gfsm+\n");
-	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainFloorConfigs);
-	//WriteErr("gfsm-\n");
-	return temp;
+	return GetTerrainSpriteMap(in, material, contentLoader.terrainFloorConfigs);
 }
 
 t_SpriteWithOffset GetBlockSpriteMap(int in, t_matglossPair material){
-	//WriteErr("gbsm+\n");
-	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainBlockConfigs);
-	//WriteErr("gfsm-\n");
-	return temp;
+	return GetTerrainSpriteMap(in, material, contentLoader.terrainBlockConfigs);
 }
 
 t_SpriteWithOffset GetSpriteVegetation( TileClass type, int index)
