@@ -237,6 +237,7 @@ int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector)
 int lookupMaterialIndex(int matType, const char* strValue)
 {
 	vector<t_matgloss>* typeVector;
+	// for appropriate elements, look up subtype
 	if (matType == Mat_Wood)
 	{
 		typeVector=&(contentLoader.woodNameStrings);
