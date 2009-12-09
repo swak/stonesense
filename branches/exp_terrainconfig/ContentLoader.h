@@ -26,9 +26,8 @@ public:
   vector<CreatureConfiguration> creatureConfigs;
   vector<VegetationConfiguration> treeConfigs;
   vector<VegetationConfiguration> shrubConfigs;
-  vector<TerrainConfiguration*> terrainConfigs;
-  vector<int> terrainFloorLookup;
-  vector<int> terrainBlockLookup;
+  vector<TerrainConfiguration*> terrainFloorConfigs;
+  vector<TerrainConfiguration*> terrainBlockConfigs;
 
   vector<t_matgloss> creatureNameStrings;
   vector<t_matgloss> stoneNameStrings;

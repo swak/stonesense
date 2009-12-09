@@ -4,22 +4,17 @@
 #include "ContentLoader.h"
 
 
-t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<int>& lookupTable)
+t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<TerrainConfiguration*>& configTable)
 {
 	//WriteErr("%d %d %d: test\n",in, material.type,material.index); 
 	t_SpriteWithOffset defaultSprite = {-1,0,0,-1,ALL_FRAMES};
-	if( in >= (int)lookupTable.size() )
+	if( in >= (int)configTable.size() )
 	{
 		//WriteErr("%d %d %d (%d): No lookup\n",in, material.type,material.index,lookupTable.size()); 
 		return defaultSprite;
 	}
-	if (lookupTable[in] == INVALID_INDEX)
-	{
-		//WriteErr("%d %d %d (%d): No terrain\n",in, material.type,material.index,lookupTable.size()); 
-		return defaultSprite;
-	}
 	//WriteErr("lookup %d\n",lookupTable[in]);
-	TerrainConfiguration* terrain = contentLoader.terrainConfigs[lookupTable[in]];
+	TerrainConfiguration* terrain = configTable[in];
 	if (terrain == NULL)
 	{
 		//WriteErr("%d %d %d: Null terrain\n",in, material.type,material.index); 
@@ -56,14 +51,14 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<i
 
 t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material){
 	//WriteErr("gfsm+\n");
-	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainFloorLookup);
+	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainFloorConfigs);
 	//WriteErr("gfsm-\n");
 	return temp;
 }
 
 t_SpriteWithOffset GetBlockSpriteMap(int in, t_matglossPair material){
 	//WriteErr("gbsm+\n");
-	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainBlockLookup);
+	t_SpriteWithOffset temp = GetTerrainSpriteMap(in, material, contentLoader.terrainBlockConfigs);
 	//WriteErr("gfsm-\n");
 	return temp;
 }

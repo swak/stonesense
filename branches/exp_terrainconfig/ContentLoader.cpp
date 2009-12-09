@@ -19,9 +19,8 @@ bool ContentLoader::Load(API& DF){
 	
   //flush old config
   flushBuildingConfig(&buildingConfigs);
-  flushTerrainConfig(terrainConfigs);
-  terrainFloorLookup.clear();
-  terrainBlockLookup.clear();
+  flushTerrainConfig(terrainFloorConfigs);
+  flushTerrainConfig(terrainBlockConfigs);
   creatureConfigs.clear();
   treeConfigs.clear();
   shrubConfigs.clear();

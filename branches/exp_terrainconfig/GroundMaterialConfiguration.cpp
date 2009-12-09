@@ -42,7 +42,7 @@ void DumpGroundMaterialNamesToDisk(){
   fclose(fp);
 }
 
-void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>& lookupTable ,int basefile)
+void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<TerrainConfiguration*>& configTable ,int basefile)
 {
 	//contentError("start",elemWallFloorSprite);
 	const char* spriteIndexStr = elemWallFloorSprite->Attribute("sprite");
@@ -64,10 +64,8 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		sprite.fileIndex = loadImgFile((char*)filename);
 	}
 	
-	set<int> lookupKeys;
+	vector<int> lookupKeys;
 	
-	int newLookup=contentLoader.terrainConfigs.size();
-	//WriteErr("nL: %d\n",newLookup);
 	TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
 	for(TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
 		 elemTerrain;
@@ -81,39 +79,30 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 			continue;
 		}
 		targetElem = atoi (gameIDstr);
-		if (lookupTable.size() <= targetElem)
+		lookupKeys.push_back(targetElem);
+		if (configTable.size() <= targetElem)
 		{
-			lookupTable.resize(targetElem+1,INVALID_INDEX);
+			configTable.resize(targetElem+1,NULL);
 		}
-		if (lookupTable[targetElem]!=INVALID_INDEX)
+		if (configTable[targetElem]==NULL)
 		{
-			//WriteErr("K %d\n",lookupTable[targetElem]);
-			lookupKeys.insert(lookupTable[targetElem]);
-		}
-		else
-		{
-			lookupKeys.insert(newLookup);
-			lookupTable[targetElem]=newLookup;
-			//WriteErr("K %d\n",lookupTable[targetElem]);
-			if (contentLoader.terrainConfigs.size() == newLookup)
-			{
-				contentLoader.terrainConfigs.push_back(new TerrainConfiguration());
-			}
+			// cleaned up in flushTerrainConfig
+			configTable[targetElem] = new TerrainConfiguration();
 		}
 	}
-	//WriteErr("nL: %d %d\n",newLookup,contentLoader.terrainConfigs.size());
-	if (lookupKeys.size() == 0)
+	int elems = lookupKeys.size();
+	//WriteErr("elems: %d\n",elems);
+	if (elems == 0)
 		return; //nothing to link to
 	
 	TiXmlElement* elemMaterial = elemWallFloorSprite->FirstChildElement("material");
 	if (elemMaterial == NULL)
 	{
 		//set default terrain sprites
-		for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
+		for (int i=0 ; i < elems; i++ )
 		{
-			int index = *it;
 			//WriteErr("index: %d / %d\n", index,contentLoader.terrainConfigs.size());
-			TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
+			TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 			//if that was null we have *really* screwed up earlier
 			//only update if not set earlier
 			if (tConfig->defaultSprite.sheetIndex == INVALID_INDEX)
@@ -143,11 +132,10 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 		if (elemSubtype == NULL)
 		{
 			//WriteErr("nosub: %d\n", elemIndex);
-			for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
+			for (int i=0 ; i < elems; i++ )
 			{
-				int index = *it;
 				//WriteErr("index: %d / %d\n", index,contentLoader.terrainConfigs.size());
-				TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
+				TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 				//WriteErr("tc\n");
 				//WriteErr("tc: %d\n", tConfig);
 				//WriteErr("tcs: %d\n", tConfig->terrainMaterials.size());
@@ -183,11 +171,10 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 				continue;				
 			}
 			//WriteErr("nosub: %d\n", subtypeId);
-			for (set<int>::iterator it=lookupKeys.begin() ; it != lookupKeys.end(); it++ )
+			for (int i=0 ; i < elems; i++ )
 			{
-				int index = *it;
-				//WriteErr("index @ %d : %d / %d\n", subtypeId, index,contentLoader.terrainConfigs.size());
-				TerrainConfiguration *tConfig = contentLoader.terrainConfigs[index];
+				//WriteErr("index: %d / %d\n", index,contentLoader.terrainConfigs.size());
+				TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 				//if that was null we have *really* screwed up earlier
 				//create a new TerrainMaterialConfiguration if required
 					//make sure we have room for it first
@@ -213,6 +200,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<int>
 }
 
 bool addSingleTerrainConfig( TiXmlElement* elemRoot){
+	//WriteErr("astc+\n");
 	int basefile = INVALID_INDEX;
   const char* filename = elemRoot->Attribute("file");
 	if (filename != NULL && filename[0] != 0)
@@ -225,7 +213,7 @@ bool addSingleTerrainConfig( TiXmlElement* elemRoot){
     //parse floors
     TiXmlElement* elemFloor = elemRoot->FirstChildElement("floor");
     while( elemFloor ){
-      parseWallFloorSpriteElement( elemFloor, contentLoader.terrainFloorLookup, basefile );
+      parseWallFloorSpriteElement( elemFloor, contentLoader.terrainFloorConfigs, basefile );
       elemFloor = elemFloor->NextSiblingElement("floor");
     }
   }
@@ -233,10 +221,11 @@ bool addSingleTerrainConfig( TiXmlElement* elemRoot){
     //parse walls
     TiXmlElement* elemWall = elemRoot->FirstChildElement("block");
     while( elemWall ){
-      parseWallFloorSpriteElement( elemWall, contentLoader.terrainBlockLookup, basefile );
+      parseWallFloorSpriteElement( elemWall, contentLoader.terrainBlockConfigs, basefile );
       elemWall = elemWall->NextSiblingElement("block");
     }
   }
+  //WriteErr("astc-\n");
   return true;
 }
 
@@ -252,14 +241,7 @@ void flushTerrainConfig(vector<TerrainConfiguration*>& config)
 	}
 	
 	config.clear();
-	config.resize(currentsize,NULL);
-}
-
-void flushTerrainLookup(vector<int>& lookup)
-{
-	uint32_t currentsize=lookup.size();
-	lookup.clear();	
 	if (currentsize < MAX_BASE_TERRAIN + FAKE_TERRAIN_COUNT)
 		currentsize = MAX_BASE_TERRAIN + FAKE_TERRAIN_COUNT;
-	lookup.resize(currentsize,INVALID_INDEX);
+	config.resize(currentsize,NULL);
 }
