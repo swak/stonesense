@@ -35,21 +35,21 @@
 	<terrain value="241"/>		
 </block>
 
-<!-- else fall through to default -->
+<!-- else fall through to default - ->
 <block>
-	<!-- stone -->
+	<!-- stone - ->
 	<terrain value="237"/>
-	<!-- obs -->
+	<!-- obs - ->
 	<terrain value="238"/>
-	<!-- feat -->
+	<!-- feat - ->
 	<terrain value="239"/>
-	<!-- vein -->
+	<!-- vein - ->
 	<terrain value="240"/>
-	<!-- ice -->
+	<!-- ice - ->
 	<terrain value="245"/>
-	<!-- cons -->
+	<!-- cons - ->
 	<terrain value="518"/>
-</block>
+</block> -->
 
 <!-- stairs -->
 
