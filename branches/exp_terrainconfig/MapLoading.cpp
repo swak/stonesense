@@ -108,9 +108,9 @@ int CalculateRampType(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment)
 	return rampblut[ramplookup];
 }
 
-bool isBlockOnVisisbleEdgeOfSegment(WorldSegment* segment, Block* b)
+bool isBlockOnVisibleEdgeOfSegment(WorldSegment* segment, Block* b)
 {
-	if(b->z == segment->z + segment->sizez - 1) 
+	if(b->z == segment->z + segment->sizez - 2) 
 		return true;
 	
 	if (DisplayedRotation == 0 && 
@@ -253,7 +253,7 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
     isHidden &= !config.show_hidden_blocks;
     bool shouldBeIncluded = (!isOpenTerrain(t) && !isHidden) || b->water.index ;
     //include hidden blocks as shaded black 
-    if(config.shade_hidden_blocks && isHidden && isBlockOnVisisbleEdgeOfSegment(&segment, b))
+    if(config.shade_hidden_blocks && isHidden && isBlockOnVisibleEdgeOfSegment(&segment, b))
     {
       b->wallType = 0;
       b->building.info.type = BUILDINGTYPE_BLACKBOX;
@@ -323,7 +323,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   if( IsConnectedToDF() == false || DF.InitMap() == false ){
     DisconnectFromDF();
     //return new blank segment
-		return new WorldSegment(x,y,z,sizex,sizey,sizez);
+		return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
   }
   
   //read memory info
@@ -402,7 +402,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 			int32_t lastTileInCellY = (celly+1) * CELLEDGESIZE - 1;
 			int32_t lastTileToReadY = min<uint32_t>(lastTileInCellY, y+sizey-1);
 			
-			for(int lz=z-sizez+1; lz <= z; lz++){
+			for(int lz=z-sizez; lz <= z; lz++){
 				//load the blcoks from this cell to the map segment
 				ReadCellToSegment(DF, *segment, cellx, celly, lz, 
 													firstTileToReadX, firstTileToReadY, lastTileToReadX, lastTileToReadY,
