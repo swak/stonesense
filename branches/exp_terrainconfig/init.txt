@@ -3,7 +3,7 @@ Please note, these keywords are case sensitive for now.
 
 Sets the width and height of the application in pixels.
 [WIDTH:1100]
-[HEIGHT:900]
+[HEIGHT:800]
 
 
 To launch the application in windowed mode, set this to YES. 
@@ -12,7 +12,6 @@ using WIDTH and HEIGHT for resolution. Try and use resolutions compatible
 with your drivers, or the program will still load in window mode.
 [WINDOWED:YES]
 
-[TRACK_CENTER:YES]
 
 These two options set how large the cube laoaded from Dwarf Fortress is.
 Each entry expects the number of tiles to load.
@@ -50,5 +49,5 @@ Shows all creatures, for debuging. Living, dead, kidnapped, caged, EVERY single 
 [ALLCREATURES:NO]
 
 
-
-[VERBOSE_LOGGING:NO]
+Follow the center of the DF window, rather than scale to the edges.
+[TRACK_CENTER:YES]
