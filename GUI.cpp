@@ -358,6 +358,7 @@ void loadGraphicsFromDisk(){
 	IMGRampSheet = load_bitmap_withWarning("ramps.png");	
 }
 void destroyGraphics(){
+	/* TODO these should really be merged in with the main imagefile reading routine */
   destroy_bitmap(IMGFloorSheet);
   destroy_bitmap(IMGObjectSheet);
   destroy_bitmap(IMGCreatureSheet);
