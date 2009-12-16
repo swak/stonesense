@@ -21,20 +21,6 @@ VegetationConfiguration::~VegetationConfiguration(void)
 {
 }
 
-int TranslatePlantName(const char* plantName, vector<t_matgloss>& plantNames ){
-	if (plantName == NULL)
-	{
-		return INVALID_INDEX;	
-	}
-  uint32_t numPlants = (uint32_t)plantNames.size();
-  for(uint32_t i=0; i < numPlants; i++){
-    if (strcmp(plantName,plantNames[i].id) == 0)
-    	return i;
- }
- WriteErr("Unable to match plant '%s' to anything in-game\n", plantName);
- return INVALID_INDEX;
-}
-
 bool addSingleVegetationConfig( TiXmlElement* elemRoot,  vector<VegetationConfiguration>* vegetationConfigs, vector<t_matgloss>& plantNames )
 {
   const char* sheetIndexStr;
@@ -48,7 +34,7 @@ bool addSingleVegetationConfig( TiXmlElement* elemRoot,  vector<VegetationConfig
   const char* filename = elemRoot->Attribute("file");
 	if (filename != NULL && filename[0] != 0)
 	{
-	  	basefile = loadImgFile((char*)filename);
+	  	basefile = loadConfigImgFile((char*)filename, elemRoot);
 	}
 	
 	//kinda round about- looking to needing to shift the lot into the plant elem
@@ -57,7 +43,7 @@ bool addSingleVegetationConfig( TiXmlElement* elemRoot,  vector<VegetationConfig
   TiXmlElement* elemTree;
   for (elemTree = elemRoot->FirstChildElement("plant");
   	elemTree; elemTree = elemTree->NextSiblingElement("plant") ){
-  	int gameID = TranslatePlantName(elemTree->Attribute("gameID"),plantNames);
+  	int gameID = lookupIndexedType(elemTree->Attribute("gameID"),plantNames);
   	if (gameID == INVALID_INDEX)
 	  	continue;
     const char* deadstr = elemTree->Attribute("dead");
@@ -80,30 +66,10 @@ bool addSingleVegetationConfig( TiXmlElement* elemRoot,  vector<VegetationConfig
 
   return true;
 }
-
-/*bool addCreaturesConfig( TiXmlElement* elemRoot, vector<CreatureConfiguration>* knownCreatures ){
-  int basefile = -1;
-  const char* filename = elemRoot->Attribute("file");
-  if (filename != NULL && filename[0] != 0)
-  {
-	basefile = loadImgFile((char*)filename);
-  } 
-  TiXmlElement* elemCreature = elemRoot->FirstChildElement("creature");
-  if (elemCreature == NULL)
-  {
-     contentError("No creatures found",elemRoot);
-     return false;
-  }
-  while( elemCreature ){
-	addSingleCreatureConfig(elemCreature,knownCreatures,basefile );
-	elemCreature = elemCreature->NextSiblingElement("creature");
-  }
-  return true;
-}*/
 	
 t_SpriteWithOffset getVegetationSprite(vector<VegetationConfiguration>& vegetationConfigs,int index,bool live,bool grown)
 {
-	int vcmax = vegetationConfigs.size();
+	int vcmax = (int)vegetationConfigs.size();
 	for (int i=0;i<vcmax;i++)
 	{
 		VegetationConfiguration* current = &(vegetationConfigs[i]);

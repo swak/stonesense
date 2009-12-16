@@ -35,7 +35,6 @@ BITMAP* IMGFloorSheet;
 BITMAP* IMGObjectSheet;
 BITMAP* IMGCreatureSheet; 
 BITMAP* IMGRampSheet; 
-BITMAP* IMGRamptopSheet; 
 BITMAP* buffer = 0;
 vector<BITMAP*> IMGFilelist;
 vector<string*> IMGFilenames;
@@ -139,7 +138,7 @@ void drawDebugCursorAndInfo(BITMAP* target){
     point.x - SPRITEWIDTH/2, point.y - (WALLHEIGHT), SPRITEWIDTH, SPRITEHEIGHT);
 
   //get block info
-  Block* b = viewedSegment->getBlockLocal( debugCursor.x, debugCursor.y, viewedSegment->sizez - 1);
+  Block* b = viewedSegment->getBlockLocal( debugCursor.x, debugCursor.y, viewedSegment->sizez-2);
   int i = 10;
   textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, "Block 0x%x", b);
   if(!b) return;
@@ -147,12 +146,35 @@ void drawDebugCursorAndInfo(BITMAP* target){
   textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
     "Coord:(%i,%i,%i)", b->x,b->y,b->z);
 
-  textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
-    "wall:%i floor:%i  Material:%s(%i)", b->wallType, b->floorType, 
-    (b->materialIndex != INVALID_INDEX ? v_stonetypes[b->materialIndex].id: ""),
-    b->materialIndex);
+  int ttype;
+  char* tform = NULL;
+  if (b->floorType>0)
+  {
+	ttype=b->floorType;	  
+	tform="floor";
+  }
+  else if (b->wallType > 0)
+  {
+	ttype=b->wallType;	  
+	tform="wall";	 
+  }
+  else if (b->ramp.type > 0)
+  {
+	ttype=b->ramp.type;	  
+	tform="ramp";	 
+  }
+  else if (b->stairType > 0)
+  {
+	ttype=b->stairType;	  
+	tform="stair";	 
+  }
     
-    textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+  if (tform != NULL)
+  {
+  	textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+    	"%s:%i Material:%i/%i", tform, ttype, b->material.type, b->material.index);
+  } 
+  textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
     "Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
 
   if(b->water.index > 0 || b->tree.index != 0)
@@ -178,6 +200,9 @@ void drawDebugCursorAndInfo(BITMAP* target){
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
       "flag1: %s ", strCreature );
   }
+  //basecon
+  //textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+   //   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
 }
 
 void DrawMinimap(BITMAP* target){
@@ -275,6 +300,8 @@ void DoSpriteIndexOverlay(){
 	index++;
 	if (index >= max)
 		index = -1;
+	//debounce f10
+	while(key[KEY_F10]) rest(50);
   }
   //redraw screen again
   paintboard();
@@ -353,15 +380,14 @@ void loadGraphicsFromDisk(){
 	IMGObjectSheet = load_bitmap_withWarning("objects.png");
 	IMGFloorSheet = load_bitmap_withWarning("floors.png");
 	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
-	IMGRampSheet = load_bitmap_withWarning("ramps.png");
-	IMGRamptopSheet = load_bitmap_withWarning("ramptops.png");	
+	IMGRampSheet = load_bitmap_withWarning("ramps.png");	
 }
 void destroyGraphics(){
+	/* TODO these should really be merged in with the main imagefile reading routine */
   destroy_bitmap(IMGFloorSheet);
   destroy_bitmap(IMGObjectSheet);
   destroy_bitmap(IMGCreatureSheet);
   destroy_bitmap(IMGRampSheet);
-  destroy_bitmap(IMGRamptopSheet);
 }
 
 //delete and clean out the image files
@@ -395,6 +421,7 @@ int loadImgFile(char* filename)
 	}
 	IMGFilelist.push_back(load_bitmap_withWarning(filename));
 	IMGFilenames.push_back(new string(filename));
+	LogVerbose("New image: %s\n",filename);
   return (int)IMGFilelist.size() - 1;
 }
 

@@ -115,6 +115,22 @@ void parseConfigLine( string line ){
     string result = parseStrFromLine( "TRACK_CENTER", line );
     config.track_center = (result == "YES");
   }
+  if( line.find("FOLLOW_DF_SCREEN") != -1){
+    string result = parseStrFromLine( "FOLLOW_DF_SCREEN", line );
+    config.follow_DFscreen = (result == "YES");
+  }
+  if( line.find("SHOW_CREATURE_NAMES") != -1){
+    string result = parseStrFromLine( "SHOW_CREATURE_NAMES", line );
+    config.show_creature_names = (result == "YES");
+  }
+  if( line.find("SHOW_OSD") != -1){
+    string result = parseStrFromLine( "SHOW_OSD", line );
+    config.show_osd = (result == "YES");
+  }
+	if( line.find("INTRO") != -1){
+    string result = parseStrFromLine( "INTRO", line );
+    config.show_intro = !(result == "OFF");
+  }
   if( line.find("FOG_RED") != -1){
     int value = parseIntFromLine( "FOG_RED", line);
     if(value > 255) value = 255;

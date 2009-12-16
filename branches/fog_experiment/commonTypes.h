@@ -48,6 +48,7 @@ typedef struct {
   int screenWidth;
   int screenHeight;
   bool Fullscreen;
+	bool show_intro;
   int fogr;
   int fogg;
   int fogb;

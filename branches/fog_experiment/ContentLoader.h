@@ -7,13 +7,13 @@
 
 class ContentLoader{
 private:
-  bool parseContentIndexFile( char* filepath, char* homefolder  );
-  bool parseContentXMLFile( char* filepath, char* homefolder  );
-  bool parseBuildingContent( TiXmlElement* elemRoot, char* homefolder  );
-  bool parseCreatureContent( TiXmlElement* elemRoot, char* homefolder  );
-  bool parseTerrainContent ( TiXmlElement* elemRoot, char* homefolder  );
-  bool parseTreeContent( TiXmlElement* elemRoot, char* homefolder  );
-  bool parseShrubContent( TiXmlElement* elemRoot, char* homefolder  );
+  bool parseContentIndexFile( char* filepath );
+  bool parseContentXMLFile( char* filepath );
+  bool parseBuildingContent( TiXmlElement* elemRoot );
+  bool parseCreatureContent( TiXmlElement* elemRoot );
+  bool parseTerrainContent ( TiXmlElement* elemRoot );
+  bool parseTreeContent( TiXmlElement* elemRoot );
+  bool parseShrubContent( TiXmlElement* elemRoot );
 
   bool translationComplete;
 public:
@@ -21,20 +21,20 @@ public:
   ~ContentLoader(void);
 
   bool Load(API& DF);
-  void TranslateConfigsFromDFAPI( API& DF );
-  bool Translated(){ return translationComplete; }
   
   vector<BuildingConfiguration> buildingConfigs;
   vector<CreatureConfiguration> creatureConfigs;
   vector<VegetationConfiguration> treeConfigs;
   vector<VegetationConfiguration> shrubConfigs;
-  vector<GroundMaterialConfiguration*> groundConfigs;
+  vector<TerrainConfiguration*> terrainFloorConfigs;
+  vector<TerrainConfiguration*> terrainBlockConfigs;
 
   vector<t_matgloss> creatureNameStrings;
+  vector<t_matgloss> stoneNameStrings;
   vector<t_matgloss> woodNameStrings;
+  vector<t_matgloss> metalNameStrings;
   vector<t_matgloss> plantNameStrings;
   vector<string> buildingNameStrings;
-  vector<preparseGroundMaterialConfiguration> unparsedGroundConfigs;
 };
 
 //singleton instance
@@ -43,3 +43,8 @@ extern ContentLoader contentLoader;
 extern const char* getDocument(TiXmlNode* element);
 extern void contentError(const char* message, TiXmlNode* element);
 extern char getAnimFrames(const char* framestring);
+extern int loadConfigImgFile(const char* filename, TiXmlElement* referrer);
+int lookupMaterialType(const char* strValue);
+int lookupMaterialIndex(int matType, const char* strValue);
+int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector);
+

@@ -79,7 +79,7 @@ void LogVerbose(char* msg, ...){
 void correctBlockForSegmetOffset(int32_t& x, int32_t& y, int32_t& z){
 	x -= viewedSegment->x;
 	y -= viewedSegment->y; //DisplayedSegmentY;
-  z -= viewedSegment->z + viewedSegment->sizez - 1;
+  z -= viewedSegment->z + viewedSegment->sizez - 2; // loading one above the top of the displayed segment for block rules
 }
 
 
@@ -139,6 +139,7 @@ int main(void)
   config.segmentSize.z = DEFAULT_SEGMENTSIZE_Z;
   config.show_creature_names = true;
   config.show_osd = true;
+	config.show_intro = true;
   config.track_center = false;
   config.animation_step = 300;
   config.follow_DFscreen = false;
@@ -173,38 +174,42 @@ int main(void)
 	}
   set_alpha_blender();
 
-
-#ifdef RELEASE
-  textprintf_centre(screen, font, config.screenWidth/2, 50, makecol(255,255,0), "Welcome to Stonesense!");
-	textprintf_centre(screen, font, config.screenWidth/2, 60, 0xffffff, "Stonesense is an isometric viewer for Dwarf Fortress.");
-
-
-	textprintf_centre(screen, font, config.screenWidth/2, 80, 0xffffff, "Programming, Jonas Ask and Kris Parker");
-	textprintf_centre(screen, font, config.screenWidth/2, 90, 0xffffff, "Lead graphics designer, Dale Holdampf");
-
-  textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-130, 0xffffff, "Contributors:");
-	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-120, 0xffffff, "7¢ Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
-  textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-110, 0xffffff, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
-  textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-100, 0xffffff, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
-  textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-90, 0xffffff, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
-
-	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-70, 0xffffff, "With special thanks to peterix for making dfHack");
-
-	//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
-  textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-40, 0xffffff, "Press F9 to continue");
-
-#endif
   loadGraphicsFromDisk();
-#ifdef RELEASE
-	while(!key[KEY_F9]) readkey();
-#endif
+	if( config.show_intro ){
+		//centred splash image
+		{
+			BITMAP* SplashImage = load_bitmap_withWarning("splash.png");
+			masked_blit(SplashImage, screen, 0, 0,
+	  			(screen->w - SplashImage->w)/2,
+	  			(screen->h - SplashImage->h)/2,
+	  			SplashImage->w, SplashImage->h);
+			destroy_bitmap(SplashImage);
+		}
+	  
+			textprintf_centre(screen, font, config.screenWidth/2, 50, makecol(255,255,0), "Welcome to Stonesense!");
+		textprintf_centre(screen, font, config.screenWidth/2, 60, 0xffffff, "Stonesense is an isometric viewer for Dwarf Fortress.");
+		
+		textprintf_centre(screen, font, config.screenWidth/2, 80, 0xffffff, "Programming, Jonas Ask and Kris Parker");
+		textprintf_centre(screen, font, config.screenWidth/2, 90, 0xffffff, "Lead graphics designer, Dale Holdampf");
+		
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-130, 0xffffff, "Contributors:");
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-120, 0xffffff, "7¢ Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-110, 0xffffff, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-100, 0xffffff, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-90, 0xffffff, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
+
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-70, 0xffffff, "With special thanks to peterix for making dfHack");
+
+		//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-40, 0xffffff, "Press F9 to continue");
+		
+		//pause till key is pressed
+		while(!key[KEY_F9]) readkey();
+		clear( screen );
+	}
 
 	//upper left corners
 	DisplayedSegmentX = DisplayedSegmentY = DisplayedSegmentZ = 0;
-	//Middle of fort
-	//DisplayedSegmentX = 131; DisplayedSegmentY = 100;DisplayedSegmentZ = 17;
-	//Two trees and a shrub
-	//DisplayedSegmentX = 114; DisplayedSegmentY = 124;DisplayedSegmentZ = 15;
 
 	//ramps
 	//DisplayedSegmentX = 238; DisplayedSegmentY = 220;DisplayedSegmentZ = 23;
@@ -215,14 +220,10 @@ int main(void)
   //ford. desert map
   //sDisplayedSegmentX = 78; DisplayedSegmentY = 123;DisplayedSegmentZ = 15;
 
-  DisplayedSegmentX = 155; DisplayedSegmentY = 177;DisplayedSegmentZ = 18;
+  DisplayedSegmentX = 125; DisplayedSegmentY = 125;DisplayedSegmentZ = 18;
 
   //DisplayedSegmentX = 242; DisplayedSegmentY = 345;DisplayedSegmentZ = 15;
 
-
-  #ifdef RELEASE
-  DisplayedSegmentX = 0; DisplayedSegmentY = 0;DisplayedSegmentZ = 18;
-  #endif
 
   //while(1)
 	reloadDisplayedSegment();

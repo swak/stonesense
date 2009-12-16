@@ -8,13 +8,14 @@
 #include "dfhack/library/tinyxml/tinyxml.h"
 
 
-CreatureConfiguration::CreatureConfiguration(int gameID, int professionID, const char* professionStr, enumCreatureSex sex, enumCreatureSpecialCases special, t_SpriteWithOffset &sprite)
+CreatureConfiguration::CreatureConfiguration(int gameID, int professionID, const char* professionStr, enumCreatureSex sex, enumCreatureSpecialCases special, t_SpriteWithOffset &sprite, int shadow)
 {
   memset(this, 0, sizeof(CreatureConfiguration) );
   this->sprite = sprite;
   this->gameID = gameID;
   this->professionID = professionID;
   this->sex = sex;
+  this->shadow = shadow;
   
   if(professionStr){
     int len = (int) strlen(professionStr);
@@ -47,64 +48,6 @@ void DumpProfessionsToDisk(){
   fclose(fp);
 }
 
-/*
-void TranslateCreatureNames(vector<CreatureConfiguration>& configs, vector<t_matgloss>& creatureNames ){
-  uint32_t numCreatures = (uint32_t)creatureNames.size();
-  //uint32_t numProfessions = dfMemoryInfo.P
-  //for each config, find it's integer ID
-  for(uint32_t i=0; i < configs.size(); i++){
-    char* ptr = configs[i].gameIDstr;
-    uint32_t j;
-    for(j=0; j < numCreatures; j++){
-      if( strcmp( ptr, creatureNames[j].id) == 0){
-        //assign ID
-        configs[i].gameID = j; 
-
-        //jump out of ID lookup loop
-        break;
-      }
-    }
-    if(j >= creatureNames.size())
-      WriteErr("Unable to match creature '%s' to anything in-game\n", ptr);
-    ptr = configs[i].professionstr;
-    if(!configs[i].customProf && strcmp(ptr, "") != 0 ){
-      string proffStr;
-      for(j=0; (proffStr = dfMemoryInfo.getProfession(j)) != "" ; j++){
-        if( proffStr.compare( ptr ) == 0){
-          //assign ID
-          configs[i].professionID = j; 
-
-          //jump out of proffessionID lookup loop
-          break;
-        }
-      }
-      if(proffStr == ""){
-        WriteErr("Unable to match Profession '%s' to anything in-game\n", ptr);
-        configs[i].professionID = INT_MAX; //if it is left at INVALID_INDEX, the condition is ignored entierly.
-      }
-    }
-  }
-}*/
-
-int translateCreature(const char* currentName, vector<t_matgloss>& creatureNames )
-{
-	if (currentName == NULL || currentName[0]==0)
-		return INVALID_INDEX;
-	uint32_t numCreatures = (uint32_t)creatureNames.size();
-    uint32_t j;
-    for(j=0; j < numCreatures; j++){
-      if( strcmp( currentName, creatureNames[j].id) == 0){
-        //assign ID
-        return j;
-
-        //jump out of ID lookup loop
-        break;
-      }
-    }
-	WriteErr("Unable to match creature '%s' to anything in-game\n", currentName);
-	return INVALID_INDEX;
-}
-
 int translateProfession(const char* currentProf)
 {
 	if (currentProf == NULL || currentProf[0]==0)
@@ -124,7 +67,7 @@ int translateProfession(const char* currentProf)
 }
 
 bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<CreatureConfiguration>* knownCreatures, int basefile ){
-  int gameID = translateCreature(elemCreature->Attribute("gameID"),contentLoader.creatureNameStrings);
+  int gameID = lookupIndexedType(elemCreature->Attribute("gameID"),contentLoader.creatureNameStrings);
   if (gameID == INVALID_INDEX)
   	return false;
   const char* sheetIndexStr;
@@ -133,10 +76,18 @@ bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<CreatureConfigu
   sprite.x=0;
   sprite.y=0;
   sprite.animFrames=ALL_FRAMES;
+  int baseShadow = DEFAULT_SHADOW;
+  const char* shadowStr = elemCreature->Attribute("shadow");
+  if (shadowStr != NULL && shadowStr[0] != 0)
+  {
+	baseShadow = atoi( shadowStr );	  
+  }
+  if (baseShadow < 0 || baseShadow > MAX_SHADOW)
+  	baseShadow = DEFAULT_SHADOW;
   const char* filename = elemCreature->Attribute("file");
 	if (filename != NULL && filename[0] != 0)
 	{
-	  	sprite.fileIndex = loadImgFile((char*)filename);
+	  	sprite.fileIndex = loadConfigImgFile((char*)filename,elemCreature);
 	}
   TiXmlElement* elemVariant = elemCreature->FirstChildElement("variant");
   while( elemVariant ){
@@ -177,10 +128,19 @@ bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<CreatureConfigu
     sprite.animFrames = getAnimFrames(elemVariant->Attribute("frames"));
 	if (sprite.animFrames == 0)
 		sprite.animFrames = ALL_FRAMES;
-    
+
+	int shadow = baseShadow;
+	const char* shadowStr = elemVariant->Attribute("shadow");
+	if (shadowStr != NULL && shadowStr[0] != 0)
+	{
+		shadow = atoi( shadowStr );	  
+	}
+	if (shadow < 0 || shadow > MAX_SHADOW)
+		shadow = baseShadow;
+		    
     //create profession config
     sprite.sheetIndex=atoi(sheetIndexStr);
-    CreatureConfiguration cre( gameID, professionID, customStr , cresex, crespec, sprite );
+    CreatureConfiguration cre( gameID, professionID, customStr , cresex, crespec, sprite, shadow);
     //add a copy to known creatures
     knownCreatures->push_back( cre );
 
@@ -188,12 +148,13 @@ bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<CreatureConfigu
   }
 
   //create default config
+  baseShadow;
   sheetIndexStr = elemCreature->Attribute("sheetIndex");
   sprite.animFrames = ALL_FRAMES;
   if (sheetIndexStr)
   {
 	sprite.sheetIndex = atoi( sheetIndexStr );
-    CreatureConfiguration cre( gameID, INVALID_INDEX, NULL, eCreatureSex_NA, eCSC_Any, sprite );
+    CreatureConfiguration cre( gameID, INVALID_INDEX, NULL, eCreatureSex_NA, eCSC_Any, sprite, baseShadow);
   	//add a copy to known creatures
     knownCreatures->push_back( cre );
   }
@@ -205,7 +166,7 @@ bool addCreaturesConfig( TiXmlElement* elemRoot, vector<CreatureConfiguration>* 
   const char* filename = elemRoot->Attribute("file");
   if (filename != NULL && filename[0] != 0)
   {
-	basefile = loadImgFile((char*)filename);
+	basefile = loadConfigImgFile((char*)filename,elemRoot);
   } 
   TiXmlElement* elemCreature = elemRoot->FirstChildElement("creature");
   if (elemCreature == NULL)

@@ -149,39 +149,70 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
   // x,y,z print pricess
   int32_t vsxmax = viewedSegment->sizex-1;
   int32_t vsymax = viewedSegment->sizey-1;
-  int32_t vszmax = viewedSegment->sizez;
-  if (!level)
-  level = create_bitmap(target->w, target->h);
-  for(int32_t vsz=0; vsz < vszmax; vsz++){
-    clear_to_color(level, makeacol(255, 0, 255, 0));
-    for(int32_t vsx=1; vsx < vsxmax; vsx++){
-        for(int32_t vsy=1; vsy < vsymax; vsy++){
-              Block *b = getBlockLocal(vsx,vsy,vsz);
-				if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
+  int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
+	if (!(config.foga == 0))
+	{
+		if (!level)
+		{
+			level = create_bitmap(target->w, target->h);
+		}
+		for(int32_t vsz=0; vsz < vszmax; vsz++)
+		{
+			clear_to_color(level, makeacol(255, 0, 255, 0));
+			for(int32_t vsx=1; vsx < vsxmax; vsx++)
+			{
+				for(int32_t vsy=1; vsy < vsymax; vsy++)
 				{
-				    Block* bLow = getBlockLocal(vsx,vsy,vsz-1);
-				    if (bLow != NULL)
-				    {
-						bLow->DrawRamptops(level);
+					Block *b = getBlockLocal(vsx,vsy,vsz);
+					if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
+					{
+						Block* bLow = getBlockLocal(vsx,vsy,vsz-1);
+						if (bLow != NULL)
+						{
+							bLow->DrawRamptops(level);
+						}
+					}
+					if (b)
+					{
+						b->Draw(level);
+						//while(!key[KEY_SPACE]) ;
+						//rest(100);
 					}
 				}
-              if (b)
-              {
-                  b->Draw(level);
-                  //while(!key[KEY_SPACE]) ;
-                  //rest(100);
-              }
-          }
-      }
-      if ((vszmax > 1) || config.fogb > 0)
-      {
-      set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
-      draw_lit_sprite(target, level, 0, 0, (((vszmax-1) - vsz) *config.foga / (vszmax-1)));
-      }
-      else
-      draw_sprite(target, level, 0, 0);
-    }
+			}
+			set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
+			draw_lit_sprite(target, level, 0, 0, (((vszmax-1) - vsz) *config.foga / (vszmax-1)));
+		}
+	}
+	else
+	{
+		for(int32_t vsz=0; vsz < vszmax; vsz++)
+		{
+			for(int32_t vsx=1; vsx < vsxmax; vsx++)
+			{
+				for(int32_t vsy=1; vsy < vsymax; vsy++)
+				{
+					Block *b = getBlockLocal(vsx,vsy,vsz);
+					if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
+					{
+						Block* bLow = getBlockLocal(vsx,vsy,vsz-1);
+						if (bLow != NULL)
+						{
+							bLow->DrawRamptops(target);
+						}
+					}
+					if (b)
+					{
+						b->Draw(target);
+						//while(!key[KEY_SPACE]) ;
+						//rest(100);
+					}
+				}
+			}
+		}
+	}
 }
+
 /*
 void WorldSegment::drawAllBlocks(BITMAP* target){
     // x,y,z print pricess
