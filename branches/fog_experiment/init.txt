@@ -57,7 +57,7 @@ Follow the center of the DF window, rather than scale to the edges.
 Follow DF window is on when Stonesense launches.
 [FOLLOW_DF_SCREEN:YES]
 
-Fog color, and alpha at the bottom z-level.
+Fog color, and alpha at the bottom z-level. setting the alpha to 0 disables fog, for a slight performance increase.
 [FOG_RED:95]
 [FOG_GREEN:95]
 [FOG_BLUE:160]
