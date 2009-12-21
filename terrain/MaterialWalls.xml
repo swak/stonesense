@@ -531,9 +531,8 @@
 	<!-- wall -->
 	<terrain value= 265 />
 	<material value="Stone">
-		<subtype value="SILTY_CLAY"/>
 		<subtype value="PELAGIC_CLAY"/>
-		<subtype value="CLAY_LOAM" />
+		<subtype value="SILTY_CLAY"/>
 		<subtype value="SANDY_CLAY"/>
 		<subtype value="CLAY"/>
 	</material>

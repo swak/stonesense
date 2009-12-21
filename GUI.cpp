@@ -31,6 +31,7 @@ int MiniMapSegmentWidth =0;
 int MiniMapSegmentHeight =0;
 double oneBlockInPixels = 0;
 
+BITMAP* IMGBloodSheet;
 BITMAP* IMGObjectSheet;
 BITMAP* IMGCreatureSheet; 
 BITMAP* IMGRampSheet; 
@@ -59,6 +60,7 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
  
 }
 
+// Why are these pointers?
 void pointToScreen(int *inx, int *iny, int inz){
   static int offx = config.screenWidth / 2;
   static int offy = 50-(BLOCKHEIGHT * config.lift_segment_offscreen);
@@ -382,11 +384,13 @@ BITMAP* load_bitmap_withWarning(char* path){
 void loadGraphicsFromDisk(){
   register_png_file_type();
 	IMGObjectSheet = load_bitmap_withWarning("objects.png");
+	IMGBloodSheet = load_bitmap_withWarning("gibs.png");
 	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
 	IMGRampSheet = load_bitmap_withWarning("ramps.png");	
 }
 void destroyGraphics(){
 	/* TODO these should really be merged in with the main imagefile reading routine */
+	destroy_bitmap(IMGBloodSheet);
   destroy_bitmap(IMGObjectSheet);
   destroy_bitmap(IMGCreatureSheet);
   destroy_bitmap(IMGRampSheet);
