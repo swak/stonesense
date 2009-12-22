@@ -134,10 +134,6 @@
 	<terrain value= 236 />
 	<!-- below ramp -->
 	<terrain value= 241 />
-	<!-- ashes -->
-	<terrain value= 242 />
-	<terrain value= 243 />
-	<terrain value= 244 />
 	<!-- furrowed -->
 	<terrain value= 261 />	
 	<!-- wall -->
@@ -152,6 +148,15 @@
 	<terrain value= 357 />
 	<terrain value= 358 />
 	<terrain value= 359 />
+</floor>
+
+<!-- ashes -->
+<floor sprite= 30 >
+	<terrain value= 242 />
+</floor>
+<floor sprite= 29 >
+	<terrain value= 243 />
+	<terrain value= 244 />
 </floor>
 
 <!-- hfspit -->
