@@ -24,6 +24,8 @@ public:
     uint32_t memoryNeeded = sizex * sizey * sizez * sizeof(Block*);
     blocksAsPointerVolume = (Block**) malloc( memoryNeeded );
     memset(blocksAsPointerVolume, 0, memoryNeeded);
+
+	ShadowMap = (bool **)malloc( sizex * sizey * sizeof(bool) );
 	}
 
   ~WorldSegment(){
@@ -34,6 +36,8 @@ public:
     blocks.clear();
     if (level)
     	destroy_bitmap(level);
+
+	delete [] ShadowMap;
   }
 
   void Dispose(void){
@@ -51,4 +55,6 @@ public:
   void addBlock(Block* b);
   void drawAllBlocks(BITMAP* target);
   bool CoordinateInsideSegment(uint32_t x, uint32_t y, uint32_t z);
+
+  bool **ShadowMap;
 };

@@ -7,7 +7,6 @@
 #include "WorldSegment.h"
 #include "BlockFactory.h"
 #include "SpriteCache.h"
-#include "Decoration.h"
 
 #include "dfhack/library/DFTypes.h"
 

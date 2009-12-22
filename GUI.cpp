@@ -169,7 +169,7 @@ void drawDebugCursorAndInfo(BITMAP* target){
 	ttype=b->stairType;	  
 	tform="stair";	 
   }
-    
+
   if (tform != NULL)
   {
 	  const char* matName = lookupMaterialTypeName(b->material.type);
@@ -180,6 +180,19 @@ void drawDebugCursorAndInfo(BITMAP* target){
   } 
   textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
     "Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
+
+  textprintf( target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+	  "debris1: %i  debris2: %i  debris3: %i  debris4: %i  debris5: %i",
+	  b->occ.bits.debris1, b->occ.bits.debris2, b->occ.bits.debris3, 
+	  b->occ.bits.debris4, b->occ.bits.debris5 );
+
+  textprintf( target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+	  "slime: %i  slime2: %i  item: %i  unit: %i  unit_grounded: %i", 
+	  b->occ.bits.slime, b->occ.bits.slime2, b->occ.bits.item, b->occ.bits.unit, 
+	  b->occ.bits.unit_grounded );
+
+  textprintf( target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF,
+	  "Darken Flag: %i", b->Darken );
 
   if(b->water.index > 0 || b->tree.index != 0)
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
