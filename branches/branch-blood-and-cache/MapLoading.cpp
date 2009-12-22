@@ -226,6 +226,11 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
     
     b->occ = occupancies[lx][ly];
 
+	if( !designations[lx][ly].bits.skyview || !designations[lx][ly].bits.light )
+		b->Darken = true;
+	else
+		b->Darken = false;
+
     //liquids
 		if(designations[lx][ly].bits.flow_size > 0){
 			b->water.type  = designations[lx][ly].bits.liquid_type;

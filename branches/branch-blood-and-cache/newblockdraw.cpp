@@ -35,7 +35,7 @@ BITMAP *onDemandBlock ( Block *b, t_SpriteWithOffset *sprite, tileTypes type )
 	o.building = o.item = o.unit = o.unit_grounded = false;
 
 	// if there are no renderable FX on this tile, tell draw to use unmodified tile
-	if( *((unsigned int *)&o) < 1 )
+	if( *((unsigned int *)&o) < 1 && b->Darken == false)
 		return null;
 
 	k.occupancy = *((unsigned int *)&o);
@@ -142,6 +142,26 @@ BITMAP *onDemandBlock ( Block *b, t_SpriteWithOffset *sprite, tileTypes type )
 		}
 	}
 
+	// do floor lighting last
+	if( type == floor && b->Darken )
+	{
+		tmpBmp = create_bitmap( TILEWIDTH, targetHeight );
+		clear_to_color( tmpBmp, makecol( 255, 0, 255) );
+		masked_blit( 
+			( sprite->fileIndex != -1 ? getImgFile( sprite->fileIndex ) : IMGObjectSheet ),
+			tmpBmp,
+			TILEWIDTH * (sprite->sheetIndex % SPRITEWIDTH),
+			FLOORHEIGHT * (sprite->sheetIndex / SPRITEHEIGHT),
+			0,0,
+			TILEWIDTH, targetHeight);
+
+		clear_to_color( backBmp, makecol( 255, 0, 255 ) );
+		masked_blit( IMGObjectSheet, backBmp, 6 * TILEWIDTH, 0, 0, 0, TILEWIDTH, SPRITEHEIGHT );
+
+		set_multiply_blender( 255, 255, 255, 64 );
+		draw_trans_sprite( tmpBmp, backBmp, 0, 0 );
+	}
+
 	destroy_bitmap(backBmp);
 
 	if(tmpBmp == null)
@@ -186,7 +206,7 @@ void drawFloor ( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
 
 			// handle ondemand tile generation stuff for occupancy.
 			// if no FX are required, it'll still do the fast draw
-			if( *(((unsigned int *)&b->occ.bits)) > 0 )
+			if( *(((unsigned int *)&b->occ.bits)) > 0 || b->Darken )
 				tmpBmp = onDemandBlock( b, &sprite, floor );
 
 			if(tmpBmp != NULL)
@@ -375,7 +395,54 @@ void drawWallBlood( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
 
 void drawWallLighting( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
 {
+	int offset = -1;
 
+	if( b->Darken )
+	{
+		Block *_E = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eRight ),
+			*_S = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eDown );
+
+		offset = 6;
+
+		if( _E != null && _E->Darken )
+		{
+			if( _S != null && _S->Darken )
+				offset = 5;
+			else
+				offset = 3;
+		}
+		else if( _S != null && _S->Darken )
+		{
+			offset = 4;
+		}
+	}
+	else
+	{
+		Block *_E = b->ownerSegment->getBlock( b->x + 1, b->y, b->z ),
+		*_S = b->ownerSegment->getBlock( b->x, b->y + 1, b->z );
+
+		if( _E != null && _E->Darken )
+		{
+			if( _S != null && _S->Darken )
+				offset = 2;
+			else
+				offset = 1;
+		}
+		else if( _S != null && _S->Darken )
+		{
+			offset = 0;
+		}
+	}
+	if( offset > -1 )
+	{
+		BITMAP *backBmp = create_bitmap( TILEWIDTH, SPRITEHEIGHT );
+		clear_to_color( backBmp, makecol(255, 0, 255) );
+		masked_blit( IMGObjectSheet, backBmp, (offset * TILEWIDTH), SPRITEHEIGHT, 0, 0, TILEWIDTH, SPRITEHEIGHT );
+		set_multiply_blender( 255, 255, 255, 64 );
+		draw_trans_sprite( target, backBmp, drawx, drawy - WALLHEIGHT );
+		destroy_bitmap( backBmp );
+	//	DrawSpriteFromSheet( 20 + offset, target, IMGObjectSheet, drawx, drawy );
+	}
 }
 
 void drawWater ( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
@@ -480,7 +547,8 @@ void Block::Draw(BITMAP *target)
 	drawWallBlood( this, target, drawx, drawy );
 
 	// Wall shading for indoors
-	drawWallLighting( this, target, drawx, drawy );
+	if( wallType > 0 )
+		drawWallLighting( this, target, drawx, drawy );
 
 	// water
 	drawWater ( this, target, drawx, drawy );
@@ -491,3 +559,22 @@ void Block::Draw(BITMAP *target)
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded))
 		DrawCreature( target, drawx, drawy, creature);
 }
+
+/* DEBRIS FLAGS!
+
+kaypy + batcountry
+
+wooden	<= d1: 0, d2: 1, d3: 1, d4: 0, d5: 1
+wooden	>= d1: 0, d2: 1, d3: 1, d4: 0, d5: 0
+
+bone	<= d1: 1, d2: 1, d3: 1, d4: 0, d5: 1
+bone	>= d1: 1, d2: 1, d3: 1, d4: 0, d5: 0
+
+iron	<= d1: 0, d2: 0, d3: 0, d4: 1, d5: 1
+iron	>= d1: 0, d2: 0, d3: 0, d4: 1, d5: 0
+
+debris1-3 == 1 2 4 bits for EGA/DF color palette
+debris4 == brightness?
+debris5 == GTE vs LTE icon in DF - facing
+
+*/
