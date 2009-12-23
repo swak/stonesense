@@ -399,19 +399,26 @@ void drawWallLighting( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
 
 	if( b->Darken )
 	{
-		Block *_E = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eRight ),
-			*_S = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eDown );
+		Block 
+			*blockE = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eRight),
+			*blockS = b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eDown);
+		bool
+			isdarkE = ( blockE == null ? true : blockE->Darken ),
+			isdarkS = ( blockS == null ? true : blockS->Darken );
+		bool 
+			_E = b->ownerSegment->ShadowMap[b->y - b->ownerSegment->y][b->x - b->ownerSegment->x + 1] && isdarkE,
+			_S = b->ownerSegment->ShadowMap[b->y - b->ownerSegment->y + 1][b->x - b->ownerSegment->x] && isdarkS;
 
 		offset = 6;
 
-		if( _E != null && _E->Darken )
+		if( _E )
 		{
-			if( _S != null && _S->Darken )
+			if( _S )
 				offset = 5;
 			else
 				offset = 3;
 		}
-		else if( _S != null && _S->Darken )
+		else if( _S  )
 		{
 			offset = 4;
 		}
@@ -473,6 +480,9 @@ void drawWater ( Block *b, BITMAP *target, int32_t drawx, int32_t drawy )
 
 void Block::Draw(BITMAP *target)
 {
+	// update lightmap
+	this->ownerSegment->ShadowMap[this->y - this->ownerSegment->y][this->x - this->ownerSegment->x] = this->Darken;
+
 	t_SpriteWithOffset sprite;
 
 	int tileBorderColor = makecol( 85, 85, 85 );
@@ -562,7 +572,7 @@ void Block::Draw(BITMAP *target)
 
 /* DEBRIS FLAGS!
 
-kaypy + batcountry
+kaypy
 
 wooden	<= d1: 0, d2: 1, d3: 1, d4: 0, d5: 1
 wooden	>= d1: 0, d2: 1, d3: 1, d4: 0, d5: 0

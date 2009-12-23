@@ -327,57 +327,58 @@ void DoSpriteIndexOverlay(){
 }
 
 void paintboard(){
-  show_mouse(NULL);
+	show_mouse(NULL);
 	uint32_t starttime = clock();
 	if(!buffer)
 		buffer = create_bitmap(config.screenWidth, config.screenHeight);
-  
-  clear_to_color(buffer,makecol(config.backr,config.backg,config.backb));
-  //clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
-  
-  if( viewedSegment == NULL ){
-    textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight/2, 0xFFffFF, "Could not find DF process");
-    return;
-  }
 
-	
-	
+	clear_to_color(buffer,makecol(config.backr,config.backg,config.backb));
+	//clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
 
-	if (config.show_osd) DrawCurrentLevelOutline(buffer, true);
-  viewedSegment->drawAllBlocks(buffer);
-	if (config.show_osd) DrawCurrentLevelOutline(buffer, false);
+	if( viewedSegment == NULL ){
+		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight/2, 0xFFffFF, "Could not find DF process");
+		return;
+	}
 
-  DebugInt1 = viewedSegment->getNumBlocks();
-	
-  int DrawTime = clock() - starttime;
-  
-  if (config.show_osd)
-  {
-    textprintf_ex(buffer, font, 10,10, 0xFFFFFF,0, "%i,%i,%i, r%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ, DisplayedRotation);
-    
-    if(config.debug_mode){
-	    textprintf_ex(buffer, font, 10,20, 0xFFFFFF,0, "Timer1: %ims", ClockedTime);
-      textprintf_ex(buffer, font, 10,30, 0xFFFFFF,0, "Timer2: %ims", ClockedTime2);
-      textprintf_ex(buffer, font, 10,40, 0xFFFFFF,0, "Draw: %ims", DrawTime);
-      textprintf_ex(buffer, font, 10,50, 0xFFFFFF,0, "D1: %i", blockFactory.getPoolSize());
+	if (config.show_osd) 
+		DrawCurrentLevelOutline(buffer, true);
 
-      drawDebugCursorAndInfo(buffer);
-    }
+	viewedSegment->drawAllBlocks(buffer);
 
-    if(config.follow_DFscreen)
-      textprintf_centre_ex(buffer, font, config.screenWidth/2,10, 0xFFFFFF,0, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
-    if(config.single_layer_view)
-      textprintf_centre_ex(buffer, font, config.screenWidth/2,20, 0xFFFFFF,0, "Single layer view");
-    if(config.automatic_reload_time)
-      textprintf_centre_ex(buffer, font, config.screenWidth/2,30, 0xFFFFFF,0, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
+	if (config.show_osd) 
+		DrawCurrentLevelOutline(buffer, false);
 
-    DrawMinimap(buffer);
-  }
+	DebugInt1 = viewedSegment->getNumBlocks();
+
+	int DrawTime = clock() - starttime;
+
+	if (config.show_osd)
+	{
+		textprintf_ex(buffer, font, 10,10, 0xFFFFFF,0, "%i,%i,%i, r%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ, DisplayedRotation);
+
+		if(config.debug_mode){
+			textprintf_ex(buffer, font, 10,20, 0xFFFFFF,0, "Timer1: %ims", ClockedTime);
+			textprintf_ex(buffer, font, 10,30, 0xFFFFFF,0, "Timer2: %ims", ClockedTime2);
+			textprintf_ex(buffer, font, 10,40, 0xFFFFFF,0, "Draw: %ims", DrawTime);
+			textprintf_ex(buffer, font, 10,50, 0xFFFFFF,0, "D1: %i", blockFactory.getPoolSize());
+
+			drawDebugCursorAndInfo(buffer);
+		}
+
+		if(config.follow_DFscreen)
+			textprintf_centre_ex(buffer, font, config.screenWidth/2,10, 0xFFFFFF,0, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
+		if(config.single_layer_view)
+			textprintf_centre_ex(buffer, font, config.screenWidth/2,20, 0xFFFFFF,0, "Single layer view");
+		if(config.automatic_reload_time)
+			textprintf_centre_ex(buffer, font, config.screenWidth/2,30, 0xFFFFFF,0, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
+
+		DrawMinimap(buffer);
+	}
 	acquire_screen();
-  
+
 	draw_sprite(screen,buffer,0,0);
-  if( !config.Fullscreen )
-    show_mouse(screen);
+	if( !config.Fullscreen )
+		show_mouse(screen);
 	release_screen();
 }
 
@@ -446,6 +447,7 @@ int loadImgFile(char* filename)
 
 
 void saveScreenshot(){
+  reloadDisplayedSegment();
   paintboard();
   //get filename
   char filename[20] ={0};
@@ -464,8 +466,10 @@ void saveScreenshot(){
     index++;
   };
   //move image to 16 bits
-  BITMAP* temp = create_bitmap_ex(16, buffer->w, buffer->h);
+  BITMAP* temp = create_bitmap_ex(24, buffer->w, buffer->h);
+  set_color_conversion( COLORCONV_PARTIAL );
   blit(buffer, temp, 0, 0, 0,0, buffer->w,buffer->h);
+
   save_png(filename, temp, 0);
   destroy_bitmap(temp);
 }
