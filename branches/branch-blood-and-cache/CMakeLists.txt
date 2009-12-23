@@ -60,6 +60,7 @@ SET(PROJECT_SRCS
     GroundMaterialConfiguration.cpp
     MapLoading.cpp
 	newblockdraw.cpp
+	SpriteCache.cpp
     SpriteMaps.cpp
     UserInput.cpp
     WorldSegment.cpp
