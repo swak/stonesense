@@ -26,6 +26,7 @@ Block::Block(WorldSegment* ownerSegment)
 
   this->material.type = INVALID_INDEX;
   this->material.index = INVALID_INDEX;
+  this->item.itemType = INVALID_INDEX;
 }
 
 
@@ -258,6 +259,12 @@ void Block::Draw(BITMAP* target){
 		DrawSpriteFromSheet( spriteNum, target, IMGObjectSheet, drawx, drawy );
 	}
 
+	// item
+	if (occ.bits.item)
+	{
+		DrawItem(target, drawx, drawy, item);
+	}
+	
   // creature
   // ensure there is *some* creature according to the map data
   // (no guarantee it is the right one)

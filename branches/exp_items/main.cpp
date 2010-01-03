@@ -141,6 +141,7 @@ int main(void)
   config.track_center = false;
   config.animation_step = 300;
   config.follow_DFscreen = false;
+  config.itemsPerFrame = 1000;
   timeToReloadConfig = true;
   config.fogr = 255;
   config.fogg = 255;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "Items.h"
 
 class WorldSegment;
 
@@ -32,6 +33,8 @@ public:
   t_creature* creature;
   //bool mirroredBuilding;
 	t_matglossPair tree;
+	
+	t_CachedItem item;
 
   struct {
     t_building info;
