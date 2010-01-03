@@ -4,6 +4,7 @@
 #include "CreatureConfiguration.h"
 #include "VegetationConfiguration.h"
 #include "GroundMaterialConfiguration.h"
+#include "Items.h"
 
 class ContentLoader{
 private:

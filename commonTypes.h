@@ -18,8 +18,11 @@ typedef struct Crd3D {
 	int32_t x,y,z;
 }Crd3D;
 
-
-
+struct t_CachedItem{
+	int itemType;
+	int matType;
+	int matIndex;
+} ;
 
 typedef struct {
   bool show_zones;
@@ -44,6 +47,7 @@ typedef struct {
   int automatic_reload_time;
   int automatic_reload_step;
   int animation_step;
+  int itemsPerFrame;
 
   int screenWidth;
   int screenHeight;

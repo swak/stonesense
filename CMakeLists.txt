@@ -63,6 +63,7 @@ SET(PROJECT_SRCS
     UserInput.cpp
     WorldSegment.cpp
     VegetationConfiguration.cpp
+    Items.cpp
     main.cpp
 
 )

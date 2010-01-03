@@ -7,6 +7,7 @@
 #include "GameBuildings.h"
 #include "Creatures.h"
 #include "ContentLoader.h"
+#include "Items.h"
 
 static API* pDFApiHandle = 0;
 
@@ -437,32 +438,50 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 
   //Read Creatures
   ReadCreaturesToSegment( DF, segment );
+  
+  //Read Items
+  ReadItems(DF);
   RESUME_DF;
 
 	//do misc beautification
   uint32_t numblocks = segment->getNumBlocks();
-  for(uint32_t i=0; i < numblocks; i++){
-			Block* b = segment->getBlock(i);
-	  //setup building sprites
-      if( b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX )
-      		loadBuildingSprites( b );
-			
-      //setup ramps
-      if(b->ramp.type > 0) 
-        b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);
-
-      //add edges to blocks and floors  
-      if( b->floorType > 0 ){
-	     b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);
-	     b->depthBorderNorth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eUp);
-      }else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false ){
-        Block* leftBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
-        Block* upBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eUp);
-        if(!leftBlock || (!leftBlock->wallType && !leftBlock->ramp.type)) 
-          b->depthBorderWest = true;
-        if(!upBlock || (!upBlock->wallType && !upBlock->ramp.type))
-          b->depthBorderNorth = true;
-      }
+  for(uint32_t i=0; i < numblocks; i++)
+	{
+		Block* b = segment->getBlock(i);
+		//setup items
+		if ( b->occ.bits.item)
+		{
+			getCachedItem(b->x, b->y, b->z, b->item);
+		}
+		else
+		{
+			clearCachedItem(b->x, b->y, b->z);
+		}
+		
+		//setup building sprites
+		if( b->building.info.type != BUILDINGTYPE_NA &&
+				b->building.info.type != BUILDINGTYPE_BLACKBOX )
+			loadBuildingSprites( b );
+		
+		//setup ramps
+		if(b->ramp.type > 0) 
+			b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);
+		
+		//add edges to blocks and floors  
+		if( b->floorType > 0 )
+		{
+			b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);
+			b->depthBorderNorth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eUp);
+		}
+		else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false )
+		{
+			Block* leftBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
+			Block* upBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eUp);
+			if(!leftBlock || (!leftBlock->wallType && !leftBlock->ramp.type)) 
+				b->depthBorderWest = true;
+			if(!upBlock || (!upBlock->wallType && !upBlock->ramp.type))
+				b->depthBorderNorth = true;
+		}
 	}
   
   DF.DestroyMap();
@@ -593,6 +612,7 @@ void reloadDisplayedSegment(){
   //create handle to dfHack API
   bool firstLoad = (pDFApiHandle == 0);
   if(pDFApiHandle == 0){
+	clearItemCache();
     memInfoHasBeenRead = false;
     pDFApiHandle = new API("Memory.xml");
     if( ConnectDFAPI( pDFApiHandle ) == false ){
