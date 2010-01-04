@@ -462,6 +462,9 @@ void saveScreenshot(){
 }
 
 void saveMegashot(){
+	acquire_screen();
+	textprintf_centre_ex(screen, font, config.screenWidth/2, config.screenHeight/2, 0xFFFFFF, 0x000000, "Saving large screenshot...");
+	release_screen();
 	char filename[20] ={0};
 	FILE* fp;
 	int index = 1;
