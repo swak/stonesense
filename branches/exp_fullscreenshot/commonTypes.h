@@ -56,6 +56,9 @@ typedef struct {
   int backr;
   int backg;
   int backb;
+  unsigned int cellDimX;
+  unsigned int cellDimY;
+  unsigned int cellDimZ;
 
   Crd3D segmentSize;
 

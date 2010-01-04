@@ -154,6 +154,11 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 		{
 			level = create_bitmap(target->w, target->h);
 		}
+		else if (!(level->w == target->w) && !(level->w == target->w))
+		{
+			destroy_bitmap(level);
+			level = create_bitmap(target->w, target->h);
+		}
 		for(int32_t vsz=0; vsz < vszmax; vsz++)
 		{
 			clear_to_color(level, makeacol(255, 0, 255, 0));

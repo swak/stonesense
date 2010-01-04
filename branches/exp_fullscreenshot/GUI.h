@@ -3,9 +3,9 @@
 #include "common.h"
 
 void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1);
-void pointToScreen(int *inx, int *iny, int inz);
-Crd2D WorldBlockToScreen(int32_t x, int32_t y, int32_t z);
-Crd2D LocalBlockToScreen(int32_t x, int32_t y, int32_t z);
+void pointToScreen(int *inx, int *iny, int inz, int targetWidth);
+Crd2D WorldBlockToScreen(int32_t x, int32_t y, int32_t z, int targetWidth);
+Crd2D LocalBlockToScreen(int32_t x, int32_t y, int32_t z, int targetWidth);
 void DrawMinimap(BITMAP* target);
 void paintboard();
 
@@ -20,6 +20,7 @@ void DoSpriteIndexOverlay();
 void loadGraphicsFromDisk();
 void destroyGraphics();
 void saveScreenshot();
+void saveMegashot();
 
 extern WorldSegment* viewedSegment;//current, loaded
 extern int DisplayedSegmentX;

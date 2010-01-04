@@ -246,8 +246,15 @@ void doKeys(){
 	timeToReloadSegment = true;
 	}
   if(key[KEY_F5]){
-    while(key[KEY_F5]);
-    saveScreenshot();
+    if(key[KEY_LCONTROL] || key[KEY_RCONTROL])
+	{
+		saveMegashot();
+	}
+	else
+	{
+		while(key[KEY_F5]);
+		saveScreenshot();
+	}
   } 
   if(key[KEY_PLUS_PAD]){
     config.automatic_reload_time += config.automatic_reload_step;
