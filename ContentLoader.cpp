@@ -19,6 +19,7 @@ ContentLoader::~ContentLoader(void)
   flushTerrainConfig(terrainFloorConfigs);
   flushTerrainConfig(terrainBlockConfigs);	
   flushCreatureConfig();
+  flushItemConfig();
 }
 
 
@@ -28,7 +29,8 @@ bool ContentLoader::Load(API& DF){
   flushBuildingConfig(&buildingConfigs);
   flushTerrainConfig(terrainFloorConfigs);
   flushTerrainConfig(terrainBlockConfigs);
-  creatureConfigs.clear();
+  flushCreatureConfig();
+  flushItemConfig();
   treeConfigs.clear();
   shrubConfigs.clear();
   flushImgFiles();
@@ -207,6 +209,8 @@ bool ContentLoader::parseContentXMLFile( char* filepath ){
         runningResult &= parseShrubContent( elemRoot );
 	else if( elementType.compare( "trees" ) == 0 )
         runningResult &= parseTreeContent( elemRoot );
+	else if( elementType.compare( "items" ) == 0 )
+        runningResult &= parseItemContent( elemRoot );
     else
     	contentError("Unrecognised root element",elemRoot);
 
@@ -223,6 +227,10 @@ bool ContentLoader::parseBuildingContent(TiXmlElement* elemRoot ){
 
 bool ContentLoader::parseCreatureContent(TiXmlElement* elemRoot ){
   return addCreaturesConfig( elemRoot, creatureConfigs );
+}
+
+bool ContentLoader::parseItemContent(TiXmlElement* elemRoot ){
+  return addItemsConfig( elemRoot, itemConfigs );
 }
 
 bool ContentLoader::parseShrubContent(TiXmlElement* elemRoot ){
@@ -436,6 +444,24 @@ void ContentLoader::flushCreatureConfig()
 	creatureConfigs.clear();
 	if (num <= creatureNameStrings.size())
 	{
-		creatureConfigs.resize(creatureNameStrings.size()+1,NULL);
+		num = creatureNameStrings.size() + 1;
 	}
+	creatureConfigs.resize(num,NULL);
+}
+
+void ContentLoader::flushItemConfig()
+{
+	uint32_t num = (uint32_t)itemConfigs.size();
+	for ( int i = 0 ; i < num; i++ )
+	{
+		if (itemConfigs[i])
+			delete itemConfigs[i];
+	}
+	// make big enough to hold all items
+	itemConfigs.clear();
+	//if (num <= itemNameStrings.size())
+	//{
+	//	num = itemNameStrings.size() + 1;
+	//}
+	itemConfigs.resize(num,NULL);
 }

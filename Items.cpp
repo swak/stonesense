@@ -1,4 +1,6 @@
 #include "Items.h"
+#include "GUI.h"
+#include "ContentLoader.h"
 
 vector<t_CachedItem*> itemCache;
 uint32_t itemIndex;
@@ -47,44 +49,32 @@ void getCachedItem(uint32_t x, uint32_t y, uint32_t z, t_CachedItem &item)
 
 inline void handleItem(API& DF, t_item &tempItem)
 {
-	//WriteErr("hi+ @%d\n",itemIndex);
 	DF.ReadItem(itemIndex, tempItem);
-	//WriteErr("hi r ed\n");
 	if (tempItem.x == 35536 || tempItem.y == 35536 || tempItem.z == 35536)
 			return;
-	//WriteErr("got\n");
 	uint32_t itemLoc = tempItem.x + (tempItem.y * imapxsize) +
 		(tempItem.z * imapxsize * imapysize);
-	//WriteErr("loc %d %d %d = %d\n",tempItem.x,tempItem.y,tempItem.z,itemLoc);
 	t_CachedItem* cachedTemp = itemCache[itemLoc];
-	//WriteErr("to %d\n",(int)cachedTemp);
 	if (cachedTemp == NULL)
 	{
 		cachedTemp = new t_CachedItem;
 		itemCache[itemLoc] = cachedTemp;
 	}
-	//WriteErr("tweak\n");
 	cachedTemp->itemType=tempItem.type;
 	cachedTemp->matType=tempItem.material.type;
 	cachedTemp->matIndex=tempItem.material.index;
-	//WriteErr("hi-\n",itemIndex);
 }
 
 void ReadItems(API& DF)
 {
-	//WriteErr("ri+\n");
 	if (itemCache.size() == 0)
 	{
-		//WriteErr("ri iiv\n");
 		initItemVector(DF);
 	}
 	t_item tempItem;
-	//WriteErr("ri iri\n");
 	uint32_t itemv_size = DF.InitReadItems();
 	uint32_t max_item = itemIndex + config.itemsPerFrame;
 	uint32_t extra_item = 0;
-	//WriteErr("ri %d of %d\n",itemIndex, itemv_size);
-	//WriteErr("ics %d\n",itemCache.size());
 	if (max_item > itemv_size)
 	{
 		extra_item = max_item - itemv_size;
@@ -95,40 +85,133 @@ void ReadItems(API& DF)
 		extra_item = itemIndex = 0;
 		max_item = itemv_size;
 	}
-	//WriteErr("ri hi1\n");
 	for (;itemIndex<max_item;itemIndex++)
 	{
 		handleItem(DF,tempItem);
 	}
-	//WriteErr("ri hi2?\n");
 	if (extra_item)
 	{
-		//WriteErr("ri hi2\n");
 		for (itemIndex = 0;itemIndex<extra_item;itemIndex++)
 		{
 			handleItem(DF,tempItem);
 		}
 	}
-	//WriteErr("ri fri\n");
 	DF.FinishReadItems();	
-	//WriteErr("ri-\n");
 }
 
 void DrawItem( BITMAP* target, int drawx, int drawy, t_CachedItem& item )
 {
-	textprintf(target, font, drawx, drawy-10, 0xFFffFF, "%d", item.itemType );
+	t_SpriteWithOffset sprite = GetItemSpriteMap( item );
+  	BITMAP* itemSheet;
+    if (sprite.fileIndex == -1)
+    {
+    	itemSheet = IMGObjectSheet;
+	}
+    else
+    {
+    	itemSheet = getImgFile(sprite.fileIndex);
+	} 
+	DrawSpriteFromSheet( sprite.sheetIndex, target, itemSheet, drawx, drawy );
 }
 
-t_SpriteWithOffset GetItemSpriteMap( t_CachedItem* item )
+t_SpriteWithOffset GetItemSpriteMap( t_CachedItem& item )
 {	
-	return spriteItem_NA;
+	vector<ItemConfiguration>* testVector;
+	uint32_t num = (uint32_t)contentLoader.itemConfigs.size();
+	if (item.itemType >= num || item.itemType < 0)
+	{
+		return spriteItem_NA;
+	}
+	testVector = contentLoader.itemConfigs[item.itemType];
+	if (testVector == NULL || testVector->size() == 0)
+	{
+		return spriteItem_NA;
+	}
+	return (*testVector)[0].sprite;
 }
 
-bool addItemConfig( TiXmlElement* elemRoot, vector<vector<ItemConfiguration>*>& knownItem )
+void pushItemConfig( vector<vector<ItemConfiguration>*>& knownItems, int gameID, ItemConfiguration& iconf)
 {
+	//get or make the vector to store it
+	vector<ItemConfiguration>* itemVector;
+	if (knownItems.size() <= gameID)
+	{
+		//resize using hint from creature name list
+		int newsize = gameID +1;
+		// wont work yet
+		//if (newsize <= contentLoader.itemNameStrings.size())
+		//{
+		//	newsize = contentLoader.itemNameStrings.size() + 1;
+		//}
+		knownItems.resize(newsize,NULL);
+	}
+	itemVector = knownItems[gameID];
+	if (itemVector == NULL)
+	{
+		itemVector = new vector<ItemConfiguration>;
+		knownItems[gameID] = itemVector;
+	}
+	//add a copy to known items
+	itemVector->push_back(iconf);
+}
+
+bool addSingleItemConfig( TiXmlElement* elemItem, vector<vector<ItemConfiguration>*>& knownItems, int basefile ){
+	//int gameID = lookupIndexedType(elemItem->Attribute("gameID"),contentLoader.itemNameStrings);
+	//if (gameID == INVALID_INDEX)
+	//	return false;
+	// no item names yet!
+	const char* gameIdStr = elemItem->Attribute("gameID");
+	int gameID = atoi(gameIdStr);
+	if (gameID == 0 && gameIdStr[0] != '0')
+		return false;
+	const char* sheetIndexStr;
+	t_SpriteWithOffset sprite;
+	sprite.fileIndex=basefile;
+	sprite.x=0;
+	sprite.y=0;
+	sprite.animFrames=ALL_FRAMES;
+	const char* filename = elemItem->Attribute("file");
+	if (filename != NULL && filename[0] != 0)
+	{
+		sprite.fileIndex = loadConfigImgFile((char*)filename,elemItem);
+	}
+	
+	//create default config
+	sheetIndexStr = elemItem->Attribute("sheetIndex");
+	sprite.animFrames = ALL_FRAMES;
+	sprite.sheetIndex = atoi( sheetIndexStr );
+	ItemConfiguration iconf(sprite, INVALID_INDEX, INVALID_INDEX);
+	pushItemConfig(knownItems, gameID, iconf);
 	return true;
 }
+
+bool addItemsConfig( TiXmlElement* elemRoot, vector<vector<ItemConfiguration>*>& knownItems )
+{
+  int basefile = -1;
+  const char* filename = elemRoot->Attribute("file");
+  if (filename != NULL && filename[0] != 0)
+  {
+	basefile = loadConfigImgFile((char*)filename,elemRoot);
+  } 
+  TiXmlElement* elemItem = elemRoot->FirstChildElement("item");
+  if (elemItem == NULL)
+  {
+     contentError("No items found",elemRoot);
+     return false;
+  }
+  while( elemItem ){
+	addSingleItemConfig(elemItem,knownItems,basefile );
+	elemItem = elemItem->NextSiblingElement("item");
+  }
+  return true;
+}
+
 ItemConfiguration::ItemConfiguration(t_SpriteWithOffset &sprite, int matType, int matIndex)
-{}
+{
+	this->sprite=sprite;
+	this->matType=matIndex;
+	this->matIndex=matIndex;
+}
+
 ItemConfiguration::~ItemConfiguration(void)
 {}

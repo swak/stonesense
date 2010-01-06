@@ -204,9 +204,17 @@ void drawDebugCursorAndInfo(BITMAP* target){
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
       "flag1: %s ", strCreature );
   }
+  if(b->occ.bits.item){
+  
+  	// hacky numeric display for testing
+  	textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+  		"item: %d ", b->item.itemType );
+  }
   //basecon
   //textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+  
    //   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
+  
 }
 
 void DrawMinimap(BITMAP* target){

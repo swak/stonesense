@@ -77,7 +77,7 @@ void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures,
 		{
 			newsize = contentLoader.creatureNameStrings.size() + 1;
 		}
-		knownCreatures.resize(newsize);
+		knownCreatures.resize(newsize,NULL);
 	}
 	creatureList = knownCreatures[gameID];
 	if (creatureList == NULL)
