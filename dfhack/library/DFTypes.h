@@ -27,13 +27,30 @@ distribution.
 
 #include "Export.h"
 
+namespace DFHack
+{
+
 struct t_matgloss
 {
-    char id[128];
+    char id[128]; //the id in the raws
     uint8_t fore; // Annoyingly the offset for this differs between types
     uint8_t back;
     uint8_t bright;
+    char name[128]; //this is the name displayed ingame
 };
+
+struct t_matglossPlant
+{
+    char id[128]; //the id in the raws
+    uint8_t fore; // Annoyingly the offset for this differs between types
+    uint8_t back;
+    uint8_t bright;
+    char name[128]; //this is the name displayed ingame
+    char drink_name[128];  //the name this item becomes a drink
+    char food_name[128];
+    char extract_name[128];
+};
+
 struct t_vein
 {
     uint32_t vtable;
@@ -189,7 +206,7 @@ enum MatglossType
     Mat_Potash = 20,
     Mat_Ashes = 20,
     Mat_PearlAsh = 21,
-    Mat_Soap = 24,
+    Mat_Soap = 24
     //NUM_MATGLOSS_TYPES
 };
 
@@ -473,11 +490,19 @@ struct t_job
     bool active;
     uint8_t jobId;
 };
-
+struct t_like
+{
+    int16_t type;
+    int16_t itemClass;
+    int16_t itemIndex;
+    t_matglossPair material;
+    bool active;
+};
 #define NUM_CREATURE_TRAITS 30
 #define NUM_CREATURE_LABORS 102
 struct t_creature
 {
+    uint32_t origin;
     uint16_t x;
     uint16_t y;
     uint16_t z;
@@ -500,6 +525,8 @@ struct t_creature
     //string last_name;
     string current_job;
     */
+    uint8_t numLikes;
+    t_like likes[32];
     t_job current_job;
     uint32_t happiness;
     uint32_t id;
@@ -518,8 +545,9 @@ struct t_item_df40d
     uint16_t x;
     uint16_t y;
     uint16_t z;
-    uint32_t unk1;
+    //uint32_t unk1;
     uint32_t flags;
+    uint32_t unk1;
     uint32_t unk2;
     uint32_t ID;
     // not complete
@@ -545,6 +573,13 @@ struct t_item
     */
  //   vector<uint8_t> bytes; used for item research
     // FIXME: not complete, we need building presence bitmaps for stuff like farm plots and stockpiles, orientation (N,E,S,W) and state (open/closed)
+};
+
+// can add more here later, but this is fine for now
+struct t_itemType
+{
+    char id[128];
+    char name[128];
 };
 
 // TODO: research this further? consult DF hacker wizards?
@@ -605,10 +640,7 @@ union t_occupancy
     // splatter. everyone loves splatter.
     unsigned int mud : 1;
     unsigned int vomit :1;
-    unsigned int debris1 :1;
-    unsigned int debris2 :1;
-    unsigned int debris3 :1;
-    unsigned int debris4 :1;
+    unsigned int broken_arrows_color :4;
     unsigned int blood_g : 1;
     unsigned int blood_g2 : 1;
     unsigned int blood_b : 1;
@@ -627,7 +659,7 @@ union t_occupancy
     unsigned int slime2 : 1;
     unsigned int blood : 1;
     unsigned int blood2 : 1;
-    unsigned int debris5 : 1;
+    unsigned int broken_arrows_variant : 1;
     unsigned int snow : 1;
     } bits;
     struct {
@@ -641,4 +673,11 @@ union t_occupancy
     } unibits;
 };
 
+struct t_viewscreen 
+{
+    int32_t type;
+    //There is more info in these objects, but I don't know what it is yet
+};
+
+}// namespace DFHack
 #endif // TYPES_H_INCLUDED

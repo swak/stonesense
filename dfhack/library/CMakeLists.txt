@@ -4,7 +4,6 @@ SET(PROJECT_HDRS
 DFCommonInternal.h
 DFDataModel.h
 DFHackAPI.h
-DFMemAccess.h
 DFMemInfo.h
 DFMemInfoManager.h
 DFProcessEnumerator.h
@@ -12,6 +11,7 @@ DFProcess.h
 DFTileTypes.h
 DFTypes.h
 DFVector.h
+DFWindow.h
 integers.h
 
 md5/md5.h
@@ -19,6 +19,8 @@ md5/md5wrapper.h
 
 tinyxml/tinystr.h
 tinyxml/tinyxml.h
+
+../shmserver/shms.h
 )
 
 SET(PROJECT_SRCS
@@ -36,21 +38,23 @@ tinyxml/tinyxmlparser.cpp
 )
 
 SET(PROJECT_HDRS_LINUX
-MemAccess-linux.h
 )
 
 SET(PROJECT_HDRS_WINDOWS
-MemAccess-windows.h
 stdint_win.h
 )
 
 SET(PROJECT_SRCS_LINUX
 DFProcess-linux.cpp
+DFProcess-linux-SHM.cpp
+DFWindow-linux.cpp
 DFProcessEnumerator-linux.cpp
 )
 
 SET(PROJECT_SRCS_WINDOWS
 DFProcess-windows.cpp
+DFProcess-windows-SHM.cpp
+DFWindow-windows.cpp
 DFProcessEnumerator-windows.cpp
 )
 
@@ -79,13 +83,17 @@ CONFIGURE_FILE( ${CMAKE_SOURCE_DIR}/library/config.h.cmake ${CMAKE_SOURCE_DIR}/l
 IF(UNIX)
   add_definitions(-DLINUX_BUILD)
   add_definitions(-DUSE_CONFIG_H)
+  find_library(X11_LIBRARY X11)
+  SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -pedantic")
+    
+  SET(PROJECT_LIBS ${X11_LIBRARY} rt)
 ELSE(UNIX)
   SET(PROJECT_LIBS psapi)
 ENDIF(UNIX)
 
 ADD_LIBRARY(dfhack SHARED ${PROJECT_SRCS})
 
-SET_TARGET_PROPERTIES( dfhack  PROPERTIES DEBUG_POSTFIX "-debug" )
+SET_TARGET_PROPERTIES(dfhack  PROPERTIES DEBUG_POSTFIX "-debug" )
 
 TARGET_LINK_LIBRARIES(dfhack ${PROJECT_LIBS})
 
