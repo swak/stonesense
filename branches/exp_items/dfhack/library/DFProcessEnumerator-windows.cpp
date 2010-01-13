@@ -27,8 +27,6 @@ using namespace DFHack;
 
 /// HACK: global variables (only one process can be attached at the same time.)
 Process * DFHack::g_pProcess; ///< current process. non-NULL when picked
-ProcessHandle DFHack::g_ProcessHandle; ///< cache of handle to current process. used for speed reasons
-int DFHack::g_ProcessMemFile; ///< opened /proc/PID/mem, valid when attached
 
 class DFHack::ProcessEnumerator::Private
 {
@@ -70,9 +68,24 @@ bool ProcessEnumerator::findProcessess()
     // Get the list of process identifiers.
     DWORD ProcArray[2048], memoryNeeded, numProccesses;
 
+    {
+        Process *p = new SHMProcess(d->meminfo->meminfo);
+        if(p->isIdentified())
+        {
+            d->processes.push_back(p);
+			return true;
+        }
+        else
+        {
+            delete p;
+            p = 0;
+        }
+    }
+    
     EnableDebugPriv();
     if ( !EnumProcesses( ProcArray, sizeof(ProcArray), &memoryNeeded ) )
     {
+        cout << "EnumProcesses fail'd" << endl;
         return false;
     }
 
@@ -82,14 +95,14 @@ bool ProcessEnumerator::findProcessess()
     // iterate through processes
     for ( int i = 0; i < (int)numProccesses; i++ )
     {
-        Process *p = new Process(ProcArray[i],d->meminfo->meminfo);
-        if(p->isIdentified())
+        Process *q = new NormalProcess(ProcArray[i],d->meminfo->meminfo);
+        if(q->isIdentified())
         {
-            d->processes.push_back(p);
+            d->processes.push_back(q);
         }
         else
         {
-            delete p;
+            delete q;
         }
     }
     if(d->processes.size())
@@ -116,14 +129,19 @@ ProcessEnumerator::ProcessEnumerator( string path_to_xml )
     d->meminfo = new MemInfoManager(path_to_xml);
 }
 
-
-ProcessEnumerator::~ProcessEnumerator()
+void ProcessEnumerator::purge()
 {
-    // delete all processes
     for(uint32_t i = 0;i < d->processes.size();i++)
     {
         delete d->processes[i];
     }
+    d->processes.clear();
+}
+
+ProcessEnumerator::~ProcessEnumerator()
+{
+    // delete all processes
+    purge();
     delete d->meminfo;
     delete d;
 }

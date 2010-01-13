@@ -28,8 +28,10 @@ distribution.
 #include "Export.h"
 #include <string>
 #include <vector>
+#include <map>
 #include "integers.h"
 #include "DFTileTypes.h"
+#include "DFWindow.h"
 
 namespace DFHack
 {
@@ -46,11 +48,21 @@ namespace DFHack
         bool Detach();
         bool isAttached();
         
+        //true if paused, false if not
+        bool ReadPauseState(); 
+        
+        // read the DF menu view state
+        bool ReadViewScreen(t_viewscreen &);
+        
+        
         // stop DF from executing
         bool Suspend();
+        // stop DF from executing, asynchronous, use with polling
+        bool AsyncSuspend();
         // resume DF
         bool Resume();
         /**
+         * Force resume
          * be careful with this one
          */
         bool ForceResume();
@@ -64,6 +76,7 @@ namespace DFHack
         bool ReadWoodMatgloss (vector<t_matgloss> & output);
         bool ReadMetalMatgloss(vector<t_matgloss> & output);
         bool ReadPlantMatgloss(vector<t_matgloss> & output);
+        bool ReadPlantMatgloss (vector<t_matglossPlant> & plants);
         bool ReadCreatureMatgloss(vector<t_matgloss> & output);
 
         // read region surroundings, get their vectors of geolayers so we can do translation (or just hand the translation table to the client)
@@ -145,7 +158,7 @@ namespace DFHack
         void FinishReadVegetation();
         
         uint32_t InitReadCreatures();
-        // returns index of creature actually read or -1 if no creature can be found
+        /// returns index of creature actually read or -1 if no creature can be found
         int32_t ReadCreatureInBox(int32_t index, t_creature & furball,
                                   const uint16_t &x1, const uint16_t &y1,const uint16_t &z1,
                                   const uint16_t &x2, const uint16_t &y2,const uint16_t &z2);
@@ -163,10 +176,16 @@ namespace DFHack
         bool getCursorCoords (int32_t &x, int32_t &y, int32_t &z);
         bool setCursorCoords (const int32_t &x, const int32_t &y, const int32_t &z);
 
+        /// This returns false if there is nothing under the cursor, it puts the addresses in a vector if there is
+        bool getCurrentCursorCreatures(vector<uint32_t> &addresses); 
+
         bool InitViewSize();
         bool getWindowSize(int32_t & width, int32_t & height);
         bool setWindowSize(const int32_t & width, const int32_t & height);
         
+        void getItemIndexesInBox(vector<uint32_t> &indexes,
+                                const uint16_t &x1, const uint16_t &y1, const uint16_t &z1,
+                                const uint16_t &x2, const uint16_t &y2, const uint16_t &z2);
         /*
         // FIXME: add a real creature class, move these
         string getLastName(const uint32_t &index, bool);
@@ -177,16 +196,26 @@ namespace DFHack
         vector<t_trait> getTraits(const uint32_t &index);
         vector<t_labor> getLabors(const uint32_t &index);
         */
-        
-        void InitReadNameTables();
+        void InitReadNameTables(map< string, vector< string > > & nameTable);
         void FinishReadNameTables();
 
+        string TranslateName(const t_lastname & last, const map< string, vector< string > > &nameTable,const string & language="GENERIC");
+        string TranslateName(const t_squadname & squad, const map< string, vector< string > > &nameTable,const string & language="GENERIC");
+        
+        void WriteLabors(const uint32_t &index, uint8_t labors[NUM_CREATURE_LABORS]);
+        
         uint32_t InitReadItems();
         bool ReadItem(const uint32_t &index, t_item & item);
         void FinishReadItems();
         
         memory_info getMemoryInfo();
         Process * getProcess();
+        DFWindow * getWindow();
+        /*
+            // FIXME: BAD!
+            bool ReadAllMatgloss(vector< vector< string > > & all);
+        */
+        bool ReadItemTypes(vector< vector< t_itemType > > & itemTypes);
     };
 } // namespace DFHack
 #endif // SIMPLEAPI_H_INCLUDED
