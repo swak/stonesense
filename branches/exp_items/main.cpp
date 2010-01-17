@@ -142,6 +142,7 @@ int main(void)
   config.animation_step = 300;
   config.follow_DFscreen = false;
   config.itemsPerFrame = 1000;
+  config.show_items = true;
   timeToReloadConfig = true;
   config.fogr = 255;
   config.fogg = 255;

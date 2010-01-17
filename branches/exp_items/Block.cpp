@@ -260,7 +260,7 @@ void Block::Draw(BITMAP* target){
 	}
 
 	// item
-	if (occ.bits.item)
+	if (occ.bits.item && config.show_items)
 	{
 		DrawItem(target, drawx, drawy, item);
 	}
