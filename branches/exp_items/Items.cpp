@@ -52,6 +52,8 @@ void getCachedItem(uint32_t x, uint32_t y, uint32_t z, t_CachedItem &item)
 		item.itemType = INVALID_INDEX;
 }
 
+uint32_t item_hidden_flag = 1 << 24;
+
 inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 {
 	//WriteErr("hi+ %d\n",itemIndex);
@@ -59,6 +61,9 @@ inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 	//WriteErr("hi ri\n");
 	if (tempItem.x == 35536 || tempItem.y == 35536 || tempItem.z == 35536)
 			return;
+	// TODO integrate DFHack flags when they arrive
+	if (!(tempItem.flags & 1)) //item on ground
+		return;
 	uint32_t itemLoc = tempItem.x + (tempItem.y * imapxsize) +
 		(tempItem.z * imapxsize * imapysize);
 	//WriteErr("hi cc\n");
@@ -67,13 +72,27 @@ inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 	{
 		cachedTemp = new t_CachedItem;
 		itemCache[itemLoc] = cachedTemp;
+		cachedTemp->oddPass = !oddPass; // ensure write
+	}
+	// check if cached item has priority
+	if (cachedTemp->oddPass == oddPass)
+	{
+		if (cachedTemp->itemIndex > itemIndex)
+			return;
+	}
+	else
+	{
+		if (cachedTemp->itemIndex < itemIndex)
+			return;
 	}
 	//WriteErr("hi wc\n");
 	cachedTemp->itemType=tempItem.type;
 	cachedTemp->matType=tempItem.material.type;
 	cachedTemp->matIndex=tempItem.material.index;
 	cachedTemp->flags=tempItem.flags;
-	cachedTemp->itemIndex=itemIndex;	
+	cachedTemp->itemIndex=itemIndex;
+	cachedTemp->itemID=tempItem.ID;
+	cachedTemp->oddPass = oddPass;
 	//WriteErr("hi-\n");
 }
 
