@@ -219,7 +219,7 @@ void drawDebugCursorAndInfo(BITMAP* target){
 
   		
   	textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
-  		"iflags:%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d",
+  		"iflags:%d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d %d%d%d%d (%d %d)",
    			getBit(b->item.flags,0),
   			getBit(b->item.flags,1),
   			getBit(b->item.flags,2),
@@ -250,7 +250,10 @@ void drawDebugCursorAndInfo(BITMAP* target){
   			getBit(b->item.flags,27),
   			getBit(b->item.flags,28),
   			getBit(b->item.flags,29),
-  			getBit(b->item.flags,30)
+  			getBit(b->item.flags,30),
+  			getBit(b->item.flags,31),
+  			(b->item.flags & 1),
+  			(b->item.flags & 1<<24)
   			);
   }
   //basecon
