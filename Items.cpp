@@ -74,15 +74,32 @@ inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 		itemCache[itemLoc] = cachedTemp;
 		cachedTemp->oddPass = !oddPass; // ensure write
 	}
+	// check if cached item is the same as us
+	if (cachedTemp->itemID == tempItem.ID)
+	{
+		// check if we have a full cycle without state change
+		if (cachedTemp->oddPass != oddPass && (cachedTemp->flags & item_hidden_flag) == (tempItem.flags & item_hidden_flag))
+		{
+			cachedTemp->fullPass = true;
+		}
+		else
+		{
+			cachedTemp->fullPass = false;
+		}
+		//update changing state
+		cachedTemp->oddPass = oddPass;
+		cachedTemp->flags=tempItem.flags;
+		return;
+	}
 	// check if cached item has priority
 	if (cachedTemp->oddPass == oddPass)
 	{
-		if (cachedTemp->itemIndex > itemIndex)
+		if (cachedTemp->itemIndex > itemIndex && !(cachedTemp->flags & item_hidden_flag))
 			return;
 	}
 	else
 	{
-		if (cachedTemp->itemIndex < itemIndex)
+		if (cachedTemp->itemIndex < itemIndex && (tempItem.flags & item_hidden_flag))
 			return;
 	}
 	//WriteErr("hi wc\n");
@@ -93,6 +110,7 @@ inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 	cachedTemp->itemIndex=itemIndex;
 	cachedTemp->itemID=tempItem.ID;
 	cachedTemp->oddPass = oddPass;
+	cachedTemp->fullPass = false;
 	//WriteErr("hi-\n");
 }
 
@@ -209,8 +227,10 @@ void ReadItems(API& DF)
 void DrawItem( BITMAP* target, int drawx, int drawy, t_CachedItem& item )
 {
 	t_SpriteWithOffset sprite = GetItemSpriteMap( item );
+	if (sprite.sheetIndex == INVALID_INDEX)
+		return;
   	BITMAP* itemSheet;
-    if (sprite.fileIndex == -1)
+    if (sprite.fileIndex == INVALID_INDEX)
     {
     	itemSheet = IMGObjectSheet;
 	}
@@ -224,6 +244,12 @@ void DrawItem( BITMAP* target, int drawx, int drawy, t_CachedItem& item )
 t_SpriteWithOffset GetItemSpriteMap( t_CachedItem& item )
 {	
 	vector<ItemConfiguration>* testVector;
+	if (item.flags & item_hidden_flag)
+	{
+		if (item.fullPass)
+			return spriteItem_None;
+		return spriteItem_NA;
+	}
 	uint32_t num = (uint32_t)contentLoader.itemConfigs.size();
 	if (item.itemType >= num || item.itemType < 0)
 	{
