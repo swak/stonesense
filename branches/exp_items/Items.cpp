@@ -3,10 +3,14 @@
 #include "ContentLoader.h"
 
 vector<t_CachedItem*> itemCache;
-uint32_t itemIndex;
+uint32_t itemIndex = 0;
 uint32_t imapxsize;
 uint32_t imapysize;
 uint32_t imapzsize;
+uint32_t checked_size = 0;
+bool oddPass = false;
+
+#define ITEM_VECTOR_PRIORITY_AREA 10
 
 void initItemVector(API& DF)
 {
@@ -26,6 +30,7 @@ void clearItemCache()
 			delete(itemCache[i]);
 	}
 	itemCache.clear();
+	itemIndex = 0;
 }
 
 void clearCachedItem(uint32_t x, uint32_t y, uint32_t z)
@@ -47,56 +52,139 @@ void getCachedItem(uint32_t x, uint32_t y, uint32_t z, t_CachedItem &item)
 		item.itemType = INVALID_INDEX;
 }
 
-inline void handleItem(API& DF, t_item &tempItem)
+inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 {
+	//WriteErr("hi+ %d\n",itemIndex);
 	DF.ReadItem(itemIndex, tempItem);
+	//WriteErr("hi ri\n");
 	if (tempItem.x == 35536 || tempItem.y == 35536 || tempItem.z == 35536)
 			return;
 	uint32_t itemLoc = tempItem.x + (tempItem.y * imapxsize) +
 		(tempItem.z * imapxsize * imapysize);
+	//WriteErr("hi cc\n");
 	t_CachedItem* cachedTemp = itemCache[itemLoc];
 	if (cachedTemp == NULL)
 	{
 		cachedTemp = new t_CachedItem;
 		itemCache[itemLoc] = cachedTemp;
 	}
+	//WriteErr("hi wc\n");
 	cachedTemp->itemType=tempItem.type;
 	cachedTemp->matType=tempItem.material.type;
 	cachedTemp->matIndex=tempItem.material.index;
+	cachedTemp->flags=tempItem.flags;
+	cachedTemp->itemIndex=itemIndex;	
+	//WriteErr("hi-\n");
 }
 
 void ReadItems(API& DF)
 {
+	//WriteErr("ri+\n");
 	if (itemCache.size() == 0)
 	{
 		initItemVector(DF);
 	}
 	t_item tempItem;
 	uint32_t itemv_size = DF.InitReadItems();
-	uint32_t max_item = itemIndex + config.itemsPerFrame;
-	uint32_t extra_item = 0;
-	if (max_item > itemv_size)
+	// check for first time setup
+	if (itemIndex == 0)
 	{
-		extra_item = max_item - itemv_size;
-		max_item = itemv_size;
+		itemIndex == itemv_size - 1;
 	}
-	if (extra_item > itemIndex)
+	// note: everything is unsigned, so we need to be careful about
+	// not dropping below zero
+	uint32_t min_item; // stop point for base search [min_item .. current itemIndex]
+	uint32_t extra_item; // stop point for extra search [extra_item .. itemv_size)
+	uint32_t item_rem;	// scratch for remaining search size
+	// uint32_t itemv_size // item vector size
+	// uint32_t checked_size // last cycles itemv_size
+	
+	extra_item = itemv_size;
+	item_rem = config.itemsPerFrame;
+	bool all_items = false;
+	// dont worry about cache speed if we are loading manually
+	// also, handle the case where there are few enough items
+	// to just load everything
+	if (config.automatic_reload_time == 0 || itemv_size <= item_rem)
 	{
-		extra_item = itemIndex = 0;
-		max_item = itemv_size;
+		itemIndex = itemv_size - 1;
+		min_item = 0;
+		all_items = true;
 	}
-	for (;itemIndex<max_item;itemIndex++)
+	else
 	{
-		handleItem(DF,tempItem);
-	}
-	if (extra_item)
-	{
-		for (itemIndex = 0;itemIndex<extra_item;itemIndex++)
+		// danger: much end-casey maths
+		// check for pathological vector shrinkage case
+		// 
+		if (itemIndex >= itemv_size) //know either itemIndex < checked_size or
+										// are in initial state
 		{
-			handleItem(DF,tempItem);
+			itemIndex = itemv_size - 1;	
+		}
+		// run as much as we can of newly created items preferentially
+		// this way dead critters make a bloody mess rather than spraying unidentified objects
+		// (if we cant run em all, we'll forget the rest... but how often will that happen?)
+		// we'll also miss stuff as a result of simultaneous delete/create
+		if (checked_size > 0 && checked_size < itemv_size)
+		{
+			extra_item = itemv_size - item_rem; // know itemv_size > item_rem (outer if)
+			if (checked_size >= extra_item) // know checked_size < itemv_size
+			{
+				extra_item = checked_size;
+			}
+			if (itemIndex >= extra_item) // itemIndex in [0 .. itemv_size)
+			{
+				extra_item = itemIndex + 1;
+			}
+			item_rem -= itemv_size - extra_item; // at this stage, extra item in (0 .. itemv_size]
+		}
+		// run as much as we can from itemIndex
+		if (item_rem <= itemIndex)
+		{
+			min_item = itemIndex - item_rem;
+		}
+		else // have remainder after rest of set- run more from top
+		{
+			min_item = 0;
+			extra_item -= item_rem - itemIndex;
 		}
 	}
-	DF.FinishReadItems();	
+	// store amount checked for next time
+	checked_size = itemv_size;
+	//WriteErr("ItemCache: v: 0 - %d (%d) e: %d - %d b: %d - %d\n",itemv_size-1,checked_size,extra_item,itemv_size-1,min_item,itemIndex);
+	// first pass- current sweep;
+	itemIndex++;
+	while (itemIndex>min_item) // this construct avoids problems when min_item == 0
+	{
+		itemIndex--;
+		handleItem(DF,tempItem,all_items);
+	}
+	// second pass- 'extra' sweep
+	// update pass if we have looped
+	//WriteErr("ri p2\n");
+	if (min_item == 0)
+	{
+		oddPass = !oddPass;
+	}
+	if (extra_item < itemv_size)
+	{
+		for (itemIndex = itemv_size - 1;itemIndex>=extra_item;itemIndex--)
+		{
+			handleItem(DF,tempItem,false);
+		}
+	}
+	//WriteErr("ri dr\n");
+	DF.FinishReadItems();
+	// work out where we left off
+	if (min_item)
+	{
+		itemIndex = min_item;	
+	}
+	else
+	{
+		itemIndex = extra_item;	
+	}
+	//WriteErr("ri-\n");
 }
 
 void DrawItem( BITMAP* target, int drawx, int drawy, t_CachedItem& item )

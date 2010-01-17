@@ -22,6 +22,11 @@ struct t_CachedItem{
 	int itemType;
 	int matType;
 	int matIndex;
+	uint32_t flags;
+	int itemIndex;
+	int itemID;
+	bool oddPass;
+	bool fullPass;
 } ;
 
 typedef struct {

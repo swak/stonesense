@@ -126,6 +126,11 @@ void DrawCurrentLevelOutline(BITMAP* target, bool backPart){
 	}
 }
 
+inline int getBit(uint32_t flags, int bit)
+{
+	return 1 && (flags & (1<<bit));
+}
+
 void drawDebugCursorAndInfo(BITMAP* target){
   Crd2D point = LocalBlockToScreen(debugCursor.x, debugCursor.y, 0);
 
@@ -205,10 +210,48 @@ void drawDebugCursorAndInfo(BITMAP* target){
       "flag1: %s ", strCreature );
   }
   if(b->occ.bits.item){
-  
+  	//WriteErr("itemnloc %d\n",contentLoader.buildingNameStrings.at(b->item.itemType));
+  	
   	// hacky numeric display for testing
   	textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
-  		"item: %d ", b->item.itemType );
+  		"item: %d %d (%s)",
+  		b->item.itemIndex, b->item.itemType , (b->item.itemType>0 && b->item.itemType < contentLoader.buildingNameStrings.size())?contentLoader.buildingNameStrings.at(b->item.itemType).c_str():"?");
+
+  		
+  	textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+  		"iflags:%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d",
+   			getBit(b->item.flags,0),
+  			getBit(b->item.flags,1),
+  			getBit(b->item.flags,2),
+  			getBit(b->item.flags,3),
+  			getBit(b->item.flags,4),
+  			getBit(b->item.flags,5),
+  			getBit(b->item.flags,6),
+  			getBit(b->item.flags,7),
+  			getBit(b->item.flags,8),
+  			getBit(b->item.flags,9),
+  			getBit(b->item.flags,10),
+  			getBit(b->item.flags,11),
+  			getBit(b->item.flags,12),
+  			getBit(b->item.flags,13),
+  			getBit(b->item.flags,14),
+  			getBit(b->item.flags,15),
+  			getBit(b->item.flags,16),
+  			getBit(b->item.flags,17),
+  			getBit(b->item.flags,18),
+  			getBit(b->item.flags,19),
+  			getBit(b->item.flags,20),
+  			getBit(b->item.flags,21),
+  			getBit(b->item.flags,22),
+  			getBit(b->item.flags,23),
+  			getBit(b->item.flags,24),
+  			getBit(b->item.flags,25),
+  			getBit(b->item.flags,26),
+  			getBit(b->item.flags,27),
+  			getBit(b->item.flags,28),
+  			getBit(b->item.flags,29),
+  			getBit(b->item.flags,30)
+  			);
   }
   //basecon
   //textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
