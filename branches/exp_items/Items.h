@@ -3,6 +3,7 @@
 #include "dfhack/library/tinyxml/tinyxml.h"
 
 static t_SpriteWithOffset spriteItem_NA = {142, 0, 0,-1,1+2+4+8+16+32};
+static t_SpriteWithOffset spriteItem_None = {-1, 0, 0,-1,1+2+4+8+16+32};
 
 void ReadItems(API& DF);
 void clearItemCache();
