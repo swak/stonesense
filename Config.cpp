@@ -135,7 +135,16 @@ void parseConfigLine( string line ){
   string result = parseStrFromLine( "SHOW_ZONES", line );
     config.show_zones = (result == "YES");
   }
-	if( line.find("INTRO") != -1){
+  if( line.find("SHOW_ITEMS") != -1){
+    string result = parseStrFromLine( "SHOW_ITEMS", line );
+    config.show_items = (result == "YES");
+  }
+  if( line.find("ITEMS_READ_PER_FRAME") != -1){
+    int value = parseIntFromLine( "ITEMS_READ_PER_FRAME", line);
+    if(value < 0) value = 0;
+    config.itemsPerFrame = value;
+  }
+  if( line.find("INTRO") != -1){
     string result = parseStrFromLine( "INTRO", line );
     config.show_intro = !(result == "OFF");
   }

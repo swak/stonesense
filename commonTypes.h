@@ -53,6 +53,7 @@ typedef struct {
   int automatic_reload_step;
   int animation_step;
   int itemsPerFrame;
+  bool show_items;
 
   int screenWidth;
   int screenHeight;

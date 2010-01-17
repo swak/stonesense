@@ -440,7 +440,10 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   ReadCreaturesToSegment( DF, segment );
   
   //Read Items
-  ReadItems(DF);
+  if (config.show_items)
+  {
+  	ReadItems(DF);
+  }
   RESUME_DF;
 
 	//do misc beautification
@@ -449,13 +452,16 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 	{
 		Block* b = segment->getBlock(i);
 		//setup items
-		if ( b->occ.bits.item)
+		if (config.show_items)
 		{
-			getCachedItem(b->x, b->y, b->z, b->item);
-		}
-		else
-		{
-			clearCachedItem(b->x, b->y, b->z);
+			if ( b->occ.bits.item)
+			{
+				getCachedItem(b->x, b->y, b->z, b->item);
+			}
+			else
+			{
+				clearCachedItem(b->x, b->y, b->z);
+			}
 		}
 		
 		//setup building sprites
