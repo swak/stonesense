@@ -69,7 +69,8 @@ void Block::Draw(BITMAP* target){
 	correctBlockForSegmetOffset( drawx, drawy, drawz);
   correctBlockForRotation( drawx, drawy, drawz);
 	pointToScreen((int*)&drawx, (int*)&drawy, drawz);
-	drawx -= TILEWIDTH>>1;
+	static int tileshift = (TILEWIDTH - HORIZONTALSHIFT) / 2;
+	drawx -= tileshift;
 
   int tileBorderColor = makecol(85,85,85);
 

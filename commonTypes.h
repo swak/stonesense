@@ -17,10 +17,12 @@ typedef struct Crd2D {
 typedef struct Crd3D {
 	int32_t x,y,z;
 }Crd3D;
-
-
-
-
+enum enumBlendmethod
+{
+	bLinear,
+	bLog,
+	bLog_inv
+};
 typedef struct {
   bool show_zones;
   bool show_stockpiles;
@@ -46,6 +48,7 @@ typedef struct {
   int automatic_reload_time;
   int automatic_reload_step;
   int animation_step;
+  enumBlendmethod blendmethod;
 
   int screenWidth;
   int screenHeight;

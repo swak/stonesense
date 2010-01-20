@@ -1,7 +1,7 @@
 #include "common.h"
 #include "WorldSegment.h"
 #include "GUI.h"
-
+#include <math.h>
 
 Block* WorldSegment::getBlock(int32_t x, int32_t y, int32_t z){
 	if(x < this->x || x >= this->x + this->sizex) return 0;
@@ -179,7 +179,27 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 				}
 			}
 			set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
-			draw_lit_sprite(target, level, 0, 0, (((vszmax-1) - vsz) *config.foga / (vszmax-1)));
+			int blend;
+			switch (config.blendmethod)
+			{
+			case bLinear:
+				blend = (config.foga * ((vszmax-1) - vsz) / (vszmax-1));
+				break;
+			case bLog:
+				blend = (config.foga * (1 - log10((float)10 * (vsz+1) / (vszmax-1))));
+				break;
+			case bLog_inv:
+				blend = (config.foga * log10((float)10 * ((vszmax-1) - vsz) / (vszmax-1)));
+				break;
+			default:
+				blend = 0;
+			}
+			if(blend > 0)
+			{
+				draw_lit_sprite(target, level, 0, 0, blend);
+			}
+			else
+				draw_sprite(target, level, 0, 0);
 		}
 	}
 	else

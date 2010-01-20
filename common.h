@@ -28,7 +28,7 @@ using namespace DFHack;
 #define INVALID_INDEX -1
 #define UNCONFIGURED_INDEX -2
 
-#define ISOMETRIC
+#define SQUARE
 //#define CAVALIER
 
 // TILEWIDTH: total size of sprite left to right
@@ -36,12 +36,16 @@ using namespace DFHack;
 // WALLHEIGHT: height of a one pixel wide stripe of wall top to bottom
 //		== amount top of wall is raised from where the floor would be
 // FLOORHEIGHT: height of a one pixel stripe of the 'wall' of a floor tile
-
+// HORIZONTALSHIFT: amount that each successive row if tiles is shifted to the right. leave at 0 for isometric.
+// VERTICALSHIFT: amount that each successive column is shifted downwards. leave at 0 for isometric.
+//      -- setting HORIZONTALSHIFT to TILEWIDTH and VERTICALSHIFT to -TILEHEIGHT results in a square tileset, otherwise in trimetric.
 #ifdef CAVALIER
 #define TILEWIDTH 46
 #define TILEHEIGHT 46
 #define WALLHEIGHT 24
 #define FLOORHEIGHT 6
+#define HORIZONTALSHIFT 0
+#define VERTICALSHIFT 0
 #endif
 
 #ifdef ISOMETRIC
@@ -49,6 +53,8 @@ using namespace DFHack;
 #define TILEHEIGHT 16
 #define WALLHEIGHT 16
 #define FLOORHEIGHT 4
+#define HORIZONTALSHIFT 0
+#define VERTICALSHIFT 0
 #endif
 
 #ifdef DOUBLESIZE
@@ -56,6 +62,17 @@ using namespace DFHack;
 #define TILEHEIGHT 32
 #define WALLHEIGHT 32
 #define FLOORHEIGHT 8
+#define HORIZONTALSHIFT 0
+#define VERTICALSHIFT 0
+#endif
+
+#ifdef SQUARE
+#define TILEWIDTH 32
+#define TILEHEIGHT 16
+#define WALLHEIGHT 16
+#define FLOORHEIGHT 4
+#define HORIZONTALSHIFT TILEWIDTH
+#define VERTICALSHIFT -TILEHEIGHT
 #endif
 
 #define GFXMODE GFX_AUTODETECT_WINDOWED
