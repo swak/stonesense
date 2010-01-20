@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Restraint" gameID="restraint"> 
+		<sprite index = 107 />
+</building> 

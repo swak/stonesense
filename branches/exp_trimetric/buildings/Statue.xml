@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Statue" gameID="statue"> 
+		<sprite index = 86 />
+</building> 
