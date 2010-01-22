@@ -1,15 +1,30 @@
 <?xml version="1.0" ?>
 
 <items file="items.png" >
-<item gameID="124" sheetIndex = 0 />
-<item gameID="122" sheetIndex = 1 />
-<item gameID="94" sheetIndex = 2 />
-<item gameID="150" sheetIndex = 3 />
-<item gameID="116" sheetIndex = 4 />
-<item gameID="115" sheetIndex = 5 />
-<item gameID="131" sheetIndex = 6 />
-<item gameID="144" sheetIndex = 7 />
-<item gameID="103" sheetIndex = 8 />
-<item gameID="101" sheetIndex = 9 />
+<item gameID="item_wood" sheetIndex = 0 />
+<item gameID="item_stone" sheetIndex = 1 />
+<item gameID="item_barrel" sheetIndex = 2 />
+<item gameID="item_bin" sheetIndex = 3 />
+<item gameID="item_skull" sheetIndex = 4 />
+<item gameID="item_bone" sheetIndex = 5 />
+<item gameID="item_shell" sheetIndex = 6 />
+<item gameID="item_bucket" sheetIndex = 7 />
+<item gameID="item_ammo" sheetIndex = 8 />
+<item gameID="item_quiver" sheetIndex = 9 />
+<item gameID="item_pants" sheetIndex = 10 />
+<item gameID="item_armor" sheetIndex = 11 />
+<item gameID="item_shield" sheetIndex = 12 />
+<item gameID="item_shoes" sheetIndex = 13 />
+<item gameID="item_gloves" sheetIndex = 14 />
+<item gameID="item_helm" sheetIndex = 15 />
+<item gameID="item_rough" sheetIndex = 16 />
+<item gameID="item_smallgem" sheetIndex = 16 />
+<item gameID="item_gem" sheetIndex = 17 />
+<item gameID="item_flask" sheetIndex = 18 />
+<item gameID="item_skin_tanned" sheetIndex = 19 />
+<item gameID="item_skin_raw" sheetIndex = 20 />
+<item gameID="item_chain" sheetIndex = 21 />
+<item gameID="item_cage" sheetIndex = 22 />
+<item gameID="item_bar" sheetIndex = 23 />
 </items>
 
