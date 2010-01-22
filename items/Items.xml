@@ -6,7 +6,7 @@
 <item gameID="item_barrel" sheetIndex = 2 />
 <item gameID="item_bin" sheetIndex = 3 />
 <item gameID="item_skull" sheetIndex = 4 />
-<item gameID="item_bone" sheetIndex = 5 />
+<item gameID="item_bones" sheetIndex = 5 />
 <item gameID="item_shell" sheetIndex = 6 />
 <item gameID="item_bucket" sheetIndex = 7 />
 <item gameID="item_ammo" sheetIndex = 8 />
@@ -26,5 +26,29 @@
 <item gameID="item_chain" sheetIndex = 21 />
 <item gameID="item_cage" sheetIndex = 22 />
 <item gameID="item_bar" sheetIndex = 23 />
+<item gameID="item_meat" sheetIndex = 24 />
+<item gameID="item_glob" sheetIndex = 25 />
+<item gameID="item_food" sheetIndex = 26 />
+<item gameID="item_scepter" sheetIndex = 27 />
+<item gameID="item_goblet" sheetIndex = 28 />
+<item gameID="item_ring" sheetIndex = 29 />
+<item gameID="item_earring" sheetIndex = 29 />
+<item gameID="item_totem" sheetIndex = 30 />
+<item gameID="item_weapon" sheetIndex = 31 />
+<item gameID="item_trapparts" sheetIndex = 32 />
+<item gameID="item_trapcomp" sheetIndex = 33 />
+<item gameID="item_remains" sheetIndex = 34 />
+<item gameID="item_corpsepiece" sheetIndex = 34 />
+<item gameID="item_corpse" sheetIndex = 35 />
+<item gameID="item_thread" sheetIndex = 37 />
+<item gameID="item_cloth" sheetIndex = 36 />
+<item gameID="item_bracelet" sheetIndex = 38 />
+<item gameID="item_crown" sheetIndex = 39 />
+<item gameID="item_instrument" sheetIndex = 40 />
+<item gameID="item_figurine" sheetIndex = 41 />
+<item gameID="item_amulet" sheetIndex = 42 />
+<item gameID="item_box" sheetIndex = 43 />
+<item gameID="item_plant" sheetIndex = 44 />
 </items>
+
 
