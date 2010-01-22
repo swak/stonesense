@@ -8,7 +8,7 @@ uint32_t imapxsize;
 uint32_t imapysize;
 uint32_t imapzsize;
 uint32_t checked_size = 0;
-bool oddPass = false;
+uint32_t cachePass = 0;
 
 #define ITEM_VECTOR_PRIORITY_AREA 10
 
@@ -56,9 +56,7 @@ uint32_t item_hidden_flag = 1 << 24;
 
 inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 {
-	//WriteErr("hi+ %d\n",itemIndex);
 	DF.ReadItem(itemIndex, tempItem);
-	//WriteErr("hi ri\n");
 	if (tempItem.x == 35536 || tempItem.y == 35536 || tempItem.z == 35536)
 			return;
 	// TODO integrate DFHack flags when they arrive
@@ -66,57 +64,58 @@ inline void handleItem(API& DF, t_item &tempItem, bool all_items)
 		return;
 	uint32_t itemLoc = tempItem.x + (tempItem.y * imapxsize) +
 		(tempItem.z * imapxsize * imapysize);
-	//WriteErr("hi cc\n");
 	t_CachedItem* cachedTemp = itemCache[itemLoc];
 	if (cachedTemp == NULL)
 	{
 		cachedTemp = new t_CachedItem;
 		itemCache[itemLoc] = cachedTemp;
-		cachedTemp->oddPass = !oddPass; // ensure write
+		cachedTemp->cachePass = cachePass-2; // ensure write
 	}
-	// check if cached item is the same as us
-	if (cachedTemp->itemID == tempItem.ID)
+	if (!all_items)
 	{
-		// check if we have a full cycle without state change
-		if (cachedTemp->oddPass != oddPass && (cachedTemp->flags & item_hidden_flag) == (tempItem.flags & item_hidden_flag))
+		// check if cached item is the same as us
+		if (cachedTemp->itemID == tempItem.ID)
 		{
-			cachedTemp->fullPass = true;
+			// check if we have a full cycle without state change
+			if (cachedTemp->cachePass == cachePass-1 &&
+				(cachedTemp->flags & item_hidden_flag) == (tempItem.flags & item_hidden_flag))
+			{
+				cachedTemp->fullPass = true;
+			}
+			else
+			{
+				cachedTemp->fullPass = false;
+			}
+			//update changing state
+			cachedTemp->cachePass = cachePass;
+			cachedTemp->flags=tempItem.flags;
+			return;
 		}
-		else
+		// check if cached item has priority
+		if (cachedTemp->cachePass == cachePass)
 		{
-			cachedTemp->fullPass = false;
+			if (cachedTemp->itemIndex > itemIndex &&
+					(!(cachedTemp->flags & item_hidden_flag) || (tempItem.flags & item_hidden_flag)))
+				return;
 		}
-		//update changing state
-		cachedTemp->oddPass = oddPass;
-		cachedTemp->flags=tempItem.flags;
-		return;
+		else if (cachedTemp->cachePass == cachePass - 1)
+		{
+			if (cachedTemp->itemIndex < itemIndex && (tempItem.flags & item_hidden_flag))
+				return;
+		}
 	}
-	// check if cached item has priority
-	if (cachedTemp->oddPass == oddPass)
-	{
-		if (cachedTemp->itemIndex > itemIndex && !(cachedTemp->flags & item_hidden_flag))
-			return;
-	}
-	else
-	{
-		if (cachedTemp->itemIndex < itemIndex && (tempItem.flags & item_hidden_flag))
-			return;
-	}
-	//WriteErr("hi wc\n");
 	cachedTemp->itemType=tempItem.type;
 	cachedTemp->matType=tempItem.material.type;
 	cachedTemp->matIndex=tempItem.material.index;
 	cachedTemp->flags=tempItem.flags;
 	cachedTemp->itemIndex=itemIndex;
 	cachedTemp->itemID=tempItem.ID;
-	cachedTemp->oddPass = oddPass;
-	cachedTemp->fullPass = false;
-	//WriteErr("hi-\n");
+	cachedTemp->cachePass = cachePass;
+	cachedTemp->fullPass = all_items; // if we are running all items at once, we know we checked everything
 }
 
 void ReadItems(API& DF)
 {
-	//WriteErr("ri+\n");
 	if (itemCache.size() == 0)
 	{
 		initItemVector(DF);
@@ -138,7 +137,6 @@ void ReadItems(API& DF)
 	
 	extra_item = itemv_size;
 	item_rem = config.itemsPerFrame;
-	bool all_items = false;
 	// dont worry about cache speed if we are loading manually
 	// also, handle the case where there are few enough items
 	// to just load everything
@@ -146,7 +144,13 @@ void ReadItems(API& DF)
 	{
 		itemIndex = itemv_size - 1;
 		min_item = 0;
-		all_items = true;
+		cachePass++; // why reset it periodically when you can let it overflow?
+		// use ascending loop for simplicity
+		for (itemIndex = 0;itemIndex < itemv_size;itemIndex++)
+		{
+			handleItem(DF,tempItem,true);	
+		}
+		itemIndex = 0;
 	}
 	else
 	{
@@ -185,43 +189,39 @@ void ReadItems(API& DF)
 			min_item = 0;
 			extra_item -= item_rem - itemIndex;
 		}
-	}
-	// store amount checked for next time
-	checked_size = itemv_size;
-	//WriteErr("ItemCache: v: 0 - %d (%d) e: %d - %d b: %d - %d\n",itemv_size-1,checked_size,extra_item,itemv_size-1,min_item,itemIndex);
-	// first pass- current sweep;
-	itemIndex++;
-	while (itemIndex>min_item) // this construct avoids problems when min_item == 0
-	{
-		itemIndex--;
-		handleItem(DF,tempItem,all_items);
-	}
-	// second pass- 'extra' sweep
-	// update pass if we have looped
-	//WriteErr("ri p2\n");
-	if (min_item == 0)
-	{
-		oddPass = !oddPass;
-	}
-	if (extra_item < itemv_size)
-	{
-		for (itemIndex = itemv_size - 1;itemIndex>=extra_item;itemIndex--)
+		// store amount checked for next time
+		checked_size = itemv_size;
+		// first pass- current sweep;
+		itemIndex++;
+		while (itemIndex>min_item) // this construct avoids problems when min_item == 0
 		{
+			itemIndex--;
 			handleItem(DF,tempItem,false);
 		}
+		// second pass- 'extra' sweep
+		// update pass if we have looped
+		if (min_item == 0)
+		{
+			cachePass++; // why reset it periodically when you can let it overflow?
+		}
+		if (extra_item < itemv_size)
+		{
+			for (itemIndex = itemv_size - 1;itemIndex>=extra_item;itemIndex--)
+			{
+				handleItem(DF,tempItem,false);
+			}
+		}
+		// work out where we left off
+		if (min_item)
+		{
+			itemIndex = min_item;	
+		}
+		else
+		{
+			itemIndex = extra_item;	
+		}
 	}
-	//WriteErr("ri dr\n");
 	DF.FinishReadItems();
-	// work out where we left off
-	if (min_item)
-	{
-		itemIndex = min_item;	
-	}
-	else
-	{
-		itemIndex = extra_item;	
-	}
-	//WriteErr("ri-\n");
 }
 
 void DrawItem( BITMAP* target, int drawx, int drawy, t_CachedItem& item )
@@ -288,15 +288,27 @@ void pushItemConfig( vector<vector<ItemConfiguration>*>& knownItems, int gameID,
 	itemVector->push_back(iconf);
 }
 
+int getItemnameFromString(const char* strType)
+{
+  for (uint32_t i=0; i<contentLoader.buildingNameStrings.size(); i++){
+		if (contentLoader.buildingNameStrings[i].compare(strType) == 0)
+		{
+			return i;
+		}
+	}
+	return INVALID_INDEX;	
+}
+
 bool addSingleItemConfig( TiXmlElement* elemItem, vector<vector<ItemConfiguration>*>& knownItems, int basefile ){
-	//int gameID = lookupIndexedType(elemItem->Attribute("gameID"),contentLoader.itemNameStrings);
-	//if (gameID == INVALID_INDEX)
-	//	return false;
-	// no item names yet!
-	const char* gameIdStr = elemItem->Attribute("gameID");
-	int gameID = atoi(gameIdStr);
-	if (gameID == 0 && gameIdStr[0] != '0')
+	// names are stored in with buildings at the moment...
+	int gameID = getItemnameFromString(elemItem->Attribute("gameID"));
+	if (gameID == INVALID_INDEX)
 		return false;
+	// no item names yet!
+	//const char* gameIdStr = elemItem->Attribute("gameID");
+	//int gameID = atoi(gameIdStr);
+	//if (gameID == 0 && gameIdStr[0] != '0')
+	//	return false;
 	const char* sheetIndexStr;
 	t_SpriteWithOffset sprite;
 	sprite.fileIndex=basefile;
