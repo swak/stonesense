@@ -25,7 +25,7 @@ struct t_CachedItem{
 	uint32_t flags;
 	int itemIndex;
 	int itemID;
-	bool oddPass;
+	uint32_t cachePass;
 	bool fullPass;
 } ;
 
