@@ -164,6 +164,7 @@ void doKeys(){
 		DisplayedRotation++;
     DisplayedRotation %= 4;
 		timeToReloadSegment = true;
+		while(key[KEY_ENTER]);
 	}
 	if(key[KEY_PGDN] || key[KEY_9]){
 		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
@@ -195,6 +196,7 @@ void doKeys(){
     	loadGraphicsFromDisk();
 		timeToReloadConfig = true;
 		timeToReloadSegment = true;
+		while(key[KEY_G]);
 	}
   if(key[KEY_U]){
 		config.show_stockpiles = !config.show_stockpiles;
@@ -205,6 +207,11 @@ void doKeys(){
 		config.show_zones = !config.show_zones;
     timeToReloadSegment = true;
 		while(key[KEY_I]);
+	}
+  if(key[KEY_O]){
+		config.show_items = !config.show_items;
+    timeToReloadSegment = true;
+		while(key[KEY_O]);
 	}
   if(key[KEY_C]){
 		config.truncate_walls = !config.truncate_walls;
