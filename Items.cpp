@@ -260,7 +260,14 @@ t_SpriteWithOffset GetItemSpriteMap( t_CachedItem& item )
 	{
 		return spriteItem_NA;
 	}
-	return (*testVector)[0].sprite;
+	int maxv = testVector->size();
+	int mat = item.matType;
+	for (int i=0;i<maxv;i++)
+	{
+		if (mat == (*testVector)[i].matType || (*testVector)[i].matType == INVALID_INDEX)
+			return (*testVector)[i].sprite;
+	}
+	return spriteItem_NA;
 }
 
 void pushItemConfig( vector<vector<ItemConfiguration>*>& knownItems, int gameID, ItemConfiguration& iconf)
@@ -303,7 +310,11 @@ bool addSingleItemConfig( TiXmlElement* elemItem, vector<vector<ItemConfiguratio
 	// names are stored in with buildings at the moment...
 	int gameID = getItemnameFromString(elemItem->Attribute("gameID"));
 	if (gameID == INVALID_INDEX)
+	{
+		WriteErr("Item name %d not recognised\n",elemItem->Attribute("gameID"));
+		contentError("in item config",elemItem);
 		return false;
+	}
 	// no item names yet!
 	//const char* gameIdStr = elemItem->Attribute("gameID");
 	//int gameID = atoi(gameIdStr);
@@ -320,12 +331,22 @@ bool addSingleItemConfig( TiXmlElement* elemItem, vector<vector<ItemConfiguratio
 	{
 		sprite.fileIndex = loadConfigImgFile((char*)filename,elemItem);
 	}
-	
+	int mattype = INVALID_INDEX;
+	const char* matname = elemItem->Attribute("material");
+	if (matname != NULL && matname[0] != 0)
+	{
+		mattype = lookupMaterialType(matname);
+		if (mattype == INVALID_INDEX)
+		{
+			WriteErr("Material name %d not recognised\n",matname);
+			contentError("in item config",elemItem);			
+		}
+	}
 	//create default config
 	sheetIndexStr = elemItem->Attribute("sheetIndex");
 	sprite.animFrames = ALL_FRAMES;
 	sprite.sheetIndex = atoi( sheetIndexStr );
-	ItemConfiguration iconf(sprite, INVALID_INDEX, INVALID_INDEX);
+	ItemConfiguration iconf(sprite, mattype, INVALID_INDEX);
 	pushItemConfig(knownItems, gameID, iconf);
 	return true;
 }
@@ -354,7 +375,7 @@ bool addItemsConfig( TiXmlElement* elemRoot, vector<vector<ItemConfiguration>*>&
 ItemConfiguration::ItemConfiguration(t_SpriteWithOffset &sprite, int matType, int matIndex)
 {
 	this->sprite=sprite;
-	this->matType=matIndex;
+	this->matType=matType;
 	this->matIndex=matIndex;
 }
 
