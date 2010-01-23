@@ -49,6 +49,19 @@
 <item gameID="item_amulet" sheetIndex = 42 />
 <item gameID="item_box" sheetIndex = 43 />
 <item gameID="item_plant" sheetIndex = 44 />
+<item gameID="item_chair" sheetIndex = 45 />
+<item gameID="item_table" sheetIndex = 46 />
+<item gameID="item_cabinet" sheetIndex = 47 />
+<item gameID="item_bed" sheetIndex = 48 />
+<item gameID="item_door" sheetIndex = 49 />
+<item gameID="item_hatch_cover" sheetIndex = 50 />
+<item gameID="item_floodgate" sheetIndex = 51 />
+<item gameID="item_anvil" sheetIndex = 52 />
+<item gameID="item_statue" sheetIndex = 53 />
+<item gameID="item_grate" sheetIndex = 54 />
+<item gameID="item_window" sheetIndex = 55 />
+<item gameID="item_armorstand" sheetIndex = 56 />
+<item gameID="item_weaponrack" sheetIndex = 57 />
 </items>
 
 
