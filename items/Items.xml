@@ -3,6 +3,7 @@
 <items file="items.png" >
 <item gameID="item_wood" sheetIndex = 0 />
 <item gameID="item_stone" sheetIndex = 1 />
+<item gameID="item_rock" sheetIndex = 1 />
 <item gameID="item_barrel" material="Metal" sheetIndex = 69 />
 <item gameID="item_barrel" sheetIndex = 2 />
 <item gameID="item_bin" material="Metal" sheetIndex = 70 />
@@ -39,6 +40,8 @@
 <item gameID="item_cage" sheetIndex = 22 />
 <item gameID="item_bar" sheetIndex = 23 />
 <item gameID="item_meat" sheetIndex = 24 />
+<item gameID="item_fish" sheetIndex = 24 />
+<item gameID="item_fish_raw" sheetIndex = 72 />
 <item gameID="item_glob" sheetIndex = 25 />
 <item gameID="item_food" sheetIndex = 26 />
 <item gameID="item_scepter" sheetIndex = 27 />
@@ -78,6 +81,26 @@
 <item gameID="item_weaponrack" sheetIndex = 57 />
 <item gameID="item_box" sheetIndex = 58 />
 <item gameID="item_backpack" sheetIndex = 71 />
+<item gameID="item_coin" sheetIndex = 73 />
+<item gameID="item_liquid_misc" sheetIndex = 74 />
+<item gameID="item_extract" sheetIndex = 74 />
+<item gameID="item_potion" sheetIndex = 74 />
+<item gameID="item_drink" sheetIndex = 74 />
+<item gameID="item_powder_misc" sheetIndex = 75 />
+<item gameID="item_seeds" sheetIndex = 73 />
+<item gameID="item_blocks" sheetIndex = 76 />
+<item gameID="item_leaves" sheetIndex = 77 />
+<item gameID="item_ballistaarrowhead" sheetIndex = 78 />
+<item gameID="item_cheese" sheetIndex = 79 />
+<item gameID="item_toy" sheetIndex = 80 />
+<item gameID="item_animaltrap" sheetIndex = 81 />
+<item gameID="item_coffin" sheetIndex = 82 />
+<item gameID="item_quern" sheetIndex = 83 />
+<item gameID="item_millstone" sheetIndex = 83 />
+<item gameID="item_catapultparts" sheetIndex = 84 />
+<item gameID="item_ballistaparts" sheetIndex = 84 />
+<item gameID="item_siegeammo" sheetIndex = 85 />
+<item gameID="item_pipe_section" sheetIndex = 86 />
 </items>
 
 
