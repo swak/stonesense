@@ -3,7 +3,9 @@
 <items file="items.png" >
 <item gameID="item_wood" sheetIndex = 0 />
 <item gameID="item_stone" sheetIndex = 1 />
+<item gameID="item_barrel" material="Metal" sheetIndex = 69 />
 <item gameID="item_barrel" sheetIndex = 2 />
+<item gameID="item_bin" material="Metal" sheetIndex = 70 />
 <item gameID="item_bin" sheetIndex = 3 />
 <item gameID="item_skull" sheetIndex = 4 />
 <item gameID="item_bones" sheetIndex = 5 />
@@ -11,15 +13,25 @@
 <item gameID="item_bucket" sheetIndex = 7 />
 <item gameID="item_ammo" sheetIndex = 8 />
 <item gameID="item_quiver" sheetIndex = 9 />
-<item gameID="item_pants" sheetIndex = 10 />
-<item gameID="item_armor" sheetIndex = 11 />
+<item gameID="item_pants" material="Metal" sheetIndex = 60 />
+<item gameID="item_pants" material="Leather" sheetIndex = 10 />
+<item gameID="item_pants" sheetIndex = 66 />
+<item gameID="item_armor" material="Metal" sheetIndex = 61 />
+<item gameID="item_armor" material="Leather" sheetIndex = 11 />
+<item gameID="item_armor" sheetIndex = 67 />
+<item gameID="item_shield" material="Metal" sheetIndex = 62 />
 <item gameID="item_shield" sheetIndex = 12 />
+<item gameID="item_shoes" material="Metal" sheetIndex = 63 />
 <item gameID="item_shoes" sheetIndex = 13 />
+<item gameID="item_gloves" material="Metal" sheetIndex = 64 />
 <item gameID="item_gloves" sheetIndex = 14 />
-<item gameID="item_helm" sheetIndex = 15 />
+<item gameID="item_helm" material="Metal" sheetIndex = 65 />
+<item gameID="item_helm" material="Leather" sheetIndex = 15 />
+<item gameID="item_helm" sheetIndex = 68 />
 <item gameID="item_rough" sheetIndex = 16 />
 <item gameID="item_smallgem" sheetIndex = 16 />
 <item gameID="item_gem" sheetIndex = 17 />
+<item gameID="item_flask" material="Leather" sheetIndex = 59 />
 <item gameID="item_flask" sheetIndex = 18 />
 <item gameID="item_skin_tanned" sheetIndex = 19 />
 <item gameID="item_skin_raw" sheetIndex = 20 />
@@ -47,7 +59,9 @@
 <item gameID="item_instrument" sheetIndex = 40 />
 <item gameID="item_figurine" sheetIndex = 41 />
 <item gameID="item_amulet" sheetIndex = 42 />
-<item gameID="item_box" sheetIndex = 43 />
+<item gameID="item_box" material="Leather" sheetIndex = 43 />
+<item gameID="item_box" material="Silk" sheetIndex = 43 />
+<item gameID="item_box" material="PlantCloth" sheetIndex = 43 />
 <item gameID="item_plant" sheetIndex = 44 />
 <item gameID="item_chair" sheetIndex = 45 />
 <item gameID="item_table" sheetIndex = 46 />
@@ -62,6 +76,8 @@
 <item gameID="item_window" sheetIndex = 55 />
 <item gameID="item_armorstand" sheetIndex = 56 />
 <item gameID="item_weaponrack" sheetIndex = 57 />
+<item gameID="item_box" sheetIndex = 58 />
+<item gameID="item_backpack" sheetIndex = 71 />
 </items>
 
 
