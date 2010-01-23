@@ -37,6 +37,7 @@ SET(PROJECT_SRCS
     dfhack/library/DFMemInfo.cpp
     dfhack/library/DFMemInfoManager.cpp
     dfhack/library/DFTileTypes.cpp
+
     dfhack/library/md5/md5.cpp
     dfhack/library/md5/md5wrapper.cpp
     loadpng/loadpng.c
@@ -116,6 +117,8 @@ ELSE(UNIX)
     add_definitions(-DBUILD_DFHACK_LIB)
     SET (PLATFORM_SRC
 	dfhack/library/DFProcess-windows.cpp
+	dfhack/library/DFProcess-windows-SHM.cpp
+	dfhack/library/DFWindow-windows.cpp
 	dfhack/library/DFProcessEnumerator-windows.cpp
 	)
     # use local allegro
