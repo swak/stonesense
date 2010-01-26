@@ -1,7 +1,8 @@
 #include "common.h"
 #include "WorldSegment.h"
 #include "GUI.h"
-
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 BITMAP* level = 0;
 
@@ -150,7 +151,8 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
   int32_t vsxmax = viewedSegment->sizex-1;
   int32_t vsymax = viewedSegment->sizey-1;
   int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
-	if (!(config.foga == 0))
+  int foglevel;
+  if ((!(config.foga == 0)) || (!(config.fogtype == fNone)))
 	{
 		if (!level)
 		{
@@ -180,8 +182,34 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 					}
 				}
 			}
-			set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
-			draw_lit_sprite(target, level, 0, 0, (((vszmax-1) - vsz) *config.foga / (vszmax-1)));
+			switch (config.fogtype)
+			{
+				case fNone:
+					foglevel = 0;
+					break;
+				case fLin:
+					foglevel = (config.foga * ((vszmax-1) - vsz)) / (vszmax-1);//Linear
+					break;
+				case fSin:
+					foglevel = config.foga * (sin((((float)vszmax-1) - vsz) / (vszmax-1)*M_PI-(0.5*M_PI))+1) / 2; //Sinusidal
+					break;
+				case fLog:
+					foglevel = config.foga * (log10(((((float)vszmax-1) - vsz) / (vszmax-1)*9)+1)); //Logarithmic
+					break;
+				case fLoginv:
+					foglevel = config.foga * (1-(log10(10-((((float)vszmax-1) - vsz) / (vszmax-1)*9)))); //Inverse Logarithmic
+					break;
+				default:
+					foglevel = 0;
+			}
+			WriteErr("Fogtype == %d, Foglevel == %d\n", config.fogtype, foglevel);
+			if (foglevel >= 1)
+			{
+				set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
+				draw_lit_sprite(target, level, 0, 0, foglevel);
+			}
+			else
+				draw_sprite(target, level, 0, 0);
 		}
 	}
 	else

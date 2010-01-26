@@ -16,7 +16,7 @@ with your drivers, or the program will still load in window mode.
 These two options set how large the cube laoaded from Dwarf Fortress is.
 Each entry expects the number of tiles to load.
 [SEGMENTSIZE_XY:90]
-[SEGMENTSIZE_Z:8]
+[SEGMENTSIZE_Z:17]
 
 Change this off to skip the intro.
 [INTRO:ON]
@@ -57,15 +57,18 @@ Follow the center of the DF window, rather than scale to the edges.
 Follow DF window is on when Stonesense launches.
 [FOLLOW_DF_SCREEN:YES]
 
+Fog gradient method. valid values are NONE, SIN, LOG, LOGINV, and LIN.
+[FOGTYPE:NONE]
+
 Fog color, and alpha at the bottom z-level. setting the alpha to 0 disables fog, for a slight performance increase.
-[FOG_RED:95]
-[FOG_GREEN:95]
-[FOG_BLUE:160]
+[FOG_RED:255]
+[FOG_GREEN:255]
+[FOG_BLUE:255]
 [FOG_ALPHA:255]
 
 
 Background color. setting this the same as teh fog color produces a nice effect.
-[BACK_RED:95]
-[BACK_GREEN:95]
-[BACK_BLUE:160]
+[BACK_RED:255]
+[BACK_GREEN:255]
+[BACK_BLUE:255]
 

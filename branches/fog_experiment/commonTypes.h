@@ -19,7 +19,13 @@ typedef struct Crd3D {
 }Crd3D;
 
 
-
+enum fogType{
+	  fNone,
+	  fLin,
+	  fSin,
+	  fLog,
+	  fLoginv
+  };
 
 typedef struct {
   bool show_zones;
@@ -58,6 +64,8 @@ typedef struct {
   int backb;
 
   Crd3D segmentSize;
+
+  fogType fogtype;
 
 } GameConfiguration;
 
