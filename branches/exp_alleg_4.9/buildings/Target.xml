@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Target" gameID="archery_target">
+		<sprite index = 288 />	
+</building> 

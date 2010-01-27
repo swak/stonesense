@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Paved Road" gameID="paved_road"> 
+	
+
+		<sprite index = 140 />
+
+	
+</building> 
