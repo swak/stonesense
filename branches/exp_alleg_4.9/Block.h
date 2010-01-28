@@ -42,8 +42,8 @@ public:
 	bool IsVisible(){
 		return (floorType || wallType) != 0;
 	}
-	void Draw(BITMAP* target);
-	void DrawRamptops(BITMAP* target);
+	void Draw(ALLEGRO_BITMAP* target);
+	void DrawRamptops(ALLEGRO_BITMAP* target);
 	
 private:
 

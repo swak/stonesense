@@ -10,7 +10,7 @@ public:
 	int sizex, sizey, sizez;
   Crd3D regionSize;
   Block** blocksAsPointerVolume;
-  BITMAP* level;
+  ALLEGRO_BITMAP *level;
 
 	WorldSegment(int x, int y, int z, int sizex, int sizey, int sizez){
 		this->x = x; 
@@ -33,7 +33,7 @@ public:
     }
     blocks.clear();
     if (level)
-    	destroy_bitmap(level);
+    	al_destroy_bitmap(level);
   }
 
   void Dispose(void){
@@ -49,6 +49,6 @@ public:
   Block* getBlockRelativeTo(uint32_t x, uint32_t y, uint32_t z,  dirRelative direction);
   Block* getBlock(uint32_t index);
   void addBlock(Block* b);
-  void drawAllBlocks(BITMAP* target);
+  void drawAllBlocks(ALLEGRO_BITMAP* target);
   bool CoordinateInsideSegment(uint32_t x, uint32_t y, uint32_t z);
 };

@@ -7,7 +7,11 @@
 #include <assert.h>
 #include <vector>
 #include <map>
-#include <allegro.h>
+#include <allegro5\allegro.h>
+#include <allegro5\allegro_primitives.h>
+#include <allegro5\allegro_font.h>
+#include <allegro5\allegro_image.h>
+#include <allegro5\allegro_native_dialog.h>
 
 using namespace std;
 
@@ -186,3 +190,5 @@ class BuildingConfiguration;
 #define FILENAME_BUFFERSIZE 50
 // temp buffers are bigger because they deal with absolute paths
 #define FILENAME_BUFFERSIZE_LOCAL 200
+
+ALLEGRO_FONT *font;

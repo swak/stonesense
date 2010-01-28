@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="Stonesense"
 	ProjectGUID="{37B19492-24AE-43C0-B67E-B252915A1C98}"
 	RootNamespace="Stonesense"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="allegro/lib_msvs8/alld.lib PSAPI.lib dfhack/build/dfhack-debug.lib loadpng/libpng/lib/libpng.lib"
+				AdditionalDependencies="allegro-4.9.16-msvc-bin\lib\allegro-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack-debug.lib loadpng/libpng/lib/libpng.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -117,8 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="allegro"
-				PreprocessorDefinitions="ALLEGRO_MSVC"
+				AdditionalIncludeDirectories="&quot;allegro-4.9.16-msvc-bin\include&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -136,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="allegro/lib_msvs8/alleg.lib  PSAPI.lib dfhack/build/dfhack.lib loadpng/libpng/lib/libpng.lib"
+				AdditionalDependencies="allegro-4.9.16-msvc-bin/lib/allegro-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_primitives-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_font-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_image-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_dialog-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -348,22 +347,6 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="loadpng"
-				>
-				<File
-					RelativePath=".\loadpng\loadpng.c"
-					>
-				</File>
-				<File
-					RelativePath=".\loadpng\regpng.c"
-					>
-				</File>
-				<File
-					RelativePath=".\loadpng\savepng.c"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="Configuration"
 				>
 				<File
@@ -470,14 +453,6 @@
 				</File>
 				<File
 					RelativePath=".\dfhack\library\dftypes.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="loadpng"
-				>
-				<File
-					RelativePath=".\loadpng\loadpng.h"
 					>
 				</File>
 			</Filter>

@@ -136,27 +136,28 @@ void WorldSegment::addBlock(Block* b){
 
 }
 /*
-void WorldSegment::drawAllBlocks(BITMAP* target){
+void WorldSegment::drawAllBlocks(ALLEGRO_BITMAP* target){
   uint32_t numblocks = (uint32_t)this->blocks.size();
   for(uint32_t i=0; i < numblocks; i++){
 	  viewedSegment->blocks[i]->Draw(target);
 	}
 }*/
 
-void WorldSegment::drawAllBlocks(BITMAP* target){
-  // x,y,z print pricess
-  int32_t vsxmax = viewedSegment->sizex-1;
-  int32_t vsymax = viewedSegment->sizey-1;
-  int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
+void WorldSegment::drawAllBlocks(ALLEGRO_BITMAP* target){
+	// x,y,z print pricess
+	al_set_target_bitmap(target);
+	int32_t vsxmax = viewedSegment->sizex-1;
+	int32_t vsymax = viewedSegment->sizey-1;
+	int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
 	if ((config.foga != 0) && (vszmax > 1))
 	{
 		if (!level)
 		{
-			level = create_bitmap(target->w, target->h);
+			level = al_create_bitmap(al_get_bitmap_width(target), al_get_bitmap_height(target));
 		}
 		for(int32_t vsz=0; vsz < vszmax; vsz++)
 		{
-			clear_to_color(level, makeacol(255, 0, 255, 0));
+			al_clear_to_color(al_map_rgba(255, 0, 255, 0));
 			for(int32_t vsx=1; vsx < vsxmax; vsx++)
 			{
 				for(int32_t vsy=1; vsy < vsymax; vsy++)
@@ -178,8 +179,10 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 					}
 				}
 			}
-			set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
-			draw_lit_sprite(target, level, 0, 0, (((vszmax-1) - vsz) *config.foga / (vszmax-1)));
+			//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(config.fogr, config.fogg, config.fogb, (((vszmax-1) - vsz) *config.foga / (vszmax-1))));
+			//set_trans_blender(config.fogr, config.fogg, config.fogb, 255);
+			//draw_lit_sprite(target, level, 0, 0, );
+			al_draw_bitmap(level, 0, 0, 0);
 		}
 	}
 	else
@@ -212,7 +215,7 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 }
 
 /*
-void WorldSegment::drawAllBlocks(BITMAP* target){
+void WorldSegment::drawAllBlocks(ALLEGRO_BITMAP* target){
     // x,y,z print pricess
     int32_t vsxmax = viewedSegment->x + viewedSegment->sizex;
     int32_t vsymax = viewedSegment->y + viewedSegment->sizey;
@@ -270,7 +273,7 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
     }
 }
 */
-/*void WorldSegment::drawAllBlocks(BITMAP* target){
+/*void WorldSegment::drawAllBlocks(ALLEGRO_BITMAP* target){
     // x,y,z print pricess
     int32_t vsxmax = viewedSegment->x + viewedSegment->sizex;
     int32_t vsymax = viewedSegment->y + viewedSegment->sizey;

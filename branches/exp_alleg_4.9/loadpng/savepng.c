@@ -32,7 +32,7 @@ static void flush_data(png_structp png_ptr) { (void)png_ptr; }
 /* save_indexed:
  *  Core save routine for 8 bpp images.
  * */
-static int save_indexed(png_structp png_ptr, BITMAP *bmp)
+static int save_indexed(png_structp png_ptr, ALLEGRO_BITMAP *bmp)
 {
     ASSERT(bitmap_color_depth(bmp) == 8);
 
@@ -74,7 +74,7 @@ static int save_indexed(png_structp png_ptr, BITMAP *bmp)
 /* save_rgb:
  *  Core save routine for 15/16/24 bpp images (original by Martijn Versteegh).
  */
-static int save_rgb(png_structp png_ptr, BITMAP *bmp)
+static int save_rgb(png_structp png_ptr, ALLEGRO_BITMAP *bmp)
 {
     AL_CONST int depth = bitmap_color_depth(bmp);
     unsigned char *rowdata;
@@ -127,7 +127,7 @@ static int save_rgb(png_structp png_ptr, BITMAP *bmp)
 /* save_rgba:
  *  Core save routine for 32 bpp images.
  */
-static int save_rgba(png_structp png_ptr, BITMAP *bmp)
+static int save_rgba(png_structp png_ptr, ALLEGRO_BITMAP *bmp)
 {
     unsigned char *rowdata;
     int x, y;
@@ -163,7 +163,7 @@ static int save_rgba(png_structp png_ptr, BITMAP *bmp)
  *  Writes a non-interlaced, no-frills PNG, taking the usual save_xyz
  *  parameters.  Returns non-zero on error.
  */
-static int really_save_png(PACKFILE *fp, BITMAP *bmp, AL_CONST RGB *pal)
+static int really_save_png(PACKFILE *fp, ALLEGRO_BITMAP *bmp, AL_CONST RGB *pal)
 {
     png_structp png_ptr = NULL;
     png_infop info_ptr = NULL;
@@ -284,7 +284,7 @@ static int really_save_png(PACKFILE *fp, BITMAP *bmp, AL_CONST RGB *pal)
 }
 
 
-int save_png(AL_CONST char *filename, BITMAP *bmp, AL_CONST RGB *pal)
+int save_png(AL_CONST char *filename, ALLEGRO_BITMAP *bmp, AL_CONST RGB *pal)
 {
     PACKFILE *fp;
     int result;

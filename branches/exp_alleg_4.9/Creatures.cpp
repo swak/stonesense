@@ -24,14 +24,14 @@ bool IsCreatureVisible( t_creature* c ){
   return true;
 }
 
-void DrawCreature( BITMAP* target, int drawx, int drawy, t_creature* creature ){
+void DrawCreature( ALLEGRO_BITMAP* target, int drawx, int drawy, t_creature* creature ){
   t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
   //if(creature->x == 151 && creature->y == 145)
   //  int j = 10;
   if( config.show_creature_names )
   	if (creature->nick_name[0] && config.names_use_nick)
   	{
-  		textprintf(target, font, drawx, drawy-20, 0xFFffFF, "%s", creature->nick_name );
+		al_draw_textf(font, drawx, drawy-20, 0, "%s", creature->nick_name);
 	}
   	else if (creature->first_name[0])
   	{
@@ -40,14 +40,14 @@ void DrawCreature( BITMAP* target, int drawx, int drawy, t_creature* creature ){
 	  	buffer[127]=0;
 	  	if (buffer[0]>90)
 	  		buffer[0] -= 32;
-    	textprintf(target, font, drawx, drawy-20, 0xFFffFF, "%s", buffer );
+    	al_draw_textf(font, drawx, drawy-20, 0, "%s", buffer );
 	}
     else if (config.names_use_species)
     {
-    	textprintf(target, font, drawx, drawy-20, 0xFFffFF, "[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
+    	al_draw_textf(font, drawx, drawy-20, 0, "[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
 	}
     	
-  	BITMAP* creatureSheet;
+  	ALLEGRO_BITMAP* creatureSheet;
     if (sprite.fileIndex == -1)
     {
     	creatureSheet = IMGCreatureSheet;

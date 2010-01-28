@@ -78,9 +78,9 @@ static int check_if_png(PACKFILE *fp)
 /* really_load_png:
  *  Worker routine, used by load_png and load_memory_png.
  */
-static BITMAP *really_load_png(png_structp png_ptr, png_infop info_ptr, RGB *pal)
+static ALLEGRO_BITMAP *really_load_png(png_structp png_ptr, png_infop info_ptr, RGB *pal)
 {
-    BITMAP *bmp;
+    ALLEGRO_BITMAP *bmp;
     PALETTE tmppal;
     png_uint_32 width, height, rowbytes;
     int bit_depth, color_type, interlace_type;
@@ -219,10 +219,10 @@ static BITMAP *really_load_png(png_structp png_ptr, png_infop info_ptr, RGB *pal
 /* load_png:
  *  Load a PNG file from disk, doing colour coversion if required.
  */
-BITMAP *load_png(AL_CONST char *filename, RGB *pal)
+ALLEGRO_BITMAP *load_png(AL_CONST char *filename, RGB *pal)
 {
     PACKFILE *fp;
-    BITMAP *bmp;
+    ALLEGRO_BITMAP *bmp;
 
     ASSERT(filename);
 
@@ -242,9 +242,9 @@ BITMAP *load_png(AL_CONST char *filename, RGB *pal)
 /* load_png_pf:
  *  Load a PNG file from disk, doing colour coversion if required.
  */
-BITMAP *load_png_pf(PACKFILE *fp, RGB *pal)
+ALLEGRO_BITMAP *load_png_pf(PACKFILE *fp, RGB *pal)
 {
-    BITMAP *bmp;
+    ALLEGRO_BITMAP *bmp;
     png_structp png_ptr;
     png_infop info_ptr;
 
@@ -338,10 +338,10 @@ static int check_if_png_memory(AL_CONST void *buffer)
 /* load_memory_png:
  *  Load a PNG file from memory, doing colour coversion if required.
  */
-BITMAP *load_memory_png(AL_CONST void *buffer, int bufsize, RGB *pal)
+ALLEGRO_BITMAP *load_memory_png(AL_CONST void *buffer, int bufsize, RGB *pal)
 {
     MEMORY_READER_STATE memory_reader_state;
-    BITMAP *bmp;
+    ALLEGRO_BITMAP *bmp;
     png_structp png_ptr;
     png_infop info_ptr;
 
