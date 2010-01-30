@@ -6,177 +6,186 @@
 #include "Creatures.h"
 
 void mouseProc(int flags){
-  int j = 10;
-  if(flags & MOUSE_FLAG_LEFT_DOWN){
-    
-    
-  }
-  //paintboard();
+	//int j = 10;
+	//if(flags & MOUSE_FLAG_LEFT_DOWN){
+
+
+	//}
+	////paintboard();
 }
 
 void automaticReloadProc(){
-		timeToReloadSegment = true;
+	timeToReloadSegment = true;
 }
 
 void initAutoReload()
 {
-    if( config.automatic_reload_time > 0 )
-      install_int( automaticReloadProc, config.automatic_reload_time );
+	if( config.automatic_reload_time > 0 )
+	{
+		if(!reloadtimer)
+			reloadtimer = al_install_timer(config.automatic_reload_time);
+		else
+			al_set_timer_speed(reloadtimer, config.automatic_reload_time);
+		al_start_timer(reloadtimer);
+	}
+	//install_int( automaticReloadProc, config.automatic_reload_time );
 }
 
 void abortAutoReload()
 {
 	config.automatic_reload_time = 0;
-	remove_int( automaticReloadProc );	
+	al_stop_timer(reloadtimer);
+	al_uninstall_timer(reloadtimer);
+	//remove_int( automaticReloadProc );	
 }
 
 void changeRelativeToRotation( int &inputx, int &inputy, int stepx, int stepy ){
-  switch(DisplayedRotation){
+	switch(DisplayedRotation){
   case 0:
-    inputx += stepx;
-    inputy += stepy;
-    break;
+	  inputx += stepx;
+	  inputy += stepy;
+	  break;
   case 1:
-    inputx += stepy;
-    inputy -= stepx;
-    break;
+	  inputx += stepy;
+	  inputy -= stepx;
+	  break;
   case 2:
-    inputx -= stepx;
-    inputy -= stepy;
-    break;
+	  inputx -= stepx;
+	  inputy -= stepy;
+	  break;
   case 3:
-    inputx -= stepy;
-    inputy += stepx;
-    break;
-  };
+	  inputx -= stepy;
+	  inputy += stepx;
+	  break;
+	};
 }
 
 void moveViewRelativeToRotation( int stepx, int stepy )
 {
-  if (config.follow_DFscreen)
-  	changeRelativeToRotation(config.viewXoffset, config.viewYoffset, stepx, stepy );
-  else
-  	changeRelativeToRotation(DisplayedSegmentX, DisplayedSegmentY, stepx, stepy );
+	if (config.follow_DFscreen)
+		changeRelativeToRotation(config.viewXoffset, config.viewYoffset, stepx, stepy );
+	else
+		changeRelativeToRotation(DisplayedSegmentX, DisplayedSegmentY, stepx, stepy );
 }
 
 void doKeys(){
-  char stepsize = (key[KEY_LSHIFT] || key[KEY_RSHIFT] ? MAPNAVIGATIONSTEPBIG : MAPNAVIGATIONSTEP);
-  //mouse_callback = mouseProc;
-    static int last_mouse_z;
-    if(mouse_z < last_mouse_z)
-    {
+	al_get_keyboard_state(keyboard);
+	char stepsize = (al_key_down(keyboard, ALLEGRO_KEY_LSHIFT) || al_key_down(keyboard, ALLEGRO_KEY_RSHIFT) ? MAPNAVIGATIONSTEPBIG : MAPNAVIGATIONSTEP);
+	//mouse_callback = mouseProc;
+	al_get_mouse_state(mouse);
+	static int last_mouse_z;
+	if(mouse->z < last_mouse_z)
+	{
 		config.follow_DFscreen = false;
-        if(key[KEY_LCONTROL] || key[KEY_RCONTROL])
-        {
-            config.segmentSize.z++;
-        }
-        else
-        {
-            if (config.follow_DFscreen)
-			    config.viewZoffset -= stepsize;
-            else
-			    DisplayedSegmentZ -= stepsize;
-   		    if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
-        }
-        timeToReloadSegment = true;
-        last_mouse_z = mouse_z;
-    }
-    if(mouse_z > last_mouse_z){
+		if(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL))
+		{
+			config.segmentSize.z++;
+		}
+		else
+		{
+			if (config.follow_DFscreen)
+				config.viewZoffset -= stepsize;
+			else
+				DisplayedSegmentZ -= stepsize;
+			if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
+		}
+		timeToReloadSegment = true;
+		last_mouse_z = mouse->z;
+	}
+	if(mouse->z > last_mouse_z){
 		config.follow_DFscreen = false;
-        if(key[KEY_LCONTROL] || key[KEY_RCONTROL])
-        {
-            config.segmentSize.z--;
-            if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
-        }
-        else
-        {
-            if (config.follow_DFscreen)
-			    config.viewZoffset += stepsize;
-            else
-			    DisplayedSegmentZ += stepsize;
-   		    if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
-        }
-        timeToReloadSegment = true;
-        last_mouse_z = mouse_z;
-    }
-    if( mouse_b & 2 ){
-	  config.follow_DFscreen = false;
-      int pos, x, y;
-      pos = mouse_pos;
-      x = pos >> 16;
-      y = pos & 0x0000ffff;
-      int blockx,blocky,blockz;
-      ScreenToPoint(x,y,blockx,blocky,blockz);
-      int diffx = blockx - config.segmentSize.x/2;
-      int diffy = blocky - config.segmentSize.y/2;
-      /*we use changeRelativeToRotation directly, and not through moveViewRelativeToRotation 
-      because we don't want to move the offset with the mouse. It just feels weird. */
-      // changing to +1,+1 which moves the clicked point to one of the 4 surrounding the center of rotation
-      changeRelativeToRotation(DisplayedSegmentX, DisplayedSegmentY, diffx+1, diffy+1 );
-      //moveViewRelativeToRotation(diffx+1, diffy+1);
-      timeToReloadSegment = true;
-      //rest(50);
-    }
-    if( mouse_b & 1 ){
-        int pos, x, y;
-        pos = mouse_pos;
-        x = mouse_x;//pos >> 16;
-        y = mouse_y; //pos & 0x0000ffff;
-        if(x >= MiniMapTopLeftX && x <= MiniMapBottomRightX && y >= MiniMapTopLeftY && y <= MiniMapBottomRightY){ // in minimap
-            DisplayedSegmentX = (x-MiniMapTopLeftX-MiniMapSegmentWidth/2)/oneBlockInPixels;
-            DisplayedSegmentY = (y-MiniMapTopLeftY-MiniMapSegmentHeight/2)/oneBlockInPixels;
-        }
-        else{
-            int blockx,blocky,blockz;
-            ScreenToPoint(x,y,blockx,blocky,blockz);
-            int diffx = blockx - config.segmentSize.x/2;
-            int diffy = blocky - config.segmentSize.y/2;
-            debugCursor.x = blockx;
-            debugCursor.y = blocky;
-        }
-        timeToReloadSegment = true;
-    }
-  if(key[KEY_UP]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
-			config.follow_DFscreen = false;
-    	moveViewRelativeToRotation( 0, -stepsize );
+		if(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL))
+		{
+			config.segmentSize.z--;
+			if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
+		}
+		else
+		{
+			if (config.follow_DFscreen)
+				config.viewZoffset += stepsize;
+			else
+				DisplayedSegmentZ += stepsize;
+			if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
+		}
+		timeToReloadSegment = true;
+		last_mouse_z = mouse->z;
+	}
+	if( mouse->buttons & 2 ){
+		config.follow_DFscreen = false;
+		int x, y;
+		x = mouse->x;
+		y = mouse->y;
+		int blockx,blocky,blockz;
+		ScreenToPoint(x,y,blockx,blocky,blockz);
+		int diffx = blockx - config.segmentSize.x/2;
+		int diffy = blocky - config.segmentSize.y/2;
+		/*we use changeRelativeToRotation directly, and not through moveViewRelativeToRotation 
+		because we don't want to move the offset with the mouse. It just feels weird. */
+		// changing to +1,+1 which moves the clicked point to one of the 4 surrounding the center of rotation
+		changeRelativeToRotation(DisplayedSegmentX, DisplayedSegmentY, diffx+1, diffy+1 );
+		//moveViewRelativeToRotation(diffx+1, diffy+1);
+		timeToReloadSegment = true;
+		//al_rest(50);
+	}
+	if( mouse->buttons & 1 ){
+		int x, y;
+		x = mouse->x;//pos >> 16;
+		y = mouse->y; //pos & 0x0000ffff;
+		if(x >= MiniMapTopLeftX && x <= MiniMapBottomRightX && y >= MiniMapTopLeftY && y <= MiniMapBottomRightY){ // in minimap
+			DisplayedSegmentX = (x-MiniMapTopLeftX-MiniMapSegmentWidth/2)/oneBlockInPixels;
+			DisplayedSegmentY = (y-MiniMapTopLeftY-MiniMapSegmentHeight/2)/oneBlockInPixels;
+		}
+		else{
+			int blockx,blocky,blockz;
+			ScreenToPoint(x,y,blockx,blocky,blockz);
+			int diffx = blockx - config.segmentSize.x/2;
+			int diffy = blocky - config.segmentSize.y/2;
+			debugCursor.x = blockx;
+			debugCursor.y = blocky;
+		}
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_DOWN]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
+	if(al_key_down(keyboard, ALLEGRO_KEY_UP)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
 			config.follow_DFscreen = false;
-    	moveViewRelativeToRotation( 0, stepsize );
+		moveViewRelativeToRotation( 0, -stepsize );
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_LEFT]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
+	if(al_key_down(keyboard, ALLEGRO_KEY_DOWN)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
 			config.follow_DFscreen = false;
-    	moveViewRelativeToRotation( -stepsize, 0 );
+		moveViewRelativeToRotation( 0, stepsize );
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_RIGHT]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
+	if(al_key_down(keyboard, ALLEGRO_KEY_LEFT)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
 			config.follow_DFscreen = false;
-    	moveViewRelativeToRotation( stepsize, 0 );
+		moveViewRelativeToRotation( -stepsize, 0 );
 		timeToReloadSegment = true;
 	}
-  if(key[KEY_ENTER]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_RIGHT)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
+			config.follow_DFscreen = false;
+		moveViewRelativeToRotation( stepsize, 0 );
+		timeToReloadSegment = true;
+	}
+	if(al_key_down(keyboard, ALLEGRO_KEY_ENTER)){
 		DisplayedRotation++;
-    DisplayedRotation %= 4;
+		DisplayedRotation %= 4;
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_PGDN] || key[KEY_9]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
+	if(al_key_down(keyboard, ALLEGRO_KEY_PGDN) || al_key_down(keyboard, ALLEGRO_KEY_9)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
 			config.follow_DFscreen = false;
 		if (config.follow_DFscreen)
 			config.viewZoffset -= stepsize;
 		else
 			DisplayedSegmentZ -= stepsize;
-   		 if(DisplayedSegmentZ<1) DisplayedSegmentZ = 1;
+		if(DisplayedSegmentZ<1) DisplayedSegmentZ = 1;
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_PGUP] || key[KEY_0]){
-		if (!(key[KEY_LCONTROL] || key[KEY_RCONTROL]))
+	if(al_key_down(keyboard, ALLEGRO_KEY_PGUP) || al_key_down(keyboard, ALLEGRO_KEY_0)){
+		if (!(al_key_down(keyboard, ALLEGRO_KEY_LCTRL) || al_key_down(keyboard, ALLEGRO_KEY_RCTRL)))
 			config.follow_DFscreen = false;
 		if (config.follow_DFscreen)
 			config.viewZoffset += stepsize;
@@ -184,112 +193,121 @@ void doKeys(){
 			DisplayedSegmentZ += stepsize;
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_R]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_R)){
 		timeToReloadSegment = true;
 	}
-	if(key[KEY_D]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_D)){
 		paintboard();
 	}
-  if(key[KEY_G]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_G)){
 		destroyGraphics();
-    	loadGraphicsFromDisk();
+		loadGraphicsFromDisk();
 		timeToReloadConfig = true;
 		timeToReloadSegment = true;
 	}
-  if(key[KEY_U]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_U)){
 		config.show_stockpiles = !config.show_stockpiles;
-    timeToReloadSegment = true;
-		while(key[KEY_U]);
+		timeToReloadSegment = true;
+		while(al_key_down(keyboard, ALLEGRO_KEY_U));
 	}
-  if(key[KEY_I]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_I)){
 		config.show_zones = !config.show_zones;
-    timeToReloadSegment = true;
-		while(key[KEY_I]);
+		timeToReloadSegment = true;
+		while(al_key_down(keyboard, ALLEGRO_KEY_I));
 	}
-  if(key[KEY_C]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_C)){
 		config.truncate_walls = !config.truncate_walls;
-    timeToReloadSegment = true;
+		timeToReloadSegment = true;
 	}
-	if(key[KEY_F]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_F)){
 		config.follow_DFscreen = !config.follow_DFscreen;
 		timeToReloadSegment = true;
 	}
-  if(key[KEY_1]){
-    config.segmentSize.z--;
-    if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
-    timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_1)){
+		config.segmentSize.z--;
+		if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_2]){
-    config.segmentSize.z++;
-    //add a limit?
-    timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_2)){
+		config.segmentSize.z++;
+		//add a limit?
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_S]){
+	if(al_key_down(keyboard, ALLEGRO_KEY_S)){
 		config.single_layer_view = !config.single_layer_view;
-    timeToReloadSegment = true;
-		while(key[KEY_S]);
+		timeToReloadSegment = true;
+		while(al_key_down(keyboard, ALLEGRO_KEY_S));
 	}
-  if(key[KEY_B]){
-    config.shade_hidden_blocks = !config.shade_hidden_blocks;
-    timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_B)){
+		config.shade_hidden_blocks = !config.shade_hidden_blocks;
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_H]){
-    config.show_hidden_blocks = !config.show_hidden_blocks;
-    timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_H)){
+		config.show_hidden_blocks = !config.show_hidden_blocks;
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_N]){
-    config.show_creature_names = !config.show_creature_names;
-    timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_N)){
+		config.show_creature_names = !config.show_creature_names;
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_F2]){
-	config.show_osd = !config.show_osd;
-	timeToReloadSegment = true;
+	if(al_key_down(keyboard, ALLEGRO_KEY_F2)){
+		config.show_osd = !config.show_osd;
+		timeToReloadSegment = true;
 	}
-  if(key[KEY_F5]){
-    while(key[KEY_F5]);
-    saveScreenshot();
-  } 
-  if(key[KEY_PLUS_PAD]){
-    config.automatic_reload_time += config.automatic_reload_step;
-    paintboard();
-    install_int( automaticReloadProc, config.automatic_reload_time );
-  }
-  if(key[KEY_MINUS_PAD]){
-    config.automatic_reload_time -= config.automatic_reload_step;
-    if( config.automatic_reload_time <= 0 ){
-      config.automatic_reload_time = 0;
-      remove_int( automaticReloadProc );
-    }
-    else
-      install_int( automaticReloadProc, config.automatic_reload_time );
-    paintboard();
-  }
+	if(al_key_down(keyboard, ALLEGRO_KEY_F5)){
+		while(al_key_down(keyboard, ALLEGRO_KEY_F5));
+		saveScreenshot();
+	} 
+	if(al_key_down(keyboard, ALLEGRO_KEY_PAD_PLUS)){
+		config.automatic_reload_time += config.automatic_reload_step;
+		paintboard();
+		if(!reloadtimer)
+			reloadtimer = al_install_timer(config.automatic_reload_time);
+		else
+			al_set_timer_speed(reloadtimer, config.automatic_reload_time);
+		al_start_timer(reloadtimer);
+	}
+	if(al_key_down(keyboard, ALLEGRO_KEY_PAD_MINUS)){
+		config.automatic_reload_time -= config.automatic_reload_step;
+		if( config.automatic_reload_time <= 0 ){
+			config.automatic_reload_time = 0;
+			al_stop_timer(reloadtimer);
+			al_uninstall_timer(reloadtimer);
+		}
+		else
+			if(!reloadtimer)
+				reloadtimer = al_install_timer(config.automatic_reload_time);
+			else
+				al_set_timer_speed(reloadtimer, config.automatic_reload_time);
+		al_start_timer(reloadtimer);
+		paintboard();
+	}
 
-  if(config.debug_mode){
-    if(key[KEY_8_PAD]){
-      debugCursor.y--;
-      rest(60);
-		  paintboard();
-	  }
-	  if(key[KEY_2_PAD]){
-		  debugCursor.y++;
-      rest(60);
-		  paintboard();
-	  }
-	  if(key[KEY_4_PAD]){
-		  debugCursor.x--;
-      rest(60);
-		  paintboard();
-	  }
-	  if(key[KEY_6_PAD]){
-		  debugCursor.x++;
-      rest(60);
-		  paintboard();
-	  }
+	if(config.debug_mode){
+		if(al_key_down(keyboard, ALLEGRO_KEY_PAD_8)){
+			debugCursor.y--;
+			al_rest(60);
+			paintboard();
+		}
+		if(al_key_down(keyboard, ALLEGRO_KEY_PAD_2)){
+			debugCursor.y++;
+			al_rest(60);
+			paintboard();
+		}
+		if(al_key_down(keyboard, ALLEGRO_KEY_PAD_4)){
+			debugCursor.x--;
+			al_rest(60);
+			paintboard();
+		}
+		if(al_key_down(keyboard, ALLEGRO_KEY_PAD_6)){
+			debugCursor.x++;
+			al_rest(60);
+			paintboard();
+		}
 
-    if(key[KEY_F10]){
-      while(key[KEY_F10]);
-      DoSpriteIndexOverlay();
-    }
-  }
+		if(al_key_down(keyboard, ALLEGRO_KEY_F10)){
+			while(al_key_down(keyboard, ALLEGRO_KEY_F10));
+			DoSpriteIndexOverlay();
+		}
+	}
 }

@@ -66,13 +66,13 @@ int translateProfession(const char* currentProf)
 	return INT_MAX; //if it is left at INVALID_INDEX, the condition is ignored entierly.
 }
 
-void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures, int gameID, CreatureConfiguration& cre)
+void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures, unsigned int gameID, CreatureConfiguration& cre)
 {
 	vector<CreatureConfiguration>* creatureList;
 	if (knownCreatures.size() <= gameID)
 	{
 		//resize using hint from creature name list
-		int newsize = gameID +1;
+		unsigned int newsize = gameID +1;
 		if (newsize <= contentLoader.creatureNameStrings.size())
 		{
 			newsize = contentLoader.creatureNameStrings.size() + 1;

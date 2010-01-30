@@ -5,6 +5,9 @@
 #include "VegetationConfiguration.h"
 #include "GroundMaterialConfiguration.h"
 
+char *canonicalize_filename(char *dest, const char *filename, int size);
+char *replace_filename(char *dest, const char *path, const char *filename, int size);
+
 class ContentLoader{
 private:
   bool parseContentIndexFile( char* filepath );

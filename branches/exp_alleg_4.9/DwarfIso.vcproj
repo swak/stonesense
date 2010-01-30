@@ -135,8 +135,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				UseLibraryDependencyInputs="true"
 				AdditionalDependencies="allegro-4.9.16-msvc-bin/lib/allegro-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_primitives-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_font-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_image-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_dialog-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack.lib"
 				LinkIncremental="1"
+				SuppressStartupBanner="false"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -219,6 +222,69 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Test|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;allegro-4.9.16-msvc-bin\include&quot;"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="allegro-4.9.16-msvc-bin/lib/allegro-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_primitives-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_font-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_image-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_dialog-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

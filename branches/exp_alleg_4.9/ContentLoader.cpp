@@ -9,7 +9,25 @@
 
 ContentLoader contentLoader;
 
+const char *canonicalize_filename(const char *dest, const char *filename, int size)
+{
+	ALLEGRO_PATH *filenamepath;
+	filenamepath = al_create_path(filename);
+	al_make_path_canonical(filenamepath);
+	dest = al_path_cstr(filenamepath, ALLEGRO_NATIVE_PATH_SEP);
+	al_free_path(filenamepath);
+	return dest;
+}
 
+const char *replace_filename(const char *dest, const char *path, const char *filename, int size)
+{
+	ALLEGRO_PATH *pathpath;
+	pathpath = al_create_path(path);
+	al_set_path_filename(pathpath, filename);
+	dest = al_path_cstr(pathpath, ALLEGRO_NATIVE_PATH_SEP);
+	al_free_path(pathpath);
+	return dest;
+}
 
 ContentLoader::ContentLoader(void) { }
 ContentLoader::~ContentLoader(void)
@@ -104,12 +122,12 @@ bool getLocalFilename(char* buffer, const char* filename, const char* relativeto
 		WriteErr("Failed to build path for: %s\n",filename);
 		return false;
 	}
-	buffertest = make_relative_filename (buffer,hometemp,filetemp, FILENAME_BUFFERSIZE);
-	if (!buffertest || buffer[FILENAME_BUFFERSIZE-1] != 1)
-	{
-		WriteErr("Failed to build path for: %s\n",filename);
-		return false;
-	}
+	//buffertest = make_relative_filename (buffer,hometemp,filetemp, FILENAME_BUFFERSIZE);
+	//if (!buffertest || buffer[FILENAME_BUFFERSIZE-1] != 1)
+	//{
+	//	WriteErr("Failed to build path for: %s\n",filename);
+	//	return false;
+	//}
 	return true;
 }
 
@@ -156,7 +174,7 @@ bool ContentLoader::parseContentIndexFile( char* filepath )
 		WriteErr("File name parsing failed on %s\n",line.c_str());
 		continue;
 	}
-	char* extension = get_extension(configfilepath);
+	char* extension; //= get_extension(configfilepath);
 	if (strcmp(extension,"xml") == 0)
 	{
 	  LogVerbose("Reading xml %s...\n", configfilepath);
@@ -384,7 +402,7 @@ const char *lookupMaterialTypeName(int matType)
 	}
 }
 
-const char *lookupMaterialName(int matType,int matIndex)
+const char *lookupMaterialName(uint32_t matType,uint32_t matIndex)
 {
 	if (matIndex < 0)
 		return NULL;
@@ -427,7 +445,7 @@ int loadConfigImgFile(const char* filename, TiXmlElement* referrer)
 void ContentLoader::flushCreatureConfig()
 {
 	uint32_t num = (uint32_t)creatureConfigs.size();
-	for ( int i = 0 ; i < num; i++ )
+	for ( uint32_t i = 0 ; i < num; i++ )
 	{
 		if (creatureConfigs[i])
 			delete creatureConfigs[i];

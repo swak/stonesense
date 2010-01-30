@@ -22,7 +22,6 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/dfhack/library/
     ${CMAKE_SOURCE_DIR}/dfhack/library/md5/
     ${CMAKE_SOURCE_DIR}/dfhack/library/tinyxml
-    ${CMAKE_SOURCE_DIR}/loadpng
     ${CMAKE_SOURCE_DIR}
 )
 
@@ -39,9 +38,6 @@ SET(PROJECT_SRCS
     dfhack/library/DFTileTypes.cpp
     dfhack/library/md5/md5.cpp
     dfhack/library/md5/md5wrapper.cpp
-    loadpng/loadpng.c
-    loadpng/regpng.c
-    loadpng/savepng.c
 
     Block.cpp
     BlockCondition.cpp
@@ -100,13 +96,12 @@ IF(UNIX)
     dfhack/library/DFProcessEnumerator-linux.cpp
     )
     
-    FIND_PACKAGE(PNG REQUIRED)
     FIND_PACKAGE(Allegro REQUIRED)
     LINK_DIRECTORIES(${LINK_DIRECTORIES})
     
-    INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR} ${ALLEGRO_INCLUDE_DIR})
+    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
  
-    SET(PROJECT_LIBS ${ALLEGRO_LIBRARIES} ${PNG_LIBRARIES} ${PROJECT_LIBS})
+    SET(PROJECT_LIBS ${ALLEGRO_LIBRARIES} ${PROJECT_LIBS})
     ADD_EXECUTABLE(stonesense ${PROJECT_SRCS} ${PLATFORM_SRC})
     TARGET_LINK_LIBRARIES(stonesense ${PROJECT_LIBS})
     
@@ -122,30 +117,28 @@ ELSE(UNIX)
     
     IF(MINGW)
         add_definitions(-DALLEGRO_MINGW32)
-        SET(PROJECT_LIBS alleg42 psapi mingw32 libpng)
+        SET(PROJECT_LIBS liballegro-static-4.9.16.a liballegro_primitives-static-4.9.16.a liballegro_image-static-4.9.16.a liballegro_font-static-4.9.16.a liballegro_dialog-static-4.9.16.a libjpeg.a libpng.a libz.a libglu32.a libglaux.a psapi mingw32)
         include_directories (
 		    ${include_directories}
-		    ${CMAKE_SOURCE_DIR}/allegro-mingw-4.2.2/include
+		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/include
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
-		    ${CMAKE_SOURCE_DIR}/allegro-mingw-4.2.2/lib
-		    ${CMAKE_SOURCE_DIR}/allegro-mingw-4.2.2/bin
-		    ${CMAKE_SOURCE_DIR}/loadpng/libpng/lib/
+		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/lib
+		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/bin
 	    )
 	     
     # MSVC
     ELSE(MINGW)
         add_definitions(-DALLEGRO_MSVC)
-        SET(PROJECT_LIBS alleg psapi libpng)
+        SET(PROJECT_LIBS alleg psapi)
         include_directories (
 		    ${include_directories}
-		    ${CMAKE_SOURCE_DIR}/allegro
+		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-msvc-bin/include
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
-		    ${CMAKE_SOURCE_DIR}/allegro/lib_msvs8
-		    ${CMAKE_SOURCE_DIR}/loadpng/libpng/lib/
+		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-msvc-bin/lib
 	    )
     ENDIF(MINGW)
     ADD_EXECUTABLE(stonesense WIN32 ${PROJECT_SRCS} ${PLATFORM_SRC})

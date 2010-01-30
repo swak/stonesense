@@ -12,6 +12,9 @@
 #include <allegro5\allegro_font.h>
 #include <allegro5\allegro_image.h>
 #include <allegro5\allegro_native_dialog.h>
+#include <allegro5\allegro_opengl.h>
+
+#include <GL\glu.h>
 
 using namespace std;
 
@@ -191,4 +194,8 @@ class BuildingConfiguration;
 // temp buffers are bigger because they deal with absolute paths
 #define FILENAME_BUFFERSIZE_LOCAL 200
 
-ALLEGRO_FONT *font;
+extern ALLEGRO_FONT *font;
+extern ALLEGRO_DISPLAY     *display;
+extern ALLEGRO_KEYBOARD_STATE *keyboard;
+extern ALLEGRO_TIMER *reloadtimer;
+extern ALLEGRO_MOUSE_STATE *mouse;

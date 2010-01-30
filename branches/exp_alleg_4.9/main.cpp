@@ -116,6 +116,8 @@ int main(void)
 	allegro_icon = stonesense_xpm;
 #endif
 	al_init();
+	al_init_image_addon();
+	al_init_font_addon();
 	al_install_keyboard();
 	al_install_mouse();
 	al_show_mouse_cursor();
@@ -161,52 +163,53 @@ int main(void)
 	debugCursor.y = config.segmentSize.y / 2;
 
 
-	int gfxMode = config.Fullscreen ? GFX_AUTODETECT : GFX_AUTODETECT_WINDOWED;
-	if( set_gfx_mode(gfxMode, config.screenWidth, config.screenHeight, 0,0) != 0 ){
-		allegro_message("unable to set graphics mode.");
-		return 1;
-	}
+	int gfxMode = config.Fullscreen ? ALLEGRO_FULLSCREEN : ALLEGRO_WINDOWED;
+	al_set_new_display_flags(gfxMode|ALLEGRO_OPENGL|ALLEGRO_GENERATE_EXPOSE_EVENTS);
+	display = al_create_display(config.screenWidth, config.screenHeight);
+	//if( set_gfx_mode(gfxMode, config.screenWidth, config.screenHeight, 0,0) != 0 ){
+	//	allegro_message("unable to set graphics mode.");
+	//	return 1;
+	//}
 
-	if (is_windowed_mode()) {
-		int res = set_display_switch_mode(SWITCH_BACKGROUND);
-		if( res != 0 )
-			allegro_message("could not set run in background mode");
-	}
-	set_alpha_blender();
+	//if (is_windowed_mode()) {
+	//	int res = set_display_switch_mode(SWITCH_BACKGROUND);
+	//	if( res != 0 )
+	//		allegro_message("could not set run in background mode");
+	//}
 
 	loadGraphicsFromDisk();
-	if( config.show_intro ){
-		//centred splash image
-		{
-			ALLEGRO_BITMAP* SplashImage = load_bitmap_withWarning("splash.png");
-			al_draw_bitmap_region(SplashImage, 0, 0,
-				al_get_bitmap_width(SplashImage), al_get_bitmap_height(SplashImage),
-				(al_get_bitmap_width(al_get_backbuffer(void)) - al_get_bitmap_width(SplashImage))/2,
-				(al_get_bitmap_height(al_get_backbuffer(void)) - al_get_bitmap_height(SplashImage))/2, 0);
-			al_destroy_bitmap(SplashImage);
-		}
+	//if( config.show_intro ){
+	//	//centred splash image
+	//	{
+	//		ALLEGRO_BITMAP* SplashImage = load_bitmap_withWarning("splash.png");
+	//		al_draw_bitmap_region(SplashImage, 0, 0,
+	//			al_get_bitmap_width(SplashImage), al_get_bitmap_height(SplashImage),
+	//			(al_get_bitmap_width(al_get_backbuffer(void)) - al_get_bitmap_width(SplashImage))/2,
+	//			(al_get_bitmap_height(al_get_backbuffer(void)) - al_get_bitmap_height(SplashImage))/2, 0);
+	//		al_destroy_bitmap(SplashImage);
+	//	}
 
-		textprintf_centre(screen, font, config.screenWidth/2, 50, makecol(255,255,0), "Welcome to Stonesense!");
-		textprintf_centre(screen, font, config.screenWidth/2, 60, 0xffffff, "Stonesense is an isometric viewer for Dwarf Fortress.");
+	//	textprintf_centre(screen, font, config.screenWidth/2, 50, makecol(255,255,0), "Welcome to Stonesense!");
+	//	textprintf_centre(screen, font, config.screenWidth/2, 60, 0xffffff, "Stonesense is an isometric viewer for Dwarf Fortress.");
 
-		textprintf_centre(screen, font, config.screenWidth/2, 80, 0xffffff, "Programming, Jonas Ask and Kris Parker");
-		textprintf_centre(screen, font, config.screenWidth/2, 90, 0xffffff, "Lead graphics designer, Dale Holdampf");
+	//	textprintf_centre(screen, font, config.screenWidth/2, 80, 0xffffff, "Programming, Jonas Ask and Kris Parker");
+	//	textprintf_centre(screen, font, config.screenWidth/2, 90, 0xffffff, "Lead graphics designer, Dale Holdampf");
 
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-130, 0xffffff, "Contributors:");
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-120, 0xffffff, "7¢ Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-110, 0xffffff, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-100, 0xffffff, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-90, 0xffffff, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-130, 0xffffff, "Contributors:");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-120, 0xffffff, "7¢ Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-110, 0xffffff, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-100, 0xffffff, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-90, 0xffffff, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
 
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-70, 0xffffff, "With special thanks to peterix for making dfHack");
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-70, 0xffffff, "With special thanks to peterix for making dfHack");
 
-		//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
-		textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-40, 0xffffff, "Press F9 to continue");
+	//	//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
+	//	textprintf_centre(screen, font, config.screenWidth/2, config.screenHeight-40, 0xffffff, "Press F9 to continue");
 
-		//pause till key is pressed
-		while(!key[KEY_F9]) readkey();
-		clear( screen );
-	}
+	//	//pause till key is pressed
+	//	while(!key[KEY_F9]) readkey();
+	//	clear( screen );
+	//}
 
 	//upper left corners
 	DisplayedSegmentX = DisplayedSegmentY = DisplayedSegmentZ = 0;
@@ -242,12 +245,12 @@ int main(void)
 #ifdef BENCHMARK
 	benchmark();
 #endif
-	install_int( animUpdateProc, config.animation_step );
+	//install_int( animUpdateProc, config.animation_step );
 	initAutoReload();
 
 	paintboard();
-	while(!key[KEY_ESC] && !close_button_pressed){
-		rest(30);
+	while(true/*!key[KEY_ESC]*/){
+		//rest(30);
 		if( timeToReloadSegment ){
 			reloadDisplayedSegment();
 			paintboard();
