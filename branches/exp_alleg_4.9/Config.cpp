@@ -165,11 +165,14 @@ void parseConfigLine( string line ){
     if(value < 0) value = 0;
     config.fogb = value;
   }
-  if( line.find("FOG_ALPHA") != -1){
-    int value = parseIntFromLine( "FOG_ALPHA", line);
-    if(value > 255) value = 255;
-    if(value < 0) value = 0;
+  if( line.find("FOG_DEPTH") != -1){
+    int value = parseIntFromLine( "FOG_DEPTH", line);
+    if(value < 1) value = 1;
     config.foga = value;
+  }
+  if( line.find("SHOW_FOG") != -1){
+  string result = parseStrFromLine( "SHOW_FOG", line );
+    config.fogenable = (result == "YES");
   }
   if( line.find("BACK_RED") != -1){
     int value = parseIntFromLine( "BACK_RED", line);

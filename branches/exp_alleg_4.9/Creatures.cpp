@@ -5,7 +5,7 @@
 #include "ContentLoader.h"
 #include "GUI.h"
 
-
+extern ALLEGRO_FONT *font;
 
 //vector<t_matgloss> v_creatureNames;
 //vector<CreatureConfiguration> creatureTypes;
@@ -24,7 +24,7 @@ bool IsCreatureVisible( t_creature* c ){
   return true;
 }
 
-void DrawCreature( ALLEGRO_BITMAP* target, int drawx, int drawy, t_creature* creature ){
+void DrawCreature(int drawx, int drawy, t_creature* creature ){
   t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
   //if(creature->x == 151 && creature->y == 145)
   //  int j = 10;
@@ -56,7 +56,7 @@ void DrawCreature( ALLEGRO_BITMAP* target, int drawx, int drawy, t_creature* cre
     {
     	creatureSheet = getImgFile(sprite.fileIndex);
 	}    	
-  DrawSpriteFromSheet( sprite.sheetIndex, target, creatureSheet, drawx, drawy );
+  DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
 }
 //t_creature* global = 0;
 

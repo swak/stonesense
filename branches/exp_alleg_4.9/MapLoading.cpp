@@ -53,6 +53,14 @@ inline bool isBlockHighRampEnd(uint32_t x, uint32_t y, uint32_t z, WorldSegment*
 	return IDisWall( block->wallType );
 }
 
+inline int blockWaterDepth(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment, dirRelative dir)
+{
+	Block* block = segment->getBlockRelativeTo( x, y, z, dir);
+	if(!block) return false;
+	if(block->water.index == 0 || block->water.type == 1) return false;
+	return block->water.index;
+}
+
 inline bool isBlockHighRampTop(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment, dirRelative dir)
 {
 	Block* block = segment->getBlockRelativeTo( x, y, z, dir);
@@ -446,11 +454,18 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 	  //setup building sprites
       if( b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX )
       		loadBuildingSprites( b );
-			
+
+	  //setup deep water
+	  if( b->water.index == 7 && b->water.type == 0)
+	  {
+		  int topdepth = blockWaterDepth(b->x, b->y, b->z, segment, eAbove);
+		  if(topdepth)
+			  b->water.index = 8;
+	  }
+		
       //setup ramps
       if(b->ramp.type > 0) 
         b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);
-
       //add edges to blocks and floors  
       if( b->floorType > 0 ){
 	     b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);

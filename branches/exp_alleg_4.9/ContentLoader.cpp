@@ -9,25 +9,7 @@
 
 ContentLoader contentLoader;
 
-const char *canonicalize_filename(const char *dest, const char *filename, int size)
-{
-	ALLEGRO_PATH *filenamepath;
-	filenamepath = al_create_path(filename);
-	al_make_path_canonical(filenamepath);
-	dest = al_path_cstr(filenamepath, ALLEGRO_NATIVE_PATH_SEP);
-	al_free_path(filenamepath);
-	return dest;
-}
 
-const char *replace_filename(const char *dest, const char *path, const char *filename, int size)
-{
-	ALLEGRO_PATH *pathpath;
-	pathpath = al_create_path(path);
-	al_set_path_filename(pathpath, filename);
-	dest = al_path_cstr(pathpath, ALLEGRO_NATIVE_PATH_SEP);
-	al_free_path(pathpath);
-	return dest;
-}
 
 ContentLoader::ContentLoader(void) { }
 ContentLoader::~ContentLoader(void)
@@ -80,50 +62,32 @@ bool ContentLoader::Load(API& DF){
 // else is relative to the referrer)
 // buffer must be FILENAME_BUFFERSIZE chars
 // returns true if it all works
-bool getLocalFilename(char* buffer, const char* filename, const char* relativeto)
+bool getLocalFilename(char * buffer, const char* filename, const char* relativeto)
 {
-	char filetemp[FILENAME_BUFFERSIZE_LOCAL] = {0};
-	char hometemp[FILENAME_BUFFERSIZE_LOCAL] = {0};	
+	//char filetemp[FILENAME_BUFFERSIZE_LOCAL] = {0};
+	//char hometemp[FILENAME_BUFFERSIZE_LOCAL] = {0};	
 	// allegro will avoid writing off the end of the buffer, but wont *tell* me
 	// that the resulting filename is worthless
 	// these give me a check of my own
-	filetemp[FILENAME_BUFFERSIZE_LOCAL-1] = 1;
-	hometemp[FILENAME_BUFFERSIZE_LOCAL-1] = 1;	
-	buffer[FILENAME_BUFFERSIZE-1] = 1;
-		
-	char* buffertest;
+	//filetemp[FILENAME_BUFFERSIZE_LOCAL-1] = 1;
+	//hometemp[FILENAME_BUFFERSIZE_LOCAL-1] = 1;	
+	//buffer[FILENAME_BUFFERSIZE-1] = 1;
+
+	ALLEGRO_PATH * temppath;
 	if (filename[0] == '/' || filename[0] == '\\')
 	{
-		buffertest = canonicalize_filename (filetemp, (filename+1), FILENAME_BUFFERSIZE_LOCAL);
-		if (!buffertest || filetemp[FILENAME_BUFFERSIZE_LOCAL-1] != 1)
-		{
-			WriteErr("Failed to build path for: %s\n",filename);
-			return false;
-		}
+		temppath = al_create_path(filename);
+		al_make_path_canonical(temppath);
 	}
 	else
 	{
-		buffertest = replace_filename (filetemp, relativeto, filename, FILENAME_BUFFERSIZE_LOCAL);
-		if (!buffertest || filetemp[FILENAME_BUFFERSIZE_LOCAL-1] != 1)
-		{
-			WriteErr("Failed to build path for: %s\n",filename);
-			return false;
-		}
-		buffertest = canonicalize_filename (filetemp, filetemp, FILENAME_BUFFERSIZE_LOCAL);
-		if (!buffertest || filetemp[FILENAME_BUFFERSIZE_LOCAL-1] != 1)
-		{
-			WriteErr("Failed to build path for: %s\n",filename);
-			return false;
-		}
+		temppath = al_create_path(relativeto);
+		al_join_paths(temppath, al_create_path(filename));
+		al_make_path_canonical(temppath);
 	}
-	buffertest = canonicalize_filename (hometemp,"", FILENAME_BUFFERSIZE_LOCAL);
-	if (!buffertest || hometemp[FILENAME_BUFFERSIZE_LOCAL-1] != 1)
-	{
-		WriteErr("Failed to build path for: %s\n",filename);
-		return false;
-	}
-	//buffertest = make_relative_filename (buffer,hometemp,filetemp, FILENAME_BUFFERSIZE);
-	//if (!buffertest || buffer[FILENAME_BUFFERSIZE-1] != 1)
+	buffer = strcpy(buffer, al_path_cstr(temppath, ALLEGRO_NATIVE_PATH_SEP));
+	//WriteErr( "seems fine here: %s!\n", buffer );
+	//if (buffer[FILENAME_BUFFERSIZE-1] != 1)
 	//{
 	//	WriteErr("Failed to build path for: %s\n",filename);
 	//	return false;
@@ -174,14 +138,18 @@ bool ContentLoader::parseContentIndexFile( char* filepath )
 		WriteErr("File name parsing failed on %s\n",line.c_str());
 		continue;
 	}
-	char* extension; //= get_extension(configfilepath);
-	if (strcmp(extension,"xml") == 0)
+	//WriteErr("but it's all fucked here: %s\n",configfilepath);
+	ALLEGRO_PATH * temppath = al_create_path(configfilepath);
+	const char* extension; 
+	extension = al_get_path_extension(temppath);
+	//WriteErr("extension: %s\n",extension);
+	if (strcmp(extension,".xml") == 0)
 	{
 	  LogVerbose("Reading xml %s...\n", configfilepath);
 	  if (!parseContentXMLFile(configfilepath))
 	  	WriteErr("Failure in reading %s\n",configfilepath);		  
 	}
-	else if (strcmp(extension,"txt") == 0)
+	else if (strcmp(extension,".txt") == 0)
 	{
 	  LogVerbose("Reading index %s...\n", configfilepath);
 	  if (!parseContentIndexFile(configfilepath))
@@ -402,7 +370,7 @@ const char *lookupMaterialTypeName(int matType)
 	}
 }
 
-const char *lookupMaterialName(uint32_t matType,uint32_t matIndex)
+const char *lookupMaterialName(int matType,int matIndex)
 {
 	if (matIndex < 0)
 		return NULL;
@@ -445,7 +413,7 @@ int loadConfigImgFile(const char* filename, TiXmlElement* referrer)
 void ContentLoader::flushCreatureConfig()
 {
 	uint32_t num = (uint32_t)creatureConfigs.size();
-	for ( uint32_t i = 0 ; i < num; i++ )
+	for ( int i = 0 ; i < num; i++ )
 	{
 		if (creatureConfigs[i])
 			delete creatureConfigs[i];

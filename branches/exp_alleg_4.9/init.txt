@@ -61,15 +61,16 @@ Shows building graphics for stockpiles. (Toggle with 'u')
 Fog color, and alpha at the bottom z-level.
 Setting the alpha to 0 disables fog, for a slight performance increase.
 Color and alpha ranges are 0 (min) to 255 (max)
-[FOG_RED:95]
-[FOG_GREEN:95]
-[FOG_BLUE:160]
-[FOG_ALPHA:255]
+[SHOW_FOG:YES]
+[FOG_RED:129]
+[FOG_GREEN:159]
+[FOG_BLUE:177]
+[FOG_DEPTH:10]
 
 Background color. setting this the same as the fog color produces a nice effect.
-[BACK_RED:95]
-[BACK_GREEN:95]
-[BACK_BLUE:160]
+[BACK_RED:129]
+[BACK_GREEN:159]
+[BACK_BLUE:177]
 
 Enables or disables the entire on-screen-display overlay (Toggle with F2)
 [SHOW_OSD:YES]
@@ -84,4 +85,4 @@ Shows all creatures, for debugging. Living, dead, kidnapped, caged, EVERY single
 
 Adds more logging information to what is written to stonesense.log. May be useful
 if trying having issues with sprite configuration tweaking.
-[VERBOSE_LOGGING:NO]
+[VERBOSE_LOGGING:YES]

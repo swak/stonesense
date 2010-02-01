@@ -41,7 +41,6 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="allegro"
-				PreprocessorDefinitions="ALLEGRO_MSVC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -61,8 +60,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="allegro-4.9.16-msvc-bin\lib\allegro-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack-debug.lib loadpng/libpng/lib/libpng.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib winmm.lib psapi.lib &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\dxguid.lib&quot; &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\d3d9.lib&quot; &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\dinput8.lib&quot; opengl32.lib glu32.lib allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="D:\stonesense\branches\exp_alleg_4.9\allegro\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;allegro-4.9.16-msvc-bin\include&quot;"
+				AdditionalIncludeDirectories="allegro\include"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -136,10 +136,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="true"
-				AdditionalDependencies="allegro-4.9.16-msvc-bin/lib/allegro-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_primitives-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_font-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_image-static-4.9.16.lib allegro-4.9.16-msvc-bin/lib/allegro_dialog-static-4.9.16.lib PSAPI.lib dfhack/build/dfhack.lib"
+				AdditionalDependencies="allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
 				LinkIncremental="1"
 				SuppressStartupBanner="false"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="allegro\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -556,6 +556,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\res.rc"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

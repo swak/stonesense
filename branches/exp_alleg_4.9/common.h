@@ -175,11 +175,13 @@ extern bool animationFrameShown;
 #define TMR2_START (ClockedTime2 = clock())
 #define TMR2_STOP  (ClockedTime2 = clock() - ClockedTime2)
 
+extern bool key[ALLEGRO_KEY_MAX];
 
 void correctBlockForRotation(int32_t& x, int32_t& y, int32_t& z);
 
 //from UserInput.cpp
 void doKeys();
+void doKeys(ALLEGRO_EVENT *event);
 void initAutoReload();
 void abortAutoReload();
 

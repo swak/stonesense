@@ -54,8 +54,7 @@ inline ALLEGRO_BITMAP* imageSheet(t_SpriteWithOffset sprite, ALLEGRO_BITMAP* def
 	}
 }
 
-void Block::Draw(ALLEGRO_BITMAP* target){
-	al_set_target_bitmap(target);
+void Block::Draw(){
 	int sheetOffsetX, sheetOffsetY;
 	t_SpriteWithOffset sprite;
 	/*if(config.hide_outer_blocks){
@@ -124,11 +123,11 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 
 		//Northern frame
 		if(this->depthBorderNorth)
-			al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH-1, drawy+(TILEHEIGHT>>1)-1, tileBorderColor, 0);
+			al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH, drawy+(TILEHEIGHT>>1), tileBorderColor, 0);
 
 		//Western frame
 		if(this->depthBorderWest)
-			al_draw_line(drawx, drawy+(TILEHEIGHT>>1)-1, drawx+(TILEWIDTH>>1)-1, drawy, tileBorderColor, 0);
+			al_draw_line(drawx, drawy+(TILEHEIGHT>>1), drawx+(TILEWIDTH>>1), drawy, tileBorderColor, 0);
 	}
 
 	//Draw Ramp
@@ -152,13 +151,13 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 	//vegetation
 	if(tree.index > 0 || tree.type > 0){
 		sprite =  GetSpriteVegetation( (TileClass) getVegetationType( this->floorType ), tree.index );
-		DrawSpriteFromSheet( sprite.sheetIndex, target, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+		DrawSpriteFromSheet( sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 	}
 
 	//shadow
 	if (shadow > 0)
 	{
-		DrawSpriteFromSheet( BASE_SHADOW_TILE + shadow - 1, target, IMGObjectSheet, drawx, (ramp.type > 0)?(drawy - (WALLHEIGHT/2)):drawy );
+		DrawSpriteFromSheet( BASE_SHADOW_TILE + shadow - 1, IMGObjectSheet, drawx, (ramp.type > 0)?(drawy - (WALLHEIGHT/2)):drawy );
 	}
 
 	//Building
@@ -174,7 +173,7 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 			sprite = building.sprites[i];
 			if (!(sprite.animFrames & (1 << currentAnimationFrame)))
 				continue;
-			DrawSpriteFromSheet(sprite.sheetIndex , target, imageSheet(sprite,IMGObjectSheet), 
+			DrawSpriteFromSheet(sprite.sheetIndex , imageSheet(sprite,IMGObjectSheet), 
 
 				drawx + building.sprites[i].x,
 				drawy + building.sprites[i].y);
@@ -200,7 +199,7 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 		{
 			if (mirrored)
 				sprite.sheetIndex += 1;
-			DrawSpriteFromSheet( sprite.sheetIndex, target, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+			DrawSpriteFromSheet( sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 		}
 	}
 
@@ -232,16 +231,16 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 				drawx, drawy-(SPRITEHEIGHT-WALL_CUTOFF_HEIGHT)/2, 0);
 		}
 		else {
-			DrawSpriteFromSheet(sprite.sheetIndex, target, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+			DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 
 			drawy -= (WALLHEIGHT);
 			//Northern border
 			if(this->depthBorderNorth)
-				al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH-1, drawy+(TILEHEIGHT>>1)-1, tileBorderColor, 0);
+				al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH, drawy+(TILEHEIGHT>>1), tileBorderColor, 0);
 
 			//Western border
 			if(this->depthBorderWest)
-				al_draw_line(drawx, drawy+(TILEHEIGHT>>1)-1, drawx+(TILEWIDTH>>1)-1, drawy, tileBorderColor, 0);
+				al_draw_line(drawx, drawy+(TILEHEIGHT>>1), drawx+(TILEWIDTH>>1), drawy, tileBorderColor, 0);
 
 			drawy += (WALLHEIGHT);
 		}
@@ -258,18 +257,18 @@ void Block::Draw(ALLEGRO_BITMAP* target){
 			spriteNum = SPRITEOBJECT_WATERLEVEL1 + waterlevel - 1;
 		if(water.type == 1)
 			spriteNum = SPRITEOBJECT_WATERLEVEL1_LAVA + waterlevel - 1;
-		DrawSpriteFromSheet( spriteNum, target, IMGObjectSheet, drawx, drawy );
+		DrawSpriteFromSheet( spriteNum, IMGObjectSheet, drawx, drawy );
 	}
 
 	// creature
 	// ensure there is *some* creature according to the map data
 	// (no guarantee it is the right one)
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
-		DrawCreature( target, drawx, drawy, creature);
+		DrawCreature(drawx, drawy, creature);
 	}
 }
 
-void Block::DrawRamptops(ALLEGRO_BITMAP* target){
+void Block::DrawRamptops(){
 	if (ramp.type > 0)
 	{
 

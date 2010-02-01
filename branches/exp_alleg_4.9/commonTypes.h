@@ -58,7 +58,7 @@ typedef struct {
   int backr;
   int backg;
   int backb;
-
+	bool fogenable;
   Crd3D segmentSize;
 
 } GameConfiguration;
