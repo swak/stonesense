@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib winmm.lib psapi.lib &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\dxguid.lib&quot; &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\d3d9.lib&quot; &quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Lib\x86\dinput8.lib&quot; opengl32.lib glu32.lib allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
+				AdditionalDependencies="allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="D:\stonesense\branches\exp_alleg_4.9\allegro\lib"
 				GenerateDebugInformation="true"
@@ -214,7 +214,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="allegro/lib_msvs8/alleg.lib  PSAPI.lib dfhack/build/dfhack.lib loadpng/libpng/lib/libpng.lib"
+				AdditionalDependencies="allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
