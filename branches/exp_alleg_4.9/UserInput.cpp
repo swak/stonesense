@@ -254,7 +254,13 @@ void doKeys(){
 	  timeToReloadSegment = true;
   }
   if(key[ALLEGRO_KEY_F5]){
-	  saveScreenshot();
+	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+		saveScreenshot();
+	  else{
+		  key[ALLEGRO_KEY_F5] = 0;
+		  saveMegashot();
+	  }
+
   } 
   if(key[ALLEGRO_KEY_PAD_PLUS]){
 	  config.automatic_reload_time += config.automatic_reload_step;
