@@ -1,6 +1,1 @@
-MaterialWalls.xml
-MaterialFloors.xml
-Walls.xml
-Floors.xml
-DefaultWalls.xml
-DefaultFloors.xml
+Matgloss_Stone_Layer_Walls.xml

@@ -157,9 +157,9 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 		for(int32_t vsz=0; vsz < vszmax; vsz++)
 		{
 			clear_to_color(level, makeacol(255, 0, 255, 0));
-			for(int32_t vsx=1; vsx < vsxmax; vsx++)
+			for(int32_t vsy=1; vsy < vsymax; vsy++)
 			{
-				for(int32_t vsy=1; vsy < vsymax; vsy++)
+				for(int32_t vsx=1; vsx < vsxmax; vsx++)
 				{
 					Block *b = getBlockLocal(vsx,vsy,vsz);
 					if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
@@ -206,9 +206,9 @@ void WorldSegment::drawAllBlocks(BITMAP* target){
 	{
 		for(int32_t vsz=0; vsz < vszmax; vsz++)
 		{
-			for(int32_t vsx=1; vsx < vsxmax; vsx++)
+			for(int32_t vsy=1; vsy < vsymax; vsy++)
 			{
-				for(int32_t vsy=1; vsy < vsymax; vsy++)
+				for(int32_t vsx=1; vsx < vsxmax; vsx++)
 				{
 					Block *b = getBlockLocal(vsx,vsy,vsz);
 					if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))

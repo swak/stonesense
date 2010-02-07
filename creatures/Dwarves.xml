@@ -1,110 +1,89 @@
 <?xml version="1.0" ?>
 
 <creatures>
-<creature gameID="DWARF" sheetIndex = 180 file="dwarves.png" >
-	<variant prof="Miner" sex="M" sheetIndex = 181/>
-	<variant prof="Woodworker" sex="M" sheetIndex = 182/>
-	<variant prof="Carpenter" sex="M" sheetIndex = 182/>
-	<variant prof="Stoneworker" sex="M" sheetIndex = 183/>
-	<variant prof="Mason" sex="M" sheetIndex = 183/>
-	<variant prof="Engraver" sex="M" sheetIndex = 183/>
-	<variant prof="Ranger" sex="M" sheetIndex = 184/>
-	<variant prof="Metalsmith" sex="M" sheetIndex = 185/>
-	<variant prof="Weaponsmith" sex="M" sheetIndex = 185/>
-	<variant prof="Jeweler" sex="M" sheetIndex = 186/>
-	<variant prof="Craftsdwarf" sex="M" sheetIndex = 187/>
-	<variant prof="Fisherdwarf" sex="M" sheetIndex = 188/>
-	<variant prof="Farmer" sex="M" sheetIndex = 189/>
-	<variant prof="Planter" sex="M" sheetIndex = 189/>
-	<variant prof="Mechanic" sex="M" sheetIndex = 190/>
-	<!-- Free slot -->
-	<variant prof="Recruit" sex="M" sheetIndex = 192/>
-	<variant prof="Wrestler" sex="M" sheetIndex = 193/>
-	<variant prof="Axedwarf" sex="M" sheetIndex = 194/>
-	<variant prof="Hammerdwarf" sex="M" sheetIndex = 195/>
-	<variant prof="Macedwarf" sex="M" sheetIndex = 196/>
-	<variant prof="Marksdwarf" sex="M" sheetIndex = 197/>
-	<variant prof="Speardwarf" sex="M" sheetIndex = 198/>
-	<variant prof="Swordsdwarf" sex="M" sheetIndex = 199/>
-	
-	<variant prof="Baron Consort" sex="M" sheetIndex = 200/>
-	<variant prof="Count Consort" sex="M" sheetIndex = 200/>
-	<variant prof="Duke Consort" sex="M" sheetIndex = 200/>
-	<variant prof="King" sex="M" sheetIndex = 201/>
-	<variant prof="King Consort" sex="M" sheetIndex = 201/>
-	<variant prof="Duke" sex="M" sheetIndex = 202/>
-	<variant prof="Count" sex="M" sheetIndex = 203/>
-	<variant prof="Baron" sex="M" sheetIndex = 204/>
-	<!-- Free slot -->
-	<variant prof="Advisor" sex="M" sheetIndex = 206/>
-	<variant prof="Clerk" sex="M" sheetIndex = 207/>
-	<variant prof="Diplomat" sex="M" sheetIndex = 208/>
-	<variant prof="Outpost Liaison" sex="M" sheetIndex = 208/>
-	<variant prof="Hammerer" sex="M" sheetIndex = 209/>
-	<variant prof="Philosopher" sex="M" sheetIndex = 210/>
-	<variant prof="Tax Collector" sex="M" sheetIndex = 211/>
-	<variant prof="Champion" sex="M" sheetIndex = 212/>
-	<variant prof="Elite Wrestler" sex="M" sheetIndex = 213/>
-	<variant prof="Axe Lord" sex="M" sheetIndex = 214/>
-	<variant prof="Hammer Lord" sex="M" sheetIndex = 215/>
-	<variant prof="Mace Lord" sex="M" sheetIndex = 216/>
-	<variant prof="Elite Crossbowdwarf" sex="M" sheetIndex = 217/>
-	<variant prof="Spearmaster" sex="M" sheetIndex = 218/>
-	<variant prof="Swordmaster" sex="M" sheetIndex = 219/>
-	
-	<variant prof="Child" sheetIndex = 220/>
-	<variant prof="Baby" sheetIndex = 221/>
-	
+<creature gameID="DWARF" sheetIndex = 1 file="dorfs.png" >
+	<variant prof="Trader" sex="M" sheetIndex = 23/>
+	<variant prof="Trapper" sex="M" sheetIndex = 385/>
 
-	<variant prof="Miner" sex="F" sheetIndex = 141/>
-	<variant prof="Woodworker" sex="F" sheetIndex = 142/>
-	<variant prof="Carpenter" sex="F" sheetIndex = 142/>
-	<variant prof="Stoneworker" sex="F" sheetIndex = 143/>
-	<variant prof="Mason" sex="F" sheetIndex = 143/>
-	<variant prof="Engraver" sex="F" sheetIndex = 143/>
-	<variant prof="Ranger" sex="F" sheetIndex = 144/>
-	<variant prof="Metalsmith" sex="F" sheetIndex = 145/>
-	<variant prof="Weaponsmith" sex="F" sheetIndex = 145/>
-	<variant prof="Jeweler" sex="F" sheetIndex = 146/>
-	<variant prof="Craftsdwarf" sex="F" sheetIndex = 147/>
-	<variant prof="Fisherdwarf" sex="F" sheetIndex = 148/>
-	<variant prof="Farmer" sex="F" sheetIndex = 149/>
-	<variant prof="Planter" sex="F" sheetIndex = 149/>
-	<variant prof="Mechanic" sex="F" sheetIndex = 150/>
-	<!-- Free slot -->
-	<variant prof="Recruit" sex="F" sheetIndex = 152/>
-	<variant prof="Wrestler" sex="F" sheetIndex = 153/>
-	<variant prof="Axedwarf" sex="F" sheetIndex = 154/>
-	<variant prof="Hammerdwarf" sex="F" sheetIndex = 155/>
-	<variant prof="Macedwarf" sex="F" sheetIndex = 156/>
-	<variant prof="Marksdwarf" sex="F" sheetIndex = 157/>
-	<variant prof="Speardwarf" sex="F" sheetIndex = 158/>
-	<variant prof="Swordsdwarf" sex="F" sheetIndex = 159/>
+	<variant prof="Miner" sex="M" sheetIndex = 360/>
+	<variant prof="Mason" sex="M" sheetIndex = 361/>
+	<variant prof="Stoneworker" sex="M" sheetIndex = 361/>
+	<variant prof="Woodcutter" sex="M" sheetIndex = 362/>
+	<variant prof="Carpenter" sex="M" sheetIndex = 363/>
+	<variant prof="Woodworker" sex="M" sheetIndex = 363/>
+	<variant prof="Engraver" sex="M" sheetIndex = 364/>
+	<variant prof="Architect" sex="M" sheetIndex = 365/>
 	
-	<variant prof="Baron Consort" sex="F" sheetIndex = 160/>
-	<variant prof="Count Consort" sex="F" sheetIndex = 160/>
-	<variant prof="Duke Consort" sex="F" sheetIndex = 160/>
-	<variant prof="King" sex="F" sheetIndex = 161/>
-	<variant prof="King Consort" sex="F" sheetIndex = 161/>
-	<variant prof="Duke" sex="F" sheetIndex = 162/>
-	<variant prof="Count" sex="F" sheetIndex = 163/>
-	<variant prof="Baron" sex="F" sheetIndex = 164/>
+	<variant prof="Butcher" sex="M" sheetIndex = 380/>
+	<variant prof="Animal Dissector" sex="M" sheetIndex = 380/>
+	<variant prof="Fish Cleaner" sex="M" sheetIndex = 381/>
+	<variant prof="Fish Dissector" sex="M" sheetIndex = 381/>
+	<variant prof="Fishery Worker" sex="M" sheetIndex = 381/>
+	<variant prof="Fisherman" sex="M" sheetIndex = 382/>
+	<variant prof="Animal Trainer" sex="M" sheetIndex = 383/>
+	<variant prof="Animal Caretaker" sex="M" sheetIndex = 383/>
+	<variant prof="Hunter" sex="M" sheetIndex = 384/>
+	<variant prof="Ranger" sex="M" sheetIndex = 384/>
+	
+	<variant prof="Herbalist" sex="M" sheetIndex = 400/>
+	<variant prof="Cheeze Maker" sex="M" sheetIndex = 401/>
+	<variant prof="Thresher" sex="M" sheetIndex = 402/>
+	<variant prof="Planter" sex="M" sheetIndex = 403/>
+	<variant prof="Miller" sex="M" sheetIndex = 404/>
+	<variant prof="Farmer" sex="M" sheetIndex = 405/>
+	<variant prof="Milker" sex="M" sheetIndex = 406/>
+	<variant prof="Brewer" sex="M" sheetIndex = 407/>
+	<variant prof="Cook" sex="M" sheetIndex = 408/>
+	
+	<variant prof="Mechanic" sex="M" sheetIndex = 420/>
+	<variant prof="Engineer" sex="M" sheetIndex = 420/>
+	<variant prof="Siege Engineer" sex="M" sheetIndex = 421/>
+	<variant prof="Siege Operator" sex="M" sheetIndex = 422/>
+	<variant prof="Pump Operator" sex="M" sheetIndex = 423/>
+	<variant prof="Soap Maker" sex="M" sheetIndex = 424/>
+	<variant prof="Lye Maker" sex="M" sheetIndex = 424/>
+	<variant prof="Potash Maker" sex="M" sheetIndex = 424/>
+	<variant prof="Dyer" sex="M" sheetIndex = 425/>
 	<!-- Free slot -->
-	<variant prof="Advisor" sex="F" sheetIndex = 166/>
-	<variant prof="Clerk" sex="F" sheetIndex = 167/>
-	<variant prof="Diplomat" sex="F" sheetIndex = 168/>
-	<variant prof="Outpost Liaison" sex="F" sheetIndex = 168/>
-	<variant prof="Hammerer" sex="F" sheetIndex = 169/>
-	<variant prof="Philosopher" sex="F" sheetIndex = 170/>
-	<variant prof="Tax Collector" sex="F" sheetIndex = 171/>
-	<variant prof="Champion" sex="F" sheetIndex = 172/>
-	<variant prof="Elite Wrestler" sex="F" sheetIndex = 173/>
-	<variant prof="Axe Lord" sex="F" sheetIndex = 174/>
-	<variant prof="Hammer Lord" sex="F" sheetIndex = 175/>
-	<variant prof="Mace Lord" sex="F" sheetIndex = 176/>
-	<variant prof="Elite Crossbowdwarf" sex="F" sheetIndex = 177/>
-	<variant prof="Spearmaster" sex="F" sheetIndex = 178/>
-	<variant prof="Swordmaster" sex="F" sheetIndex = 179/>
-	<variant sex="F" sheetIndex = 140/>
+
+	<variant prof="Miner" sex="F" sheetIndex = 360/>
+	<variant prof="Mason" sex="F" sheetIndex = 361/>
+	<variant prof="Stoneworker" sex="F" sheetIndex = 361/>
+	<variant prof="Woodcutter" sex="F" sheetIndex = 362/>
+	<variant prof="Carpenter" sex="F" sheetIndex = 363/>
+	<variant prof="Woodworker" sex="F" sheetIndex = 363/>
+	<variant prof="Engraver" sex="F" sheetIndex = 364/>
+	<variant prof="Architect" sex="F" sheetIndex = 365/>
+	
+	<variant prof="Butcher" sex="F" sheetIndex = 380/>
+	<variant prof="Animal Dissector" sex="F" sheetIndex = 380/>
+	<variant prof="Fish Cleaner" sex="F" sheetIndex = 381/>
+	<variant prof="Fish Dissector" sex="F" sheetIndex = 381/>
+	<variant prof="Fishery Worker" sex="F" sheetIndex = 381/>
+	<variant prof="Fisherman" sex="F" sheetIndex = 382/>
+	<variant prof="Animal Trainer" sex="F" sheetIndex = 383/>
+	<variant prof="Animal Caretaker" sex="F" sheetIndex = 383/>
+	<variant prof="Hunter" sex="F" sheetIndex = 384/>
+	<variant prof="Ranger" sex="F" sheetIndex = 384/>
+	
+	<variant prof="Herbalist" sex="F" sheetIndex = 400/>
+	<variant prof="Cheeze Maker" sex="F" sheetIndex = 401/>
+	<variant prof="Thresher" sex="F" sheetIndex = 402/>
+	<variant prof="Planter" sex="F" sheetIndex = 403/>
+	<variant prof="Miller" sex="F" sheetIndex = 404/>
+	<variant prof="Farmer" sex="F" sheetIndex = 405/>
+	<variant prof="Milker" sex="F" sheetIndex = 406/>
+	<variant prof="Brewer" sex="F" sheetIndex = 407/>
+	<variant prof="Cook" sex="F" sheetIndex = 408/>
+	
+	<variant prof="Mechanic" sex="F" sheetIndex = 420/>
+	<variant prof="Engineer" sex="F" sheetIndex = 420/>
+	<variant prof="Siege Engineer" sex="F" sheetIndex = 421/>
+	<variant prof="Siege Operator" sex="F" sheetIndex = 422/>
+	<variant prof="Pump Operator" sex="F" sheetIndex = 423/>
+	<variant prof="Soap Maker" sex="F" sheetIndex = 424/>
+	<variant prof="Lye Maker" sex="F" sheetIndex = 424/>
+	<variant prof="Potash Maker" sex="F" sheetIndex = 424/>
+	<variant prof="Dyer" sex="F" sheetIndex = 425/>
 </creature>
 </creatures>

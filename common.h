@@ -67,10 +67,10 @@ using namespace DFHack;
 #endif
 
 #ifdef SQUARE
-#define TILEWIDTH 32
+#define TILEWIDTH 16
 #define TILEHEIGHT 16
-#define WALLHEIGHT 16
-#define FLOORHEIGHT 4
+#define WALLHEIGHT 8
+#define FLOORHEIGHT 2
 #define HORIZONTALSHIFT TILEWIDTH
 #define VERTICALSHIFT -TILEHEIGHT
 #endif

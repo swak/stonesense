@@ -455,13 +455,21 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
       if( b->floorType > 0 ){
 	     b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);
 	     b->depthBorderNorth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eUp);
+		 b->depthBorderSouth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eDown);
+		 b->depthBorderEast = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eRight);
       }else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false ){
         Block* leftBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
         Block* upBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eUp);
+		Block* downBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eDown);
+		Block* rightBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eRight);
         if(!leftBlock || (!leftBlock->wallType && !leftBlock->ramp.type)) 
           b->depthBorderWest = true;
         if(!upBlock || (!upBlock->wallType && !upBlock->ramp.type))
           b->depthBorderNorth = true;
+		if(!downBlock || (!downBlock->wallType && !downBlock->ramp.type))
+          b->depthBorderSouth = true;
+		if(!rightBlock || (!rightBlock->wallType && !rightBlock->ramp.type))
+          b->depthBorderEast = true;
       }
 	}
   

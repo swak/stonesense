@@ -10,41 +10,44 @@ class Block
 public:
 	Block(WorldSegment* ownerSegment);
 	~Block(void);
-  static void* operator new (size_t size); 
-  static void operator delete (void *p);
+	static void* operator new (size_t size); 
+	static void operator delete (void *p);
 
-  WorldSegment* ownerSegment;
-  
+	WorldSegment* ownerSegment;
+
 	uint32_t x, y, z;
 	int floorType;
 	int wallType;
 	int stairType;
-  t_matglossPair material;
+	t_matglossPair material;
 
-  bool depthBorderNorth;
-  bool depthBorderWest;
-  int shadow;
+	bool depthBorderNorth;
+	bool depthBorderWest;
+	bool depthBorderSouth;
+	bool depthBorderEast;
+
+	int shadow;
 
 	t_matglossPair ramp;
 	t_matglossPair water;
-    t_occupancy occ;
-	
-  t_creature* creature;
-  //bool mirroredBuilding;
+	t_occupancy occ;
+
+	t_creature* creature;
+	//bool mirroredBuilding;
 	t_matglossPair tree;
 
-  struct {
-    t_building info;
-    vector<t_SpriteWithOffset> sprites;
-	uint32_t index;
-  } building;
-  
+	struct {
+		t_building info;
+		vector<t_SpriteWithOffset> sprites;
+		uint32_t index;
+	} building;
+
 	bool IsVisible(){
 		return (floorType || wallType) != 0;
 	}
 	void Draw(BITMAP* target);
 	void DrawRamptops(BITMAP* target);
-	
+
 private:
 
 };
