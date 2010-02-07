@@ -22,7 +22,8 @@ include_directories (
     ${CMAKE_SOURCE_DIR}/dfhack/library/
     ${CMAKE_SOURCE_DIR}/dfhack/library/md5/
     ${CMAKE_SOURCE_DIR}/dfhack/library/tinyxml
-    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/allegro/lib/
+	${CMAKE_SOURCE_DIR}
 )
 
 SET(PROJECT_SRCS
@@ -116,29 +117,28 @@ ELSE(UNIX)
     # MinGW is broken. doesn't link properly for some reason.
     
     IF(MINGW)
-        add_definitions(-DALLEGRO_MINGW32)
-        SET(PROJECT_LIBS liballegro-static-4.9.16.a liballegro_primitives-static-4.9.16.a liballegro_image-static-4.9.16.a liballegro_font-static-4.9.16.a liballegro_dialog-static-4.9.16.a libjpeg.a libpng.a libz.a libglu32.a libglaux.a psapi mingw32)
+        add_definitions()
+        SET(PROJECT_LIBS liballegro-4.9.16.a liballegro_primitives-4.9.16.a liballegro_image-4.9.16.a liballegro_font-4.9.16.a liballegro_dialog-4.9.16.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
         include_directories (
 		    ${include_directories}
-		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/include
+		    ${CMAKE_SOURCE_DIR}/allegro
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
-		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/lib
-		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-mingw-bin/bin
+		    ${CMAKE_SOURCE_DIR}/allegro/lib
 	    )
 	     
     # MSVC
     ELSE(MINGW)
-        add_definitions(-DALLEGRO_MSVC)
+        add_definitions()
         SET(PROJECT_LIBS alleg psapi)
         include_directories (
 		    ${include_directories}
-		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-msvc-bin/include
+		    ${CMAKE_SOURCE_DIR}/allegro
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
-		    ${CMAKE_SOURCE_DIR}/allegro-4.9.16-msvc-bin/lib
+		    ${CMAKE_SOURCE_DIR}/allegro/lib
 	    )
     ENDIF(MINGW)
     ADD_EXECUTABLE(stonesense WIN32 ${PROJECT_SRCS} ${PLATFORM_SRC})
