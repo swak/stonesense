@@ -350,6 +350,10 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 	//Read Number of cells
 	int celldimX, celldimY, celldimZ;
 	DF.getSize((unsigned int &)celldimX, (unsigned int &)celldimY, (unsigned int &)celldimZ);
+		//Store these
+	config.cellDimX = celldimX * 16;
+	config.cellDimY = celldimY * 16;
+	config.cellDimZ = celldimZ;
   //bound view to world
   if(x > celldimX * CELLEDGESIZE -sizex/2) DisplayedSegmentX = x = celldimX * CELLEDGESIZE -sizex/2;
   if(y > celldimY * CELLEDGESIZE -sizey/2) DisplayedSegmentY = y = celldimY * CELLEDGESIZE -sizey/2;

@@ -178,14 +178,15 @@ int main(void)
 	
 
 	int gfxMode = config.Fullscreen ? ALLEGRO_FULLSCREEN : ALLEGRO_WINDOWED;
-	al_set_new_display_flags(gfxMode|ALLEGRO_OPENGL|ALLEGRO_GENERATE_EXPOSE_EVENTS|ALLEGRO_RESIZABLE);
+	al_set_new_display_flags(gfxMode|ALLEGRO_RESIZABLE);
 	display = al_create_display(config.screenWidth, config.screenHeight);
 	if (!al_install_keyboard()) {
 		al_show_native_message_box("Error", "Error", "al_install_keyboard failed.", NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		exit(1);
 		return 1;
 	}
-	al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
+	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
+	al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ALPHA, ALLEGRO_ONE, al_map_rgba(255, 255, 255, 255));
 	loadGraphicsFromDisk();
 	reloadtimer = al_install_timer(ALLEGRO_MSECS_TO_SECS(config.automatic_reload_time));
 
@@ -249,8 +250,12 @@ int main(void)
 						(al_get_bitmap_height(al_get_backbuffer()) - al_get_bitmap_height(SplashImage))/2, 0);
 					al_destroy_bitmap(SplashImage);
 				}
-
+				int src, dst, alpha_src, alpha_dst;
+				ALLEGRO_COLOR color;
+				al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 255, 0));
 				al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 50, ALLEGRO_ALIGN_CENTRE, "Welcome to Stonesense!");
+				al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
 				al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 60, ALLEGRO_ALIGN_CENTRE, "Stonesense is an isometric viewer for Dwarf Fortress.");
 
 				al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 80, ALLEGRO_ALIGN_CENTRE, "Programming, Jonas Ask and Kris Parker");
@@ -269,9 +274,10 @@ int main(void)
 
 				// Make the backbuffer visible
 				al_flip_display();
+				doKeys();
 			}
 			else{
-				if( true ){
+				if( timeToReloadSegment ){
 					reloadDisplayedSegment();
 					paintboard();
 					timeToReloadSegment = false;
@@ -282,7 +288,7 @@ int main(void)
 					paintboard();
 					animationFrameShown = true;
 				}
-				doKeys();
+				//doKeys();
 			}
 			redraw = false;
 		}
@@ -291,6 +297,7 @@ int main(void)
 		if (event.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
 			al_acknowledge_resize(event.display.source);
 			redraw = true;
+			timeToReloadSegment = true;
 #if 1
 			{
 				/* XXX the opengl drivers currently don't resize the backbuffer */
@@ -302,6 +309,7 @@ int main(void)
 #endif
 		}
 		if (event.type == ALLEGRO_EVENT_DISPLAY_EXPOSE) {
+			timeToReloadSegment = true;
 			redraw = true;
 		}
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN &&
@@ -311,7 +319,7 @@ int main(void)
 		if ((event.type == ALLEGRO_EVENT_KEY_DOWN) &&
 			(event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)) {
 				key[event.keyboard.keycode] = true;
-				doKeys();
+				//doKeys();
 				redraw = true;
 		}
 		if ((event.type == ALLEGRO_EVENT_KEY_UP) &&
@@ -331,8 +339,8 @@ int main(void)
 				mouse_x = event.mouse.x;
 				mouse_y = event.mouse.y;
 				mouse_b = event.mouse.button;
-				//doKeys();
-				//redraw = true;
+				doKeys();
+				redraw = true;
 		}
 		if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			break;
@@ -340,6 +348,7 @@ int main(void)
 		if (event.type == ALLEGRO_EVENT_TIMER){
 			doKeys();
 			redraw = true;
+			timeToReloadSegment = true;
 		}
 	}
 	destroyGraphics();

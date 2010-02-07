@@ -15,7 +15,7 @@ using namespace std;
 #include "ContentLoader.h"
 #include "BlockFactory.h"
 
-ALLEGRO_COLOR color_segmentoutline = al_map_rgb(17,34,17);
+ALLEGRO_COLOR color_segmentoutline = al_map_rgb(0,0,0);
 
 extern ALLEGRO_FONT *font;
 
@@ -35,7 +35,8 @@ double oneBlockInPixels = 0;
 ALLEGRO_BITMAP* IMGObjectSheet;
 ALLEGRO_BITMAP* IMGCreatureSheet; 
 ALLEGRO_BITMAP* IMGRampSheet; 
-ALLEGRO_BITMAP* IMGFog;
+//ALLEGRO_BITMAP* IMGFog;
+ALLEGRO_BITMAP* buffer = 0;
 vector<ALLEGRO_BITMAP*> IMGFilelist;
 vector<string*> IMGFilenames;
 
@@ -50,7 +51,7 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
 	//y-=BLOCKHEIGHT;
 	x+=TILEWIDTH>>1;
 	int offx = al_get_bitmap_width(al_get_target_bitmap()) /2;
-	int offy = 50-(BLOCKHEIGHT * config.lift_segment_offscreen);
+	int offy = (-20)-(BLOCKHEIGHT * config.lift_segment_offscreen);
 	y-=offy;
 	x-=offx;
 	y1=y*2-x;
@@ -62,7 +63,7 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
 
 void pointToScreen(int *inx, int *iny, int inz){
 	int offx = al_get_bitmap_width(al_get_target_bitmap()) / 2;
-	static int offy = 50-(BLOCKHEIGHT * config.lift_segment_offscreen);
+	int offy = (-20)-(BLOCKHEIGHT * config.lift_segment_offscreen);
 	int z=inz-1;
 	int x = *inx-*iny;
 	int y = *inx+*iny;
@@ -87,7 +88,7 @@ Crd2D LocalBlockToScreen(int32_t x, int32_t y, int32_t z){
 	return result;
 }
 
-void DrawCurrentLevelOutline(ALLEGRO_BITMAP* target, bool backPart){
+void DrawCurrentLevelOutline(bool backPart){
 	int x = viewedSegment->x+1;
 	int y = viewedSegment->y+1;
 	int z = DisplayedSegmentZ;
@@ -108,24 +109,24 @@ void DrawCurrentLevelOutline(ALLEGRO_BITMAP* target, bool backPart){
 	p2.y += FLOORHEIGHT;
 	p3.y += FLOORHEIGHT;
 	p4.y += FLOORHEIGHT;
-	if(backPart){
-		al_draw_line(p1.x, p1.y, p1.x, p1.y-BLOCKHEIGHT, color_segmentoutline, 0);
-		al_draw_line(p1.x, p1.y, p1.x, p1.y-BLOCKHEIGHT, color_segmentoutline, 0);
-		al_draw_line(p1.x, p1.y, p2.x, p2.y, color_segmentoutline, 0);
-		al_draw_line(p1.x, p1.y-BLOCKHEIGHT, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline, 0);
-		al_draw_line(p2.x, p2.y, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//if(backPart){
+	//	al_draw_line(p1.x, p1.y, p1.x, p1.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//	al_draw_line(p1.x, p1.y, p1.x, p1.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//	al_draw_line(p1.x, p1.y, p2.x, p2.y, color_segmentoutline, 0);
+	//	al_draw_line(p1.x, p1.y-BLOCKHEIGHT, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//	al_draw_line(p2.x, p2.y, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline, 0);
 
-		al_draw_line(p1.x, p1.y, p3.x, p3.y, color_segmentoutline, 0);
-		al_draw_line(p1.x, p1.y-BLOCKHEIGHT, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 0);
-		al_draw_line(p3.x, p3.y, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 0);
-	}else{
-		al_draw_line(p4.x, p4.y, p4.x, p4.y-BLOCKHEIGHT, color_segmentoutline, 0);
-		al_draw_line(p4.x, p4.y, p2.x, p2.y, color_segmentoutline ,0);
-		al_draw_line(p4.x, p4.y-BLOCKHEIGHT, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline ,0);
+	//	al_draw_line(p1.x, p1.y, p3.x, p3.y, color_segmentoutline, 0);
+	//	al_draw_line(p1.x, p1.y-BLOCKHEIGHT, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//	al_draw_line(p3.x, p3.y, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 0);
+	//}else{
+	//	al_draw_line(p4.x, p4.y, p4.x, p4.y-BLOCKHEIGHT, color_segmentoutline, 1);
+	//	al_draw_line(p4.x, p4.y, p2.x, p2.y, color_segmentoutline ,1);
+	//	al_draw_line(p4.x, p4.y-BLOCKHEIGHT, p2.x, p2.y-BLOCKHEIGHT, color_segmentoutline ,1);
 
-		al_draw_line(p4.x, p4.y, p3.x, p3.y, color_segmentoutline, 0);
-		al_draw_line(p4.x, p4.y-BLOCKHEIGHT, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 0);
-	}
+	//	al_draw_line(p4.x, p4.y, p3.x, p3.y, color_segmentoutline, 1);
+	//	al_draw_line(p4.x, p4.y-BLOCKHEIGHT, p3.x, p3.y-BLOCKHEIGHT, color_segmentoutline, 1);
+	//}
 }
 
 void drawDebugCursorAndInfo(){
@@ -270,10 +271,10 @@ void DrawSpriteIndexOverlay(int imageIndex){
 	}
 	al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 	al_draw_bitmap(currentImage,0,0,0);
-	for(int i =0; i<= 20*SPRITEWIDTH; i+=SPRITEWIDTH)
-		al_draw_line(i,0,i, al_get_bitmap_height(al_get_target_bitmap()), al_map_rgb(0,0,0), 0);
-	for(int i =0; i< al_get_bitmap_height(al_get_target_bitmap()); i+=SPRITEHEIGHT)
-		al_draw_line(0,i, 20*SPRITEWIDTH,i,al_map_rgb(0,0,0), 0);
+	//for(int i =0; i<= 20*SPRITEWIDTH; i+=SPRITEWIDTH)
+	//	al_draw_line(i,0,i, al_get_bitmap_height(al_get_target_bitmap()), al_map_rgb(0,0,0), 0);
+	//for(int i =0; i< al_get_bitmap_height(al_get_target_bitmap()); i+=SPRITEHEIGHT)
+	//	al_draw_line(0,i, 20*SPRITEWIDTH,i,al_map_rgb(0,0,0), 0);
 
 	for(int y = 0; y<20; y++){
 		for(int x = 0; x<20; x+=5){
@@ -311,7 +312,17 @@ void DoSpriteIndexOverlay(){
 
 void paintboard(){
 	uint32_t starttime = clock();
-	al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
+	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_NO_ALPHA);
+	//if(!buffer)
+	//	buffer = al_create_bitmap(al_get_display_width(), al_get_display_height());
+	//if(al_get_bitmap_width(buffer) != al_get_display_width() || al_get_bitmap_height(buffer) != al_get_display_height())
+	//{
+	//	al_destroy_bitmap(buffer);
+	//	buffer = al_create_bitmap(al_get_display_width(), al_get_display_height());
+	//}
+	//al_set_target_bitmap(buffer);
+	//al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ONE, ALLEGRO_ONE, al_map_rgba(255, 255, 255, 255));
+	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255));
 	al_clear_to_color(al_map_rgb(config.backr,config.backg,config.backb));
 	//clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
 
@@ -323,9 +334,9 @@ void paintboard(){
 
 
 
-	if (config.show_osd) DrawCurrentLevelOutline(al_get_target_bitmap(), true);
+	//if (config.show_osd) DrawCurrentLevelOutline(true);
 	viewedSegment->drawAllBlocks();
-	if (config.show_osd) DrawCurrentLevelOutline(al_get_target_bitmap(), false);
+	//if (config.show_osd) DrawCurrentLevelOutline(false);
 
 	DebugInt1 = viewedSegment->getNumBlocks();
 
@@ -333,6 +344,7 @@ void paintboard(){
 
 	if (config.show_osd)
 	{
+		al_hold_bitmap_drawing(true);
 		al_draw_textf(font, 10,10, 0, "%i,%i,%i, r%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ, DisplayedRotation);
 
 		if(config.debug_mode){
@@ -351,7 +363,10 @@ void paintboard(){
 			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,30, ALLEGRO_ALIGN_CENTRE, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
 
 		DrawMinimap();
+		al_hold_bitmap_drawing(false);
 	}
+	//al_set_target_bitmap(al_get_backbuffer());
+	//al_draw_bitmap(buffer, 0, 0, 0);
 	al_flip_display();
 }
 
@@ -373,13 +388,14 @@ void loadGraphicsFromDisk(){
 	IMGObjectSheet = load_bitmap_withWarning("objects.png");
 	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
 	IMGRampSheet = load_bitmap_withWarning("ramps.png");
-	IMGFog = load_bitmap_withWarning("fog.png");
+	//IMGFog = load_bitmap_withWarning("fog.tga");
 }
 void destroyGraphics(){
 	/* TODO these should really be merged in with the main imagefile reading routine */
 	al_destroy_bitmap(IMGObjectSheet);
 	al_destroy_bitmap(IMGCreatureSheet);
 	al_destroy_bitmap(IMGRampSheet);
+	//al_destroy_bitmap(IMGFog);
 }
 
 //delete and clean out the image files
@@ -450,10 +466,70 @@ void saveScreenshot(){
 		index++;
 	};
 	//move image to 16 bits
+	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_NO_ALPHA);
 	ALLEGRO_BITMAP* temp = al_create_bitmap(al_get_bitmap_width(al_get_target_bitmap()), al_get_bitmap_height(al_get_target_bitmap()));
 	al_set_target_bitmap(temp);
 	paintboard();
 	al_save_bitmap(filename, temp);
 	al_set_target_bitmap(al_get_backbuffer());
 	al_destroy_bitmap(temp);
+	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
+}
+
+void saveMegashot(){
+	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Saving large screenshot...");
+	al_flip_display();
+	char filename[20] ={0};
+	FILE* fp;
+	int index = 1;
+	//search for the first screenshot# that does not exist already
+	while(true){
+		sprintf(filename, "screenshot%i.png", index);
+		fp = fopen(filename, "r");
+		if( fp != 0)
+			fclose(fp);
+		else
+			//file does not exist, so exit loop
+			break;
+		index++;
+	};
+	WriteErr("\nSaving large screenshot to %s\n", filename);
+	int timer = clock();
+	//back up all the relevant values
+	Crd3D tempSize = config.segmentSize;
+	int tempViewx = DisplayedSegmentX;
+	int tempViewy = DisplayedSegmentY;
+	bool tempFollow = config.follow_DFscreen;
+	int tempLift = config.lift_segment_offscreen;
+	//now make them real big.
+	config.follow_DFscreen = false;
+	config.lift_segment_offscreen = 0;
+	int bigImageWidth = (config.cellDimX * TILEWIDTH);
+	int bigImageHeight = ((config.cellDimX + config.cellDimY) * TILEHEIGHT / 2) + ((config.segmentSize.z - 1) * BLOCKHEIGHT);
+	config.segmentSize.x = config.cellDimX + 2;
+	config.segmentSize.y = config.cellDimY + 2;
+	DisplayedSegmentX = -1;
+	DisplayedSegmentY = -1;
+	//Rebuild stuff
+	reloadDisplayedSegment();
+	//Draw the image and save it
+	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_NO_ALPHA);
+	al_set_new_bitmap_flags(ALLEGRO_MEMORY_BITMAP);
+	ALLEGRO_BITMAP* bigFile = al_create_bitmap(bigImageWidth, bigImageHeight);
+	al_set_target_bitmap(bigFile);
+	al_clear_to_color(al_map_rgb(config.backr,config.backg,config.backb));
+	viewedSegment->drawAllBlocks();
+	al_save_bitmap(filename, bigFile);
+	al_set_target_bitmap(al_get_backbuffer());
+	al_destroy_bitmap(bigFile);
+	//restore everything that we changed.
+	config.segmentSize = tempSize;
+	DisplayedSegmentX = tempViewx;
+	DisplayedSegmentY = tempViewy;
+	config.follow_DFscreen = tempFollow;
+	config.lift_segment_offscreen = tempLift;
+	timer = clock() - timer;
+	WriteErr("Took %ims\n", timer);
+	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
+	al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
 }

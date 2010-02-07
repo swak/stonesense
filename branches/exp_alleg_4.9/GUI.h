@@ -21,6 +21,7 @@ void DoSpriteIndexOverlay();
 void loadGraphicsFromDisk();
 void destroyGraphics();
 void saveScreenshot();
+void saveMegashot();
 
 extern WorldSegment* viewedSegment;//current, loaded
 extern int DisplayedSegmentX;
@@ -40,6 +41,6 @@ extern double oneBlockInPixels;
 extern ALLEGRO_BITMAP* IMGObjectSheet; 
 extern ALLEGRO_BITMAP* IMGCreatureSheet; 
 extern ALLEGRO_BITMAP* IMGRampSheet;  
-extern ALLEGRO_BITMAP* IMGFog;
+//extern ALLEGRO_BITMAP* IMGFog;
 
 extern Crd2D debugCursor;

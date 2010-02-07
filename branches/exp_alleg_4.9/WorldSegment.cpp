@@ -149,50 +149,36 @@ void WorldSegment::drawAllBlocks(){
 	int32_t vsxmax = viewedSegment->sizex-1;
 	int32_t vsymax = viewedSegment->sizey-1;
 	int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
-		for(int32_t vsz=0; vsz < vszmax; vsz++)
+	al_hold_bitmap_drawing(true);
+	for(int32_t vsz=0; vsz < vszmax; vsz++)
+	{
+		for(int32_t vsx=1; vsx < vsxmax; vsx++)
 		{
-			//
-			for(int32_t vsx=1; vsx < vsxmax; vsx++)
+			for(int32_t vsy=1; vsy < vsymax; vsy++)
 			{
-				for(int32_t vsy=1; vsy < vsymax; vsy++)
+				Block *b = getBlockLocal(vsx,vsy,vsz);
+				if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
 				{
-					Block *b = getBlockLocal(vsx,vsy,vsz);
-					if (b==NULL || (b->floorType == 0 && b->ramp.type == 0 && b->wallType == 0))
+					Block* bLow = getBlockLocal(vsx,vsy,vsz-1);
+					if (bLow != NULL)
 					{
-						Block* bLow = getBlockLocal(vsx,vsy,vsz-1);
-						if (bLow != NULL)
-						{
-							bLow->DrawRamptops();
-						}
+						bLow->DrawRamptops();
 					}
-					if (b)
-					{
-						b->Draw();
-						//while(!key[KEY_SPACE]) ;
-						//rest(100);
-					}
-					else
-					{
-						int32_t drawx = vsx;
-						int32_t drawy = vsy;
-						int32_t drawz = vsz-vszmax+2;
-						pointToScreen((int*)&drawx, (int*)&drawy, drawz);
-						drawx -= TILEWIDTH>>1;
-						if(config.fogenable)
-						{
-							al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(config.fogr, config.fogg, config.fogb, 255/config.foga));
-							al_draw_bitmap(IMGFog, drawx, drawy+FLOORHEIGHT, 0);
-							al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255));
-						}
-					}
-					//al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ZERO, ALLEGRO_ONE, al_map_rgb(255, 255, 255));
-					////////al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255-(((vszmax-1) - vsz) *config.foga / (vszmax-1))));
-					//al_draw_filled_rectangle(0, 0, al_get_bitmap_width(al_get_target_bitmap()), al_get_bitmap_height(al_get_target_bitmap()), al_map_rgba(config.fogr, config.fogg, config.fogb, (((vszmax-1) - vsz) *config.foga / (vszmax-1))));
-					//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255));
 				}
+				if (b)
+				{
+					b->Draw();
+					//while(!key[KEY_SPACE]) ;
+					//rest(100);
+				}
+				//al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ZERO, ALLEGRO_ONE, al_map_rgb(255, 255, 255));
+				////////al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255-(((vszmax-1) - vsz) *config.foga / (vszmax-1))));
+				//al_draw_filled_rectangle(0, 0, al_get_bitmap_width(al_get_target_bitmap()), al_get_bitmap_height(al_get_target_bitmap()), al_map_rgba(config.fogr, config.fogg, config.fogb, (((vszmax-1) - vsz) *config.foga / (vszmax-1))));
+				//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255));
 			}
 		}
-	//}
+	}
+	al_hold_bitmap_drawing(false);
 }
 
 /*

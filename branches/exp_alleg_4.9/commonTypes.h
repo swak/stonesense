@@ -61,6 +61,10 @@ typedef struct {
 	bool fogenable;
   Crd3D segmentSize;
 
+  unsigned int cellDimX;
+  unsigned int cellDimY;
+  unsigned int cellDimZ;
+
 } GameConfiguration;
 
 

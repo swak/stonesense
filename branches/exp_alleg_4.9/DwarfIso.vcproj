@@ -117,10 +117,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="allegro\include"
+				AdditionalIncludeDirectories="D:\stonesense\branches\exp_alleg_4.9\allegro"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
