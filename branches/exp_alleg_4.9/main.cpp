@@ -168,6 +168,7 @@ int main(void)
 	config.backg = 95;
 	config.backb = 160;
 	config.fogenable = true;
+	config.imageCacheSize = 4096;
 	loadfont();
 
 	loadConfigFile();

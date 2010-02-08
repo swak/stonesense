@@ -22,7 +22,7 @@ void loadGraphicsFromDisk();
 void destroyGraphics();
 void saveScreenshot();
 void saveMegashot();
-
+void saveImage(ALLEGRO_BITMAP* image);
 extern WorldSegment* viewedSegment;//current, loaded
 extern int DisplayedSegmentX;
 extern int DisplayedSegmentY;

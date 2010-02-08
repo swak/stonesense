@@ -13,7 +13,7 @@ with your drivers, or the program will still load in window mode.
 These two options set how large the cube loaded from Dwarf Fortress is.
 Each entry expects the number of tiles to load.
 [SEGMENTSIZE_XY:50]
-[SEGMENTSIZE_Z:10]
+[SEGMENTSIZE_Z:5]
 
 Change this to off to skip the intro.
 [INTRO:ON]
@@ -68,9 +68,9 @@ Color and alpha ranges are 0 (min) to 255 (max)
 [FOG_DEPTH:5]
 
 Background color. setting this the same as the fog color produces a nice effect.
-[BACK_RED:129]
-[BACK_GREEN:159]
-[BACK_BLUE:177]
+[BACK_RED:95]
+[BACK_GREEN:95]
+[BACK_BLUE:160]
 
 Enables or disables the entire on-screen-display overlay (Toggle with F2)
 [SHOW_OSD:YES]
@@ -85,4 +85,11 @@ Shows all creatures, for debugging. Living, dead, kidnapped, caged, EVERY single
 
 Adds more logging information to what is written to stonesense.log. May be useful
 if trying having issues with sprite configuration tweaking.
-[VERBOSE_LOGGING:NO]
+[VERBOSE_LOGGING:YES]
+
+When loading images, Stonesense stores them in a single large image, for better efficiency. 
+If this is set to YES, Stonesense will save a copy of the image each time it changes.
+[LOG_IMAGECACHE:NO]
+
+This set's the size of the internal image cache. Idealy, this should be the largest size that your videocard supports.
+[IMAGE_CACHE_SIZE:4096]

@@ -64,7 +64,9 @@ typedef struct {
   unsigned int cellDimX;
   unsigned int cellDimY;
   unsigned int cellDimZ;
-
+	
+  bool saveImageCache;
+  int imageCacheSize;
 } GameConfiguration;
 
 

@@ -37,6 +37,7 @@ ALLEGRO_BITMAP* IMGCreatureSheet;
 ALLEGRO_BITMAP* IMGRampSheet; 
 //ALLEGRO_BITMAP* IMGFog;
 ALLEGRO_BITMAP* buffer = 0;
+vector<ALLEGRO_BITMAP*> IMGCache;
 vector<ALLEGRO_BITMAP*> IMGFilelist;
 vector<string*> IMGFilenames;
 
@@ -253,7 +254,6 @@ void DrawSpriteFromSheet( int spriteNum, ALLEGRO_BITMAP* spriteSheet, int x, int
 	10, 60 , SPRITEWIDTH, SPRITEHEIGHT);
 	*/
 	//draw_trans_sprite(target, tiny, x, y);
-
 	al_draw_bitmap_region(spriteSheet, sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT, SPRITEWIDTH, SPRITEHEIGHT, x, y - (WALLHEIGHT), 0);
 }
 
@@ -385,9 +385,13 @@ ALLEGRO_BITMAP* load_bitmap_withWarning(char* path){
 }
 
 void loadGraphicsFromDisk(){
-	IMGObjectSheet = load_bitmap_withWarning("objects.png");
-	IMGCreatureSheet = load_bitmap_withWarning("creatures.png");
-	IMGRampSheet = load_bitmap_withWarning("ramps.png");
+	int index;
+	index = loadImgFile("objects.png");
+	IMGObjectSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
+	index = loadImgFile("creatures.png");
+	IMGCreatureSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
+	index = loadImgFile("ramps.png");
+	IMGRampSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
 	//IMGFog = load_bitmap_withWarning("fog.tga");
 }
 void destroyGraphics(){
@@ -419,32 +423,81 @@ ALLEGRO_BITMAP* getImgFile(int index)
 	return IMGFilelist[index];	
 }
 
+inline int returnGreater(int a, int b)
+{
+	if(a>b)
+		return a;
+	else return b;
+}
+
 int loadImgFile(char* filename)
 {
+	int src;
+	int dst;
+	int alpha_src;
+	int alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	ALLEGRO_BITMAP* currentTarget = al_get_target_bitmap();
 	uint32_t numFiles = (uint32_t)IMGFilelist.size();
 	for(uint32_t i = 0; i < numFiles; i++)
 	{
 		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
 			return i;
 	}
-	IMGFilelist.push_back(load_bitmap_withWarning(filename));
+	static int xOffset = 0;
+	static int yOffset = 0;
+	static int currentCache = -1;
+	static int columnWidth = 0;
+	ALLEGRO_BITMAP* tempfile = load_bitmap_withWarning(filename);
+	if(currentCache < 0)
+	{
+		currentCache = 0;
+		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
+		LogVerbose("Creating image cache #%d\n",currentCache);
+	}
+	if((yOffset + al_get_bitmap_height(tempfile)) <= config.imageCacheSize)
+	{
+		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+		yOffset += al_get_bitmap_height(tempfile);
+		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+	}
+	else if ((xOffset + al_get_bitmap_width(tempfile) + columnWidth) <= config.imageCacheSize)
+	{
+		yOffset = 0;
+		xOffset += columnWidth;
+		columnWidth = 0;
+		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+		yOffset += al_get_bitmap_height(tempfile);
+		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+	}
+	else
+	{
+		yOffset = 0;
+		xOffset = 0;
+		currentCache ++;
+		LogVerbose("Creating image cache #%d\n",currentCache);
+		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
+		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+		yOffset += al_get_bitmap_height(tempfile);
+		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+	}
+	if(config.saveImageCache)
+		saveImage(IMGCache[currentCache]);
+	al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+	al_set_target_bitmap(IMGFilelist[(IMGFilelist.size() - 1)]);
+	al_draw_bitmap(tempfile, 0, 0, 0);
+	al_destroy_bitmap(tempfile);
+	al_set_target_bitmap(currentTarget);
 	IMGFilenames.push_back(new string(filename));
 	LogVerbose("New image: %s\n",filename);
+	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
 	return (int)IMGFilelist.size() - 1;
 }
 int loadImgFile(ALLEGRO_PATH* filepath)
 {
 	char *filename = strcpy(filename,al_path_cstr(filepath, ALLEGRO_NATIVE_PATH_SEP));
-	uint32_t numFiles = (uint32_t)IMGFilelist.size();
-	for(uint32_t i = 0; i < numFiles; i++)
-	{
-		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
-			return i;
-	}
-	IMGFilelist.push_back(load_bitmap_withWarning(filename));
-	IMGFilenames.push_back(new string(filename));
-	LogVerbose("New image: %s\n",filename);
-	return (int)IMGFilelist.size() - 1;
+	return loadImgFile(filename);
 }
 
 void saveScreenshot(){
@@ -475,7 +528,25 @@ void saveScreenshot(){
 	al_destroy_bitmap(temp);
 	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
 }
+void saveImage(ALLEGRO_BITMAP* image){
+	//get filename
+	char filename[20] ={0};
+	FILE* fp;
+	int index = 1;
+	//search for the first screenshot# that does not exist already
+	while(true){
+		sprintf(filename, "Image%i.png", index);
 
+		fp = fopen(filename, "r");
+		if( fp != 0)
+			fclose(fp);
+		else
+			//file does not exist, so exit loop
+			break;
+		index++;
+	};
+	al_save_bitmap(filename, image);
+}
 void saveMegashot(){
 	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Saving large screenshot...");
 	al_flip_display();

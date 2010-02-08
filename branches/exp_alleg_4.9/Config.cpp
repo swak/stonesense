@@ -210,6 +210,14 @@ void parseConfigLine( string line ){
     if(value < -30) value = -30;
     config.viewZoffset = value;
   }
+  if( line.find("LOG_IMAGECACHE") != -1){
+    string result = parseStrFromLine( "LOG_IMAGECACHE", line );
+    config.saveImageCache = (result == "YES");
+  }
+  if( line.find("IMAGE_CACHE_SIZE") != -1){
+    int value = parseIntFromLine( "IMAGE_CACHE_SIZE", line);
+	config.imageCacheSize = value;
+  }
 }
 
 
