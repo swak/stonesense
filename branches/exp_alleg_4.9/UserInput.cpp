@@ -7,6 +7,7 @@
 extern int mouse_x, mouse_y, mouse_z;
 extern unsigned int mouse_b;
 ALLEGRO_MOUSE_STATE * mouse;
+ALLEGRO_KEYBOARD_STATE board;
 extern ALLEGRO_TIMER * reloadtimer;
 void mouseProc(int flags){
 	//int j = 10;
@@ -73,13 +74,15 @@ void moveViewRelativeToRotation( int stepx, int stepy )
 
 
 void doKeys(){
-  char stepsize = (key[ALLEGRO_KEY_LSHIFT] || key[ALLEGRO_KEY_RSHIFT] ? MAPNAVIGATIONSTEPBIG : MAPNAVIGATIONSTEP);
+	
+	al_get_keyboard_state(&keyboard);
+  char stepsize = (al_key_down(&keyboard,ALLEGRO_KEY_LSHIFT) || al_key_down(&keyboard,ALLEGRO_KEY_RSHIFT) ? MAPNAVIGATIONSTEPBIG : MAPNAVIGATIONSTEP);
   //mouse_callback = mouseProc;
   static int last_mouse_z;
   if(mouse_z < last_mouse_z)
   {
 	  config.follow_DFscreen = false;
-	  if(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL])
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
 	  {
 		  config.segmentSize.z++;
 	  }
@@ -96,7 +99,7 @@ void doKeys(){
   }
   if(mouse_z > last_mouse_z){
 	  config.follow_DFscreen = false;
-	  if(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL])
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
 	  {
 		  config.segmentSize.z--;
 		  if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
@@ -147,37 +150,37 @@ void doKeys(){
 	  }
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_UP]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_UP)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  moveViewRelativeToRotation( 0, -stepsize );
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_DOWN]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_DOWN)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  moveViewRelativeToRotation( 0, stepsize );
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_LEFT]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_LEFT)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  moveViewRelativeToRotation( -stepsize, 0 );
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_RIGHT]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_RIGHT)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  moveViewRelativeToRotation( stepsize, 0 );
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_ENTER]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_ENTER)){
 	  DisplayedRotation++;
 	  DisplayedRotation %= 4;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_PGDN] || key[ALLEGRO_KEY_9]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_PGDN) || al_key_down(&keyboard,ALLEGRO_KEY_9)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  if (config.follow_DFscreen)
 		  config.viewZoffset -= stepsize;
@@ -186,8 +189,8 @@ void doKeys(){
 	  if(DisplayedSegmentZ<1) DisplayedSegmentZ = 1;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_PGUP] || key[ALLEGRO_KEY_0]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_PGUP) || al_key_down(&keyboard,ALLEGRO_KEY_0)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		  config.follow_DFscreen = false;
 	  if (config.follow_DFscreen)
 		  config.viewZoffset += stepsize;
@@ -195,79 +198,80 @@ void doKeys(){
 		  DisplayedSegmentZ += stepsize;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_R]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_R)){
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_D]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_D)){
 	  paintboard();
   }
-  if(key[ALLEGRO_KEY_G]){
-	  destroyGraphics();
+  if(al_key_down(&keyboard,ALLEGRO_KEY_G)){
 	  loadGraphicsFromDisk();
 	  timeToReloadConfig = true;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_U]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_U)){
 	  config.show_stockpiles = !config.show_stockpiles;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_I]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_I)){
 	  config.show_zones = !config.show_zones;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_C]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_C)){
 	  config.truncate_walls = !config.truncate_walls;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_F]){
-	  config.follow_DFscreen = !config.follow_DFscreen;
-	  timeToReloadSegment = true;
+  if(al_key_down(&keyboard,ALLEGRO_KEY_F)){
+		if (al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
+		  config.followDFcursor = !config.followDFcursor;
+		else
+		config.follow_DFscreen = !config.follow_DFscreen;
+		timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_1]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_1)){
 	  config.segmentSize.z--;
 	  if(config.segmentSize.z <= 0) config.segmentSize.z = 1;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_2]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_2)){
 	  config.segmentSize.z++;
 	  //add a limit?
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_S]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_S)){
 	  config.single_layer_view = !config.single_layer_view;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_B]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_B)){
 	  config.shade_hidden_blocks = !config.shade_hidden_blocks;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_H]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_H)){
 	  config.show_hidden_blocks = !config.show_hidden_blocks;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_N]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_N)){
 	  config.show_creature_names = !config.show_creature_names;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_F2]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_F2)){
 	  config.show_osd = !config.show_osd;
 	  timeToReloadSegment = true;
   }
-  if(key[ALLEGRO_KEY_F5]){
-	  if (!(key[ALLEGRO_KEY_LCTRL] || key[ALLEGRO_KEY_RCTRL]))
+  if(al_key_down(&keyboard,ALLEGRO_KEY_F5)){
+	  if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
 		saveScreenshot();
 	  else{
-		  key[ALLEGRO_KEY_F5] = 0;
 		  saveMegashot();
 	  }
 
   } 
-  if(key[ALLEGRO_KEY_PAD_PLUS]){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_PLUS)){
 	  config.automatic_reload_time += config.automatic_reload_step;
 	  paintboard();
 	  initAutoReload();
   }
-  if(key[ALLEGRO_KEY_PAD_MINUS] && config.automatic_reload_time){
+  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_MINUS) && config.automatic_reload_time){
 	  if(config.automatic_reload_time > 0)
 	  {
 		  config.automatic_reload_time -= config.automatic_reload_step;
@@ -282,27 +286,27 @@ void doKeys(){
   }
 
   if(config.debug_mode){
-	  if(key[ALLEGRO_KEY_PAD_8]){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_8)){
 		  debugCursor.y--;
 		  paintboard();
 	  }
-	  if(key[ALLEGRO_KEY_PAD_2]){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_2)){
 		  debugCursor.y++;
 		  paintboard();
 	  }
-	  if(key[ALLEGRO_KEY_PAD_4]){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_4)){
 		  debugCursor.x--;
 		  paintboard();
 	  }
-	  if(key[ALLEGRO_KEY_PAD_6]){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_6)){
 		  debugCursor.x++;
 		  paintboard();
 	  }
 
-	  if(key[ALLEGRO_KEY_F10]){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_F10)){
 		  DoSpriteIndexOverlay();
 	  }
-	  if(key[ALLEGRO_KEY_F9] && config.show_intro){
+	  if(al_key_down(&keyboard,ALLEGRO_KEY_F9) && config.show_intro){
 		  config.show_intro = false;
 	  }
   }

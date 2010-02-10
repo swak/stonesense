@@ -19,7 +19,6 @@ ALLEGRO_BITMAP* load_bitmap_withWarning(char* path);
 void DrawSpriteIndexOverlay(int i);
 void DoSpriteIndexOverlay();
 void loadGraphicsFromDisk();
-void destroyGraphics();
 void saveScreenshot();
 void saveMegashot();
 void saveImage(ALLEGRO_BITMAP* image);
@@ -41,6 +40,5 @@ extern double oneBlockInPixels;
 extern ALLEGRO_BITMAP* IMGObjectSheet; 
 extern ALLEGRO_BITMAP* IMGCreatureSheet; 
 extern ALLEGRO_BITMAP* IMGRampSheet;  
-//extern ALLEGRO_BITMAP* IMGFog;
 
-extern Crd2D debugCursor;
+extern Crd3D debugCursor;

@@ -377,7 +377,8 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   vector< vector <uint16_t> > layers;
   DF.ReadGeology( layers );
   
-
+	//read cursor
+  pDFApiHandle->getCursorCoords(config.dfCursorX, config.dfCursorY, config.dfCursorZ);
   
   // read constructions
   vector<t_construction> allConstructions;

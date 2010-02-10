@@ -60,7 +60,11 @@ typedef struct {
   int backb;
 	bool fogenable;
   Crd3D segmentSize;
-
+	
+	bool followDFcursor;
+  int dfCursorX;
+  int dfCursorY;
+  int dfCursorZ;
   unsigned int cellDimX;
   unsigned int cellDimY;
   unsigned int cellDimZ;

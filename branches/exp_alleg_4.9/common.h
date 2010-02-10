@@ -153,6 +153,7 @@ void correctBlockForSegmetOffset(int32_t& x, int32_t& y, int32_t& z);
 
 void WriteErr(char* msg, ...);
 void LogVerbose(char* msg, ...);
+void DisplayErr(const char *format, ...);
 
 extern GameConfiguration config;
 
@@ -181,7 +182,6 @@ void correctBlockForRotation(int32_t& x, int32_t& y, int32_t& z);
 
 //from UserInput.cpp
 void doKeys();
-void doKeys(ALLEGRO_EVENT *event);
 void initAutoReload();
 void abortAutoReload();
 
@@ -198,6 +198,7 @@ class BuildingConfiguration;
 
 extern ALLEGRO_FONT *font;
 extern ALLEGRO_DISPLAY     *display;
-extern ALLEGRO_KEYBOARD_STATE *keyboard;
+extern ALLEGRO_KEYBOARD_STATE keyboard;
 extern ALLEGRO_TIMER *reloadtimer;
+extern ALLEGRO_TIMER * animationtimer;
 extern ALLEGRO_MOUSE_STATE *mouse;

@@ -119,6 +119,10 @@ void parseConfigLine( string line ){
     string result = parseStrFromLine( "FOLLOW_DF_SCREEN", line );
     config.follow_DFscreen = (result == "YES");
   }
+  if( line.find("FOLLOW_DF_CURSOR") != -1){
+    string result = parseStrFromLine( "FOLLOW_DF_CURSOR", line );
+    config.follow_DFscreen = (result == "YES");
+  }
   if( line.find("SHOW_CREATURE_NAMES") != -1){
     string result = parseStrFromLine( "SHOW_CREATURE_NAMES", line );
     config.show_creature_names = (result == "YES");
@@ -165,8 +169,8 @@ void parseConfigLine( string line ){
     if(value < 0) value = 0;
     config.fogb = value;
   }
-  if( line.find("FOG_DEPTH") != -1){
-    int value = parseIntFromLine( "FOG_DEPTH", line);
+  if( line.find("FOG_ALPHA") != -1){
+    int value = parseIntFromLine( "FOG_ALPHA", line);
     if(value < 1) value = 1;
     config.foga = value;
   }

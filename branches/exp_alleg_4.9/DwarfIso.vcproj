@@ -39,8 +39,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm1000"
 				Optimization="0"
 				AdditionalIncludeDirectories="allegro"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_DEBUG;DEBUGMODE=1;ALLEGRO_POPUP_EXAMPLES;CMAKE_INTDIR=\&quot;Debug\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -60,7 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
+				AdditionalOptions=" /STACK:10000000 /machine:I386 /debug"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro-debug-4.9.16.lib allegro_primitives-debug-4.9.16.lib allegro_font-debug-4.9.16.lib allegro_image-debug-4.9.16.lib allegro_dialog-debug-4.9.16.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="D:\stonesense\branches\exp_alleg_4.9\allegro\lib"
 				GenerateDebugInformation="true"
@@ -135,9 +138,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="true"
-				AdditionalDependencies="allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib dfhack/build/dfhack.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro-4.9.16.lib allegro_primitives-4.9.16.lib allegro_font-4.9.16.lib allegro_image-4.9.16.lib allegro_dialog-4.9.16.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib $(NOINHERIT)"
 				LinkIncremental="1"
-				SuppressStartupBanner="false"
+				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="allegro\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"

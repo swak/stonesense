@@ -39,7 +39,7 @@ bool ContentLoader::Load(API& DF){
   
   /// BAD
 //  SUSPEND_DF;
-  
+
   //read data from DF
   DF.ReadCreatureMatgloss( creatureNameStrings );
   DF.InitReadBuildings( buildingNameStrings );
@@ -51,6 +51,7 @@ bool ContentLoader::Load(API& DF){
   DF.ReadPlantMatgloss( plantNameStrings );
   
 //  RESUME_DF;
+	loadGraphicsFromDisk(); //these get destroyed when flushImgFiles is called.
   bool overallResult = parseContentIndexFile( "index.txt" );
   translationComplete = false;
 

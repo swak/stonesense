@@ -121,13 +121,16 @@ void Block::Draw(){
 			al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
 		}
 
-		////Northern frame
-		//if(this->depthBorderNorth)
-		//	al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH, drawy+(TILEHEIGHT>>1), tileBorderColor, 0);
+			drawy += (WALLHEIGHT);
+			//Northern border
+			if(this->depthBorderNorth)
+				DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
 
-		////Western frame
-		//if(this->depthBorderWest)
-		//	al_draw_line(drawx, drawy+(TILEHEIGHT>>1), drawx+(TILEWIDTH>>1), drawy, tileBorderColor, 0);
+			//Western border
+			if(this->depthBorderWest)
+				DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
+
+			drawy -= (WALLHEIGHT);
 	}
 
 	//Draw Ramp
@@ -234,13 +237,13 @@ void Block::Draw(){
 			DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 
 			//drawy -= (WALLHEIGHT);
-			////Northern border
-			//if(this->depthBorderNorth)
-			//	al_draw_line(drawx + (TILEWIDTH>>1), drawy, drawx+TILEWIDTH, drawy+(TILEHEIGHT>>1), tileBorderColor, 0);
+			//Northern border
+			if(this->depthBorderNorth)
+				DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
 
-			////Western border
-			//if(this->depthBorderWest)
-			//	al_draw_line(drawx, drawy+(TILEHEIGHT>>1), drawx+(TILEWIDTH>>1), drawy, tileBorderColor, 0);
+			//Western border
+			if(this->depthBorderWest)
+				DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
 
 			//drawy += (WALLHEIGHT);
 		}
