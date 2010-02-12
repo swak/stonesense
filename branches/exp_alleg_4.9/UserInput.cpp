@@ -223,7 +223,7 @@ void doKeys(){
   }
   if(al_key_down(&keyboard,ALLEGRO_KEY_F)){
 		if (al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
-		  config.followDFcursor = !config.followDFcursor;
+		  config.follow_DFcursor = !config.follow_DFcursor;
 		else
 		config.follow_DFscreen = !config.follow_DFscreen;
 		timeToReloadSegment = true;
@@ -287,18 +287,22 @@ void doKeys(){
 
   if(config.debug_mode){
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_8)){
+		  config.follow_DFcursor = false;
 		  debugCursor.y--;
 		  paintboard();
 	  }
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_2)){
+		  config.follow_DFcursor = false;
 		  debugCursor.y++;
 		  paintboard();
 	  }
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_4)){
+		  config.follow_DFcursor = false;
 		  debugCursor.x--;
 		  paintboard();
 	  }
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_PAD_6)){
+		  config.follow_DFcursor = false;
 		  debugCursor.x++;
 		  paintboard();
 	  }

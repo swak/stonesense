@@ -39,7 +39,8 @@ ALLEGRO_BITMAP* buffer = 0;
 vector<ALLEGRO_BITMAP*> IMGCache;
 vector<ALLEGRO_BITMAP*> IMGFilelist;
 vector<string*> IMGFilenames;
-
+GLhandleARB tinter;
+GLhandleARB tinter_shader;
 Crd3D debugCursor;
 
 void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
@@ -60,6 +61,7 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
 	y1/=TILEWIDTH;
 
 }
+
 
 void pointToScreen(int *inx, int *iny, int inz){
 	int offx = al_get_bitmap_width(al_get_target_bitmap()) / 2;
@@ -130,12 +132,13 @@ void DrawCurrentLevelOutline(bool backPart){
 }
 
 void drawDebugCursorAndInfo(){
-	if((config.dfCursorX != -30000) && config.followDFcursor)
+	if((config.dfCursorX != -30000) && config.follow_DFcursor)
 	{
 		int x = config.dfCursorX;
 		int y = config.dfCursorY;
 		int z = config.dfCursorZ;
 		correctBlockForSegmetOffset(x,y,z);
+		correctBlockForRotation( x, y, z);
 		debugCursor.x = x;
 		debugCursor.y = y;
 		debugCursor.z = z;
@@ -217,10 +220,10 @@ void drawDebugCursorAndInfo(){
 		//memset(strCreature, -1, 50);
 		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
 			"flag1: %s ", strCreature );
+		char strCreature2[150] = {0};
+		generateCreatureDebugString2( b->creature, strCreature2 );
 		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
-			"flags1: %u ", b->creature->flags1.whole );
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
-			"flags2: %u ", b->creature->flags2.whole );
+			"flag2: %s ", strCreature2 );
 	}
 	//basecon
 	//textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
@@ -360,7 +363,7 @@ void paintboard(){
 	if (config.show_osd) DrawCurrentLevelOutline(true);
 	viewedSegment->drawAllBlocks();
 	if (config.show_osd) DrawCurrentLevelOutline(false);
-	al_draw_textf(font, 10, 100, 0, "DF Cursor: %d,%d,%d", config.dfCursorX,config.dfCursorY,config.dfCursorZ);
+
 	DebugInt1 = viewedSegment->getNumBlocks();
 
 	uint32_t DrawTime = clock() - starttime;
@@ -377,13 +380,30 @@ void paintboard(){
 			al_draw_textf(font, 10, 50, 0, "D1: %i", blockFactory.getPoolSize());
 			drawDebugCursorAndInfo();
 		}
-
+		int top = 0;
 		if(config.follow_DFscreen)
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,10, ALLEGRO_ALIGN_CENTRE, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
+		{
+			top += 10;
+			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
+		}
+		if(config.follow_DFcursor)
+		{
+			top += 10;
+			if(config.dfCursorX != -30000)
+				al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Following DF Cursor at: %d,%d,%d", config.dfCursorX,config.dfCursorY,config.dfCursorZ);
+			else
+				al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "No DF cursor to follow");
+		}
 		if(config.single_layer_view)
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,20, ALLEGRO_ALIGN_CENTRE, "Single layer view");
+		{
+			top += 10;
+			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Single layer view");
+		}
 		if(config.automatic_reload_time)
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,30, ALLEGRO_ALIGN_CENTRE, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
+		{
+			top += 10;
+			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
+		}
 		al_hold_bitmap_drawing(false);
 		DrawMinimap();
 	}
@@ -407,6 +427,8 @@ ALLEGRO_BITMAP* load_bitmap_withWarning(char* path){
 }
 
 void loadGraphicsFromDisk(){
+	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
+	al_flip_display();
 	int index;
 	index = loadImgFile("objects.png");
 	IMGObjectSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
@@ -465,6 +487,20 @@ inline int returnGreater(int a, int b)
 	else return b;
 }
 
+//int loadImgFile(char* filename)
+//{
+//	uint32_t numFiles = (uint32_t)IMGFilelist.size();
+//	for(uint32_t i = 0; i < numFiles; i++)
+//	{
+//		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
+//			return i;
+//	}
+//	IMGFilelist.push_back(load_bitmap_withWarning(filename));
+//	IMGFilenames.push_back(new string(filename));
+//	LogVerbose("New image: %s\n",filename);
+//  return (int)IMGFilelist.size() - 1;
+//}
+
 int loadImgFile(char* filename)
 {
 	int src;
@@ -480,20 +516,26 @@ int loadImgFile(char* filename)
 		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
 			return i;
 	}
+	al_clear_to_color(al_map_rgb(0,0,0));
+	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filename);
+	al_flip_display();
 	static int xOffset = 0;
 	static int yOffset = 0;
 	int currentCache = IMGCache.size() -1;
 	static int columnWidth = 0;
 	ALLEGRO_BITMAP* tempfile = load_bitmap_withWarning(filename);
+	LogVerbose("New image: %s\n",filename);
 	if(currentCache < 0)
 	{
 		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
 		currentCache = IMGCache.size() -1;
 		LogVerbose("Creating image cache #%d\n",currentCache);
-		currentCache = IMGCache.size() -1;
 	}
 	if((yOffset + al_get_bitmap_height(tempfile)) <= config.imageCacheSize)
 	{
+		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_target_bitmap(IMGCache[currentCache]);
+		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
 		yOffset += al_get_bitmap_height(tempfile);
 		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
@@ -503,6 +545,9 @@ int loadImgFile(char* filename)
 		yOffset = 0;
 		xOffset += columnWidth;
 		columnWidth = 0;
+		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_target_bitmap(IMGCache[currentCache]);
+		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
 		yOffset += al_get_bitmap_height(tempfile);
 		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
@@ -514,20 +559,21 @@ int loadImgFile(char* filename)
 		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
 		currentCache = IMGCache.size() -1;
 		LogVerbose("Creating image cache #%d\n",currentCache);
+		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_target_bitmap(IMGCache[currentCache]);
+		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
 		yOffset += al_get_bitmap_height(tempfile);
 		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
 	}
 	if(config.saveImageCache)
-		saveImage(IMGCache[currentCache]);
-	al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
-	al_set_target_bitmap(IMGFilelist[(IMGFilelist.size() - 1)]);
-	al_draw_bitmap(tempfile, 0, 0, 0);
+		saveImage(tempfile);
 	al_destroy_bitmap(tempfile);
 	al_set_target_bitmap(al_get_backbuffer());
 	IMGFilenames.push_back(new string(filename));
-	LogVerbose("New image: %s\n",filename);
 	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
+	if(config.saveImageCache)
+		saveImage(IMGCache[currentCache]);
 	return (int)IMGFilelist.size() - 1;
 }
 int loadImgFile(ALLEGRO_PATH* filepath)

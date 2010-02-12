@@ -25,38 +25,43 @@ bool IsCreatureVisible( t_creature* c ){
 }
 
 void DrawCreature(int drawx, int drawy, t_creature* creature ){
-  t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
-  //if(creature->x == 151 && creature->y == 145)
-  //  int j = 10;
-  if( config.show_creature_names )
-  	if (creature->nick_name[0] && config.names_use_nick)
-  	{
-		al_draw_textf(font, drawx, drawy-20, 0, "%s", creature->nick_name);
+	t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
+	//if(creature->x == 151 && creature->y == 145)
+	//  int j = 10;
+
+	ALLEGRO_BITMAP* creatureSheet;
+	if (sprite.fileIndex == -1)
+	{
+		creatureSheet = IMGCreatureSheet;
 	}
-  	else if (creature->first_name[0])
-  	{
-	  	char buffer[128];
-	  	strncpy(buffer,creature->first_name,127);
-	  	buffer[127]=0;
-	  	if (buffer[0]>90)
-	  		buffer[0] -= 32;
-    	al_draw_textf(font, drawx, drawy-20, 0, "%s", buffer );
-	}
-    else if (config.names_use_species)
-    {
-    	al_draw_textf(font, drawx, drawy-20, 0, "[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
-	}
-    	
-  	ALLEGRO_BITMAP* creatureSheet;
-    if (sprite.fileIndex == -1)
-    {
-    	creatureSheet = IMGCreatureSheet;
-	}
-    else
-    {
-    	creatureSheet = getImgFile(sprite.fileIndex);
+	else
+	{
+		creatureSheet = getImgFile(sprite.fileIndex);
 	}    	
-  DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
+	DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
+}
+void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
+	//if(creature->x == 151 && creature->y == 145)
+	//  int j = 10;
+	if( config.show_creature_names ){
+		if (creature->nick_name[0] && config.names_use_nick)
+		{
+			al_draw_textf(font, drawx, drawy-20, 0, "%s", creature->nick_name);
+		}
+		else if (creature->first_name[0])
+		{
+			char buffer[128];
+			strncpy(buffer,creature->first_name,127);
+			buffer[127]=0;
+			if (buffer[0]>90)
+				buffer[0] -= 32;
+			al_draw_textf(font, drawx, drawy-20, 0, "%s", buffer );
+		}
+		else if (config.names_use_species)
+		{
+			al_draw_textf(font, drawx, drawy-20, 0, "[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
+		}
+	}
 }
 //t_creature* global = 0;
 
@@ -203,6 +208,79 @@ int GetCreatureShadowMap( t_creature* c )
 	if (testConfig == NULL)
 		return 4;
 	return testConfig->shadow;
+}
+void generateCreatureDebugString2( t_creature* c, char* strbuffer){
+	if(c->flags2.bits.swimming)
+		strcat(strbuffer, "swimming ");
+	if(c->flags2.bits.sparring)
+		strcat(strbuffer, "sparring ");
+	if(c->flags2.bits.no_notify) // Do not notify about level gains (for embark etc)
+		strcat(strbuffer, "no_notify ");
+	if(c->flags2.bits.unused)
+		strcat(strbuffer, "unused ");
+
+	if(c->flags2.bits.calculated_nerves)
+		strcat(strbuffer, "calculated_nerves ");
+	if(c->flags2.bits.calculated_bodyparts)
+		strcat(strbuffer, "calculated_bodyparts ");
+	if(c->flags2.bits.important_historical_figure) // slight variation
+		strcat(strbuffer, "Historical ");
+	if(c->flags2.bits.killed) // killed by kill() function
+		strcat(strbuffer, "killed ");
+
+	if(c->flags2.bits.cleanup_1) // Must be forgotten by forget function (just cleanup)
+		strcat(strbuffer, "cleanup_1 ");
+	if(c->flags2.bits.cleanup_2) // Must be deleted (cleanup)
+		strcat(strbuffer, "cleanup_2 ");
+	if(c->flags2.bits.cleanup_3) // Recently forgotten (cleanup)
+		strcat(strbuffer, "cleanup_3 ");
+	if(c->flags2.bits.for_trade) // Offered for trade
+		strcat(strbuffer, "for_trade ");
+
+	if(c->flags2.bits.trade_resolved)
+		strcat(strbuffer, "trade_resolved ");
+	if(c->flags2.bits.has_breaks)
+		strcat(strbuffer, "has_breaks ");
+	if(c->flags2.bits.gutted)
+		strcat(strbuffer, "gutted ");
+	if(c->flags2.bits.circulatory_spray)
+		strcat(strbuffer, "circulatory_spray ");
+
+	if(c->flags2.bits.locked_in_for_trading)
+		strcat(strbuffer, "locked_in_for_trading ");
+	if(c->flags2.bits.slaughter) // marked for slaughter
+		strcat(strbuffer, "slaughter ");
+	if(c->flags2.bits.underworld) // Underworld creature
+		strcat(strbuffer, "underworld ");
+	if(c->flags2.bits.resident) // Current resident
+		strcat(strbuffer, "resident ");
+
+	if(c->flags2.bits.cleanup_4) // Marked for special cleanup as unused load from unit block on disk
+		strcat(strbuffer, "cleanup_4 ");
+	if(c->flags2.bits.calculated_insulation) // Insulation from clothing calculated
+		strcat(strbuffer, "calculated_insulation ");
+	if(c->flags2.bits.visitor_uninvited) // Uninvited guest
+		strcat(strbuffer, "visitor_uninvited ");
+	if(c->flags2.bits.visitor) // visitor
+		strcat(strbuffer, "visitor ");
+
+	if(c->flags2.bits.calculated_inventory) // Inventory order calculated
+		strcat(strbuffer, "calculated_inventory ");
+	if(c->flags2.bits.vision_good) // Vision -- have good part
+		strcat(strbuffer, "goodEyes ");
+	if(c->flags2.bits.vision_damaged) // Vision -- have damaged part
+		strcat(strbuffer, "damagedEyes ");
+	if(c->flags2.bits.vision_missing) // Vision -- have missing part
+		strcat(strbuffer, "noEyes ");
+
+	if(c->flags2.bits.breathing_good) // Breathing -- have good part
+		strcat(strbuffer, "canBreathe ");
+	if(c->flags2.bits.breathing_problem) // Breathing -- having a problem
+		strcat(strbuffer, "can'tBreathe ");
+	if(c->flags2.bits.roaming_wilderness_population_source)
+		strcat(strbuffer, "roaming_wilderness_population_source ");
+	if(c->flags2.bits.roaming_wilderness_population_source_not_a_map_feature)
+		strcat(strbuffer, "roaming_wilderness_population_source_not_a_map_feature ");
 }
 
 void generateCreatureDebugString( t_creature* c, char* strbuffer){

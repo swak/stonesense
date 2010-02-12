@@ -43,6 +43,7 @@ public:
 		return (floorType || wallType) != 0;
 	}
 	void Draw();
+	void Drawcreaturetext();
 	void DrawRamptops();
 	
 private:

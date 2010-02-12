@@ -144,6 +144,7 @@ viewedSegment->blocks[i]->Draw(target);
 }*/
 
 void WorldSegment::drawAllBlocks(){
+
 	// x,y,z print pricess
 	ALLEGRO_BITMAP * temp = al_get_target_bitmap();
 	int32_t vsxmax = viewedSegment->sizex-1;
@@ -152,6 +153,7 @@ void WorldSegment::drawAllBlocks(){
 	//al_hold_bitmap_drawing(true);
 	for(int32_t vsz=0; vsz < vszmax; vsz++)
 	{
+		al_hold_bitmap_drawing(true);
 		for(int32_t vsx=1; vsx < vsxmax; vsx++)
 		{
 			for(int32_t vsy=1; vsy < vsymax; vsy++)
@@ -173,8 +175,23 @@ void WorldSegment::drawAllBlocks(){
 				}
 			}
 		}
+		al_hold_bitmap_drawing(false);
+		al_hold_bitmap_drawing(true);
+		for(int32_t vsx=1; vsx < vsxmax; vsx++)
+		{
+			for(int32_t vsy=1; vsy < vsymax; vsy++)
+			{
+				Block *b = getBlockLocal(vsx,vsy,vsz);
+				if (b)
+				{
+					b->Drawcreaturetext();
+					//while(!key[KEY_SPACE]) ;
+					//rest(100);
+				}
+			}
+		}
+		al_hold_bitmap_drawing(false);
 	}
-	//al_hold_bitmap_drawing(false);
 }
 
 /*

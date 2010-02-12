@@ -23,7 +23,8 @@ ContentLoader::~ContentLoader(void)
 
 
 bool ContentLoader::Load(API& DF){
-	
+	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
+	al_flip_display();
   //flush old config
   flushBuildingConfig(&buildingConfigs);
   flushTerrainConfig(terrainFloorConfigs);

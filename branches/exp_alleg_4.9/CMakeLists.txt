@@ -79,9 +79,9 @@ if(WIN32)
         "<CMAKE_RC_COMPILER> <FLAGS> <DEFINES> -o <OBJECT> <SOURCE>")
         set(RC_CFLAGS "-DMINGW -Ocoff")
         # If any sort of debugging is being enabled, add a _DEBUG define to the flags for the resource compiler
-        #if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        #   set(RC_CFLAGS "${RC_CFLAGS} -D_DEBUG")
-        #endif(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+        if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+           set(RC_CFLAGS "${RC_CFLAGS} -D_DEBUG")
+        endif(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
         set_source_files_properties(${CMAKE_SOURCE_DIR}/res.rc COMPILE_FLAGS "${RC_CFLAGS}")
         # For anything else, assumingly Visual Studio at this point, use a different set of compile flags
     endif(MINGW)
@@ -118,7 +118,11 @@ ELSE(UNIX)
     
     IF(MINGW)
         add_definitions()
+		if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+		SET(PROJECT_LIBS liballegro-debug-4.9.16.a liballegro_primitives-debug-4.9.16.a liballegro_image-debug-4.9.16.a liballegro_font-debug-4.9.16.a liballegro_dialog-debug-4.9.16.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
+		ELSE(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
         SET(PROJECT_LIBS liballegro-4.9.16.a liballegro_primitives-4.9.16.a liballegro_image-4.9.16.a liballegro_font-4.9.16.a liballegro_dialog-4.9.16.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
+		endif(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro

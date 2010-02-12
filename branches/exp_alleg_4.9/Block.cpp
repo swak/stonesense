@@ -68,6 +68,9 @@ void Block::Draw(){
 
 	correctBlockForSegmetOffset( drawx, drawy, drawz);
 	correctBlockForRotation( drawx, drawy, drawz);
+	int32_t viewx = drawx;
+	int32_t viewy = drawy;
+	int32_t viewz = drawz;
 	pointToScreen((int*)&drawx, (int*)&drawy, drawz);
 	drawx -= TILEWIDTH>>1;
 
@@ -268,6 +271,31 @@ void Block::Draw(){
 	// (no guarantee it is the right one)
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
 		DrawCreature(drawx, drawy, creature);
+	}
+}
+
+void Block::Drawcreaturetext(){
+	int sheetOffsetX, sheetOffsetY;
+	t_SpriteWithOffset sprite;
+	/*if(config.hide_outer_blocks){
+	if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
+	if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
+	}*/
+
+	int32_t drawx = x;
+	int32_t drawy = y;
+	int32_t drawz = z; //- ownerSegment->sizez + 1;
+
+	correctBlockForSegmetOffset( drawx, drawy, drawz);
+	correctBlockForRotation( drawx, drawy, drawz);
+	pointToScreen((int*)&drawx, (int*)&drawy, drawz);
+	drawx -= TILEWIDTH>>1;
+
+	// creature
+	// ensure there is *some* creature according to the map data
+	// (no guarantee it is the right one)
+	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
+		DrawCreatureText(drawx, drawy, creature);
 	}
 }
 

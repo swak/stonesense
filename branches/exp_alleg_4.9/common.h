@@ -14,8 +14,6 @@
 #include <allegro5\allegro_native_dialog.h>
 #include <allegro5\allegro_opengl.h>
 
-#include <GL\glu.h>
-
 using namespace std;
 
 #include "dfhack/library/DFTypes.h"

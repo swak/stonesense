@@ -118,7 +118,7 @@ void loadfont()
 {
 	font = al_load_font("a4_font.tga", 0, 0);
 	if (!font) {
-		al_show_native_message_box("Error", "Cannot load font:", "a4_font.tga", NULL, 0);
+		DisplayErr("Cannot load font: a4_font.tga");
 		exit(1);
 	}
 }
@@ -200,16 +200,17 @@ int main(void)
 	debugCursor.x = config.segmentSize.x / 2;
 	debugCursor.y = config.segmentSize.y / 2;
 
-	
 
 	int gfxMode = config.Fullscreen ? ALLEGRO_FULLSCREEN : ALLEGRO_WINDOWED;
-	al_set_new_display_flags(gfxMode);
+	al_set_new_display_flags(gfxMode|ALLEGRO_RESIZABLE);
 	display = al_create_display(config.screenWidth, config.screenHeight);
 	if (!al_install_keyboard()) {
 		al_show_native_message_box("Error", "Error", "al_install_keyboard failed.", NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		exit(1);
 		return 1;
 	}
+		
+	
 	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
 	al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ALPHA, ALLEGRO_ONE, al_map_rgba(255, 255, 255, 255));
 	loadGraphicsFromDisk();
@@ -326,7 +327,7 @@ int main(void)
 				exit(0);
 			}
 			timeToReloadSegment = true;
-#if 0
+#if 1
 			{
 				/* XXX the opengl drivers currently don't resize the backbuffer */
 				ALLEGRO_BITMAP *bb = al_get_backbuffer();
@@ -381,5 +382,3 @@ int main(void)
 	return 0;
 }
 END_OF_MAIN()
-
-
