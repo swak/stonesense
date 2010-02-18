@@ -8,7 +8,9 @@ Crd2D WorldBlockToScreen(int32_t x, int32_t y, int32_t z);
 Crd2D LocalBlockToScreen(int32_t x, int32_t y, int32_t z);
 void DrawMinimap();
 void paintboard();
-
+void draw_textf_border(const ALLEGRO_FONT *font, float x, float y, int flags, const char *format, ...);
+void draw_text_border(const ALLEGRO_FONT *font, float x, float y, int flags, const char *ustr);
+void draw_ustr_border(const ALLEGRO_FONT *font, float x, float y, int flags, const ALLEGRO_USTR *ustr);
 ALLEGRO_BITMAP* getImgFile(int index);
 void flushImgFiles();
 //returns index into getImgFile. Will only create new bitmaps when needed

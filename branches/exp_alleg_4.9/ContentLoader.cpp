@@ -23,7 +23,7 @@ ContentLoader::~ContentLoader(void)
 
 
 bool ContentLoader::Load(API& DF){
-	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
 	al_flip_display();
   //flush old config
   flushBuildingConfig(&buildingConfigs);
@@ -99,6 +99,9 @@ bool getLocalFilename(char * buffer, const char* filename, const char* relativet
 
 bool ContentLoader::parseContentIndexFile( char* filepath )
 {
+	al_clear_to_color(al_map_rgb(0,0,0));
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
+	al_flip_display();
   string line;
   ifstream myfile( filepath );
   if (myfile.is_open() == false){
@@ -168,6 +171,9 @@ bool ContentLoader::parseContentIndexFile( char* filepath )
 }
 
 bool ContentLoader::parseContentXMLFile( char* filepath ){
+	al_clear_to_color(al_map_rgb(0,0,0));
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
+	al_flip_display();
   TiXmlDocument doc( filepath );
   bool loadOkay = doc.LoadFile();
   TiXmlHandle hDoc(&doc);

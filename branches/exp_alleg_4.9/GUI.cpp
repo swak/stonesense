@@ -61,8 +61,78 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1)
 	y1/=TILEWIDTH;
 
 }
+void draw_textf_border(const ALLEGRO_FONT *font, float x, float y, int flags, const char *format, ...)
+{
+	ALLEGRO_STATE backup;
+	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
+	int src, dst, alpha_src, alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+
+	ALLEGRO_USTR *buf;
+	va_list arglist;
+	const char *s;
+
+	/* Fast path for common case. */
+	if (0 == strcmp(format, "%s")) {
+		va_start(arglist, format);
+		s = va_arg(arglist, const char *);
+		al_draw_text(font, x-1, y-1, flags, s);
+		al_draw_text(font, x-1, y+1, flags, s);
+		al_draw_text(font, x+1, y+1, flags, s);
+		al_draw_text(font, x+1, y-1, flags, s);
+		al_restore_state(&backup);
+		al_draw_text(font, x, y, flags, s);
+		va_end(arglist);
+		return;
+	}
 
 
+	va_start(arglist, format);
+	buf = al_ustr_new("");
+	al_ustr_vappendf(buf, format, arglist);
+	va_end(arglist);
+	al_draw_text(font, x-1, y-1, flags, al_cstr(buf));
+	al_draw_text(font, x-1, y+1, flags, al_cstr(buf));
+	al_draw_text(font, x+1, y+1, flags, al_cstr(buf));
+	al_draw_text(font, x+1, y-1, flags, al_cstr(buf));
+	al_restore_state(&backup);
+	al_draw_text(font, x, y, flags, al_cstr(buf));
+	al_ustr_free(buf);
+}
+void draw_text_border(const ALLEGRO_FONT *font, float x, float y, int flags, const char *ustr)
+{
+	ALLEGRO_STATE backup;
+	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
+	int src, dst, alpha_src, alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+
+	al_draw_text(font, x-1, y-1, flags, ustr);
+	al_draw_text(font, x-1, y+1, flags, ustr);
+	al_draw_text(font, x+1, y+1, flags, ustr);
+	al_draw_text(font, x+1, y-1, flags, ustr);
+	al_restore_state(&backup);
+	al_draw_text(font, x, y, flags, ustr);
+}
+void draw_ustr_border(const ALLEGRO_FONT *font, float x, float y, int flags, const ALLEGRO_USTR *ustr)
+{
+	ALLEGRO_STATE backup;
+	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
+	int src, dst, alpha_src, alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+
+	al_draw_ustr(font, x-1, y-1, flags, ustr);
+	al_draw_ustr(font, x-1, y+1, flags, ustr);
+	al_draw_ustr(font, x+1, y+1, flags, ustr);
+	al_draw_ustr(font, x+1, y-1, flags, ustr);
+	al_restore_state(&backup);
+	al_draw_ustr(font, x, y, flags, ustr);
+}
 void pointToScreen(int *inx, int *iny, int inz){
 	int offx = al_get_bitmap_width(al_get_target_bitmap()) / 2;
 	int offy = (-20)-(BLOCKHEIGHT * config.lift_segment_offscreen);
@@ -154,10 +224,10 @@ void drawDebugCursorAndInfo(){
 	//get block info
 	Block* b = viewedSegment->getBlockLocal( debugCursor.x, debugCursor.y, debugCursor.z+viewedSegment->sizez-2);
 	int i = 10;
-	al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, "Block 0x%x", b);
+	draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, "Block 0x%x", b);
 	if(!b) return;
 
-	al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+	draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 		"Coord:(%i,%i,%i)", b->x,b->y,b->z);
 
 	int ttype;
@@ -187,46 +257,46 @@ void drawDebugCursorAndInfo(){
 	{
 		const char* matName = lookupMaterialTypeName(b->material.type);
 		const char* subMatName = lookupMaterialName(b->material.type,b->material.index);
-		al_draw_textf(font, 2, config.screenHeight-20-(i--*10), 0, 
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"%s:%i Material:%s%s%s", tform, ttype, 
 			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
 	} 
-	al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+	draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 		"Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
 
 	if(b->water.index > 0 || b->tree.index != 0)
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 		"tree:%i water:%i", b->tree.index, b->water.index);
 	//building
 	//if(b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX){
 	//	const char* matName = lookupMaterialTypeName(b->building.info.material.type);
 	//	const char* subMatName = lookupMaterialName(b->building.info.material.type,b->building.info.material.index);
-	//	al_draw_textf(font, 2, config.screenHeight-20-(i--*10), 0, 
+	//	draw_textf_border(font, 2, config.screenHeight-20-(i--*al_get_font_line_height(font)), 0, 
 	//		"Building: %s(%i) Material: %s%s%s", 
 	//		contentLoader.buildingNameStrings.at(b->building.info.type).c_str(),
 	//		b->building.info.type, matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
 	//}
 	//creatures
 	if(b->creature != null){
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Creature:%s(%i) Profession:%s", 
 			contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
 			dfMemoryInfo.getProfession( b->creature->profession ).c_str());
 		if(b->creature->current_job.active)
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+			draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Job: %s", dfMemoryInfo.getJob( b->creature->current_job.jobId).c_str());
 		char strCreature[150] = {0};
 		generateCreatureDebugString( b->creature, strCreature );
 		//memset(strCreature, -1, 50);
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"flag1: %s ", strCreature );
 		char strCreature2[150] = {0};
 		generateCreatureDebugString2( b->creature, strCreature2 );
-		al_draw_textf(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*10), 0, 
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"flag2: %s ", strCreature2 );
 	}
 	//basecon
-	//textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+	//textprintf(target, font, 2, config.screenHeight-20-(i--*al_get_font_line_height(font)), 0xFFFFFF, 
 	//   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
 }
 
@@ -237,7 +307,7 @@ void DrawMinimap(){
 	int posy = 10;
 
 	if(!viewedSegment || viewedSegment->regionSize.x == 0 || viewedSegment->regionSize.y == 0){
-		al_draw_textf(font, posx, posy, 0, "No map loaded");
+		draw_textf_border(font, posx, posy, 0, "No map loaded");
 		return;
 	}
 
@@ -298,10 +368,10 @@ void DrawSpriteIndexOverlay(int imageIndex){
 	for(int y = 0; y<20; y++){
 		for(int x = 0; x<20; x+=5){
 			int index = y * 20 + x;
-			al_draw_textf(font,  x*SPRITEWIDTH+5, y* SPRITEHEIGHT+5, 0, "%i", index);
+			draw_textf_border(font,  x*SPRITEWIDTH+5, y* SPRITEHEIGHT+(al_get_font_line_height(font)/2), 0, "%i", index);
 		}
 	}	
-	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())-10, al_get_bitmap_height(al_get_target_bitmap()) -10, ALLEGRO_ALIGN_RIGHT, 
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())-10, al_get_bitmap_height(al_get_target_bitmap()) -al_get_font_line_height(font), ALLEGRO_ALIGN_RIGHT, 
 		"%s (Press SPACE to return)",
 		(imageIndex==-1?"objects.png":IMGFilenames[imageIndex]->c_str()));  
 	al_flip_display();
@@ -353,9 +423,9 @@ void paintboard(){
 	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba(255, 255, 255, 255));
 	al_clear_to_color(al_map_rgb(config.backr,config.backg,config.backb));
 	//clear_to_color(buffer,makecol(12,7,49)); //this one is calm and nice
-	
+
 	if( viewedSegment == NULL ){
-		al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Could not find DF process");
+		draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Could not find DF process");
 		return;
 	}
 
@@ -368,41 +438,52 @@ void paintboard(){
 
 	uint32_t DrawTime = clock() - starttime;
 	
+	//teh drawtime indicator is too jumpy, so I'm averaging it out over 10 frames.
+	static uint32_t DrawTimes[10];
+	static int ind = 0;
+	if(ind >= 10)
+		ind = 0;
+	DrawTimes[ind] = DrawTime;
+	ind++;
+	DrawTime = 0;
+	for(int i = 0; i<10; i++)
+		DrawTime += DrawTimes[i];
+	DrawTime = DrawTime / 10;
 	if (config.show_osd)
 	{
 		al_hold_bitmap_drawing(true);
-		al_draw_textf(font, 10,10, 0, "%i,%i,%i, r%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ, DisplayedRotation);
+		draw_textf_border(font, 10,al_get_font_line_height(font), 0, "%i,%i,%i, r%i", DisplayedSegmentX,DisplayedSegmentY,DisplayedSegmentZ, DisplayedRotation);
 
 		if(config.debug_mode){
-			al_draw_textf(font, 10, 20, 0, "Timer1: %ims", ClockedTime);
-			al_draw_textf(font, 10, 30, 0, "Timer2: %ims", ClockedTime2);
-			al_draw_textf(font, 10, 40, 0, "Draw: %ims", DrawTime);
-			al_draw_textf(font, 10, 50, 0, "D1: %i", blockFactory.getPoolSize());
+			draw_textf_border(font, 10, 2*al_get_font_line_height(font), 0, "Timer1: %ims", ClockedTime);
+			draw_textf_border(font, 10, 3*al_get_font_line_height(font), 0, "Timer2: %ims", ClockedTime2);
+			draw_textf_border(font, 10, 4*al_get_font_line_height(font), 0, "Draw: %ims", DrawTime);
+			draw_textf_border(font, 10, 5*al_get_font_line_height(font), 0, "D1: %i", blockFactory.getPoolSize());
 			drawDebugCursorAndInfo();
 		}
 		int top = 0;
 		if(config.follow_DFscreen)
 		{
-			top += 10;
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
+			top += al_get_font_line_height(font);
+			draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Locked on DF screen + (%d,%d,%d)",config.viewXoffset,config.viewYoffset,config.viewZoffset);
 		}
 		if(config.follow_DFcursor)
 		{
-			top += 10;
+			top += al_get_font_line_height(font);
 			if(config.dfCursorX != -30000)
-				al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Following DF Cursor at: %d,%d,%d", config.dfCursorX,config.dfCursorY,config.dfCursorZ);
+				draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Following DF Cursor at: %d,%d,%d", config.dfCursorX,config.dfCursorY,config.dfCursorZ);
 			else
-				al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "No DF cursor to follow");
+				draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "No DF cursor to follow");
 		}
 		if(config.single_layer_view)
 		{
-			top += 10;
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Single layer view");
+			top += al_get_font_line_height(font);
+			draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Single layer view");
 		}
 		if(config.automatic_reload_time)
 		{
-			top += 10;
-			al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
+			top += al_get_font_line_height(font);
+			draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,top, ALLEGRO_ALIGN_CENTRE, "Reloading every %0.1fs", (float)config.automatic_reload_time/1000);
 		}
 		al_hold_bitmap_drawing(false);
 		DrawMinimap();
@@ -427,7 +508,7 @@ ALLEGRO_BITMAP* load_bitmap_withWarning(char* path){
 }
 
 void loadGraphicsFromDisk(){
-	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading...");
 	al_flip_display();
 	int index;
 	index = loadImgFile("objects.png");
@@ -472,7 +553,7 @@ void flushImgFiles()
 	IMGFilelist.clear();
 	IMGFilenames.clear();
 	IMGCache.clear();
-	
+
 }
 
 ALLEGRO_BITMAP* getImgFile(int index)
@@ -517,7 +598,7 @@ int loadImgFile(char* filename)
 			return i;
 	}
 	al_clear_to_color(al_map_rgb(0,0,0));
-	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filename);
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filename);
 	al_flip_display();
 	static int xOffset = 0;
 	static int yOffset = 0;
@@ -574,6 +655,8 @@ int loadImgFile(char* filename)
 	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
 	if(config.saveImageCache)
 		saveImage(IMGCache[currentCache]);
+	al_clear_to_color(al_map_rgb(0,0,0));
+	al_flip_display();
 	return (int)IMGFilelist.size() - 1;
 }
 int loadImgFile(ALLEGRO_PATH* filepath)
@@ -630,7 +713,7 @@ void saveImage(ALLEGRO_BITMAP* image){
 	al_save_bitmap(filename, image);
 }
 void saveMegashot(){
-	al_draw_textf(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Saving large screenshot...");
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Saving large screenshot...");
 	al_flip_display();
 	char filename[20] ={0};
 	FILE* fp;

@@ -116,9 +116,9 @@ void correctBlockForSegmetOffset(int32_t& x, int32_t& y, int32_t& z){
 
 void loadfont()
 {
-	font = al_load_font("a4_font.tga", 0, 0);
+	font = al_load_font("DejaVuSans.ttf", 10, 0);
 	if (!font) {
-		DisplayErr("Cannot load font: a4_font.tga");
+		DisplayErr("Cannot load font: DejaVuSans.ttf");
 		exit(1);
 	}
 }
@@ -158,6 +158,7 @@ int main(void)
 	al_init();
 	al_init_image_addon();
 	al_init_font_addon();
+    al_init_ttf_addon();
 	al_install_keyboard();
 	al_install_mouse();
 	al_show_mouse_cursor();
@@ -202,7 +203,7 @@ int main(void)
 
 
 	int gfxMode = config.Fullscreen ? ALLEGRO_FULLSCREEN : ALLEGRO_WINDOWED;
-	al_set_new_display_flags(gfxMode|ALLEGRO_RESIZABLE);
+	al_set_new_display_flags(gfxMode|ALLEGRO_RESIZABLE|ALLEGRO_OPENGL);
 	display = al_create_display(config.screenWidth, config.screenHeight);
 	if (!al_install_keyboard()) {
 		al_show_native_message_box("Error", "Error", "al_install_keyboard failed.", NULL, ALLEGRO_MESSAGEBOX_ERROR);
@@ -214,6 +215,9 @@ int main(void)
 	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
 	al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ALPHA, ALLEGRO_ONE, al_map_rgba(255, 255, 255, 255));
 	loadGraphicsFromDisk();
+	al_clear_to_color(al_map_rgb(0,0,0));
+	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Srarting up...");
+	al_flip_display();
 	reloadtimer = al_install_timer(ALLEGRO_MSECS_TO_SECS(config.automatic_reload_time));
 	animationtimer = al_install_timer(ALLEGRO_MSECS_TO_SECS(config.automatic_reload_time));
 	al_start_timer(animationtimer);
@@ -240,27 +244,27 @@ int main(void)
 		ALLEGRO_COLOR color;
 		al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
 		al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 255, 0));
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 50, ALLEGRO_ALIGN_CENTRE, "Welcome to Stonesense!");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 5*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Welcome to Stonesense!");
 		al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 60, ALLEGRO_ALIGN_CENTRE, "Stonesense is an isometric viewer for Dwarf Fortress.");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 6*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Stonesense is an isometric viewer for Dwarf Fortress.");
 
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 80, ALLEGRO_ALIGN_CENTRE, "Programming, Jonas Ask and Kris Parker");
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 90, ALLEGRO_ALIGN_CENTRE, "Lead graphics designer, Dale Holdampf");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 8*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Programming, Jonas Ask and Kris Parker");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, 9*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Lead graphics designer, Dale Holdampf");
 
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-130, ALLEGRO_ALIGN_CENTRE, "Contributors:");
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-120, ALLEGRO_ALIGN_CENTRE, "7c Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-110, ALLEGRO_ALIGN_CENTRE, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-100, ALLEGRO_ALIGN_CENTRE, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-90, ALLEGRO_ALIGN_CENTRE, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-13*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Contributors:");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-12*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "7c Nickel, Belal, DeKaFu, Dante, Deon, dyze, Errol, fifth angel,");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-11*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "frumpton, IDreamOfGiniCoeff, Impaler, Japa, jarathor, ");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-10*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Jiri Petru, Lord Nightmare, McMe, Mike Mayday, Nexii ");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-9*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Malthus, peterix, Seuss, Talvara, winner, and Xandrin.");
 
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-70, ALLEGRO_ALIGN_CENTRE, "With special thanks to peterix for making dfHack");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-7*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "With special thanks to peterix for making dfHack");
 
 		//"The program is in a very early alpha, we're only showcasing it to get ideas and feedback, so use it at your own risk."
-		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-40, ALLEGRO_ALIGN_CENTRE, "Press F9 to continue");
+		al_draw_text(font, al_get_bitmap_width(al_get_backbuffer())/2, al_get_bitmap_height(al_get_backbuffer())-4*al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE, "Press F9 to continue");
 
 		// Make the backbuffer visible
 		al_flip_display();
-		while(al_key_down(&keyboard,ALLEGRO_KEY_F9)) al_get_keyboard_state(&keyboard);
+		while(!al_key_down(&keyboard,ALLEGRO_KEY_F9)) al_get_keyboard_state(&keyboard);
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 		al_flip_display();
 	}
@@ -381,4 +385,4 @@ int main(void)
 
 	return 0;
 }
-END_OF_MAIN()
+//END_OF_MAIN()

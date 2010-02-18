@@ -58,12 +58,6 @@
 //#define OSX_BOOTSTRAP_DETECTION
 
 
-#define OSX_GFX_NONE                    0
-#define OSX_GFX_WINDOW                  1
-#define OSX_GFX_FULL                    2
-
-#define BMP_EXTRA(bmp)                  ((BMP_EXTRA_INFO *)((bmp)->extra))
-
 #define HID_MAX_DEVICES                 MAX_JOYSTICKS
 #define HID_MOUSE                       0
 #define HID_JOYSTICK                    1
@@ -150,6 +144,9 @@ AL_FUNC(ALLEGRO_DISPLAY_INTERFACE*, _al_osx_get_display_driver, (void));
 AL_FUNC(ALLEGRO_MOUSE_DRIVER*, _al_osx_get_mouse_driver, (void));
 AL_FUNC(ALLEGRO_JOYSTICK_DRIVER*, _al_osx_get_joystick_driver, (void));
 #endif
+
+AL_FUNC(int, _al_osx_run_main, (int argc, char **argv,
+   int (*real_main)(int, char **)));
 
 #endif
 

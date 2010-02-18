@@ -118,11 +118,7 @@ ELSE(UNIX)
     
     IF(MINGW)
         add_definitions()
-		if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-		SET(PROJECT_LIBS liballegro-debug-4.9.16.a liballegro_primitives-debug-4.9.16.a liballegro_image-debug-4.9.16.a liballegro_font-debug-4.9.16.a liballegro_dialog-debug-4.9.16.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
-		ELSE(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        SET(PROJECT_LIBS liballegro-4.9.16.a liballegro_primitives-4.9.16.a liballegro_image-4.9.16.a liballegro_font-4.9.16.a liballegro_dialog-4.9.16.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
-		endif(CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+        SET(PROJECT_LIBS liballegro-4.9.17.a liballegro_primitives-4.9.17.a liballegro_image-4.9.17.a liballegro_font-4.9.17.a liballegro_dialog-4.9.17.a liballegro_ttf-4.9.17.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro
