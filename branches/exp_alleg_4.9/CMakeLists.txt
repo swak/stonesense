@@ -97,12 +97,14 @@ IF(UNIX)
     dfhack/library/DFProcessEnumerator-linux.cpp
     )
     
-    FIND_PACKAGE(Allegro REQUIRED)
+#    FIND_PACKAGE(Allegro5 REQUIRED)
     LINK_DIRECTORIES(${LINK_DIRECTORIES})
     
-    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
+#    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
  
-    SET(PROJECT_LIBS ${ALLEGRO_LIBRARIES} ${PROJECT_LIBS})
+#    SET(PROJECT_LIBS ${ALLEGRO5_LIBRARIES} ${PROJECT_LIBS})
+    SET(PROJECT_LIBS allegro-4.9.17 allegro_primitives-4.9.17 allegro_color-4.9.17 allegro_dialog-4.9.17 allegro_flac-4.9.17 allegro_font-4.9.17 allegro_image-4.9.17 allegro_main-4.9.17 allegro_memfile-4.9.17 allegro_ttf-4.9.17 allegro_vorbis-4.9.17 ${PROJECT_LIBS})
+    
     ADD_EXECUTABLE(stonesense ${PROJECT_SRCS} ${PLATFORM_SRC})
     TARGET_LINK_LIBRARIES(stonesense ${PROJECT_LIBS})
     

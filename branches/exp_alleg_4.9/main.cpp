@@ -57,7 +57,7 @@ bool key[ALLEGRO_KEY_MAX];
 int32_t viewy = 0;
 int32_t viewz = 0;
 bool followmode = true;*/
-volatile int close_button_pressed = FALSE;
+volatile int close_button_pressed = false;
 
 void WriteErr(char* msg, ...){
 	va_list arglist;
@@ -152,9 +152,11 @@ void animUpdateProc()
 
 int main(void)
 {
+    /*
 #ifdef LINUX_BUILD
 	allegro_icon = stonesense_xpm;
 #endif
+*/
 	al_init();
 	al_init_image_addon();
 	al_init_font_addon();
