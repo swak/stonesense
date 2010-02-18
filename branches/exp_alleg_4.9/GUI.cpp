@@ -584,6 +584,24 @@ inline int returnGreater(int a, int b)
 
 int loadImgFile(char* filename)
 {
+	static bool foundSize = false;
+	if(!foundSize)
+	{
+		ALLEGRO_BITMAP* test = 0;
+		while(true)
+		{
+			test = al_create_bitmap(config.imageCacheSize,config.imageCacheSize);
+			if(test)
+			{
+				WriteErr("%i works.\n", config.imageCacheSize);
+				break;
+			}
+			WriteErr("%i is too large. chopping it.\n", config.imageCacheSize);
+			config.imageCacheSize = config.imageCacheSize / 2;
+		}
+		foundSize = true;
+		al_destroy_bitmap(test);
+	}
 	int src;
 	int dst;
 	int alpha_src;
@@ -609,6 +627,10 @@ int loadImgFile(char* filename)
 	if(currentCache < 0)
 	{
 		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
+		if(!IMGCache[0])
+		{
+			DisplayErr("Cannot create bitmap sized %ix%i, please chose a smaller size",config.imageCacheSize,config.imageCacheSize);
+		}
 		currentCache = IMGCache.size() -1;
 		LogVerbose("Creating image cache #%d\n",currentCache);
 	}
