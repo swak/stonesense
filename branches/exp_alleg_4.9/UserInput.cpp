@@ -277,8 +277,8 @@ void doKeys(){
 		  config.automatic_reload_time -= config.automatic_reload_step;
 	  }
 	  if( config.automatic_reload_time <= 0 ){
+		  al_stop_timer(reloadtimer);
 		  config.automatic_reload_time = 0;
-		  abortAutoReload();
 	  }
 	  else
 		  initAutoReload();
