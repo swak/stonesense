@@ -167,6 +167,7 @@ int main(void)
 	al_set_system_mouse_cursor(ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT);
 	WriteErr("\nStonesense launched\n");
 
+	config.currentOverlay = none;
 	config.debug_mode = false;
 	config.hide_outer_blocks = false;
 	config.shade_hidden_blocks = true;
@@ -217,6 +218,7 @@ int main(void)
 	//al_set_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, al_map_rgba_f(1.0, 1.0, 1.0, 1.0));
 	al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ALPHA, ALLEGRO_ONE, al_map_rgba(255, 255, 255, 255));
 	loadGraphicsFromDisk();
+	al_set_display_icon(IMGIcon);
 	al_clear_to_color(al_map_rgb(0,0,0));
 	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Srarting up...");
 	al_flip_display();
@@ -307,9 +309,9 @@ int main(void)
 	//install_int( animUpdateProc, config.animation_step );
 	initAutoReload();
 
-
+	bool redraw;
 	while (true) {
-		if (timeToReloadSegment && al_event_queue_is_empty(queue)) {
+		if (redraw && al_event_queue_is_empty(queue)) {
 			al_rest(ALLEGRO_MSECS_TO_SECS(30));
 			if( timeToReloadSegment ){
 				reloadDisplayedSegment();
@@ -323,6 +325,7 @@ int main(void)
 				animationFrameShown = true;
 			}
 			doKeys();
+			redraw = false;
 		}
 
 		al_wait_for_event(queue, &event);
@@ -333,6 +336,7 @@ int main(void)
 				exit(0);
 			}
 			timeToReloadSegment = true;
+			redraw = true;
 #if 1
 			{
 				/* XXX the opengl drivers currently don't resize the backbuffer */
@@ -343,26 +347,11 @@ int main(void)
 			}
 #endif
 		}
-		if (event.type == ALLEGRO_EVENT_DISPLAY_EXPOSE) {
-			timeToReloadSegment = true;
-		}
-		if (event.type == ALLEGRO_EVENT_KEY_DOWN &&
-			event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+			if(event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
 				break;
-		}
-		if (event.type == ALLEGRO_EVENT_MOUSE_AXES) {
-				mouse_x = event.mouse.x;
-				mouse_y = event.mouse.y;
-				mouse_z = event.mouse.z;
-				//doKeys();
-				//redraw = true;
-		}
-		if (event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN || ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-				mouse_x = event.mouse.x;
-				mouse_y = event.mouse.y;
-				mouse_b = event.mouse.button;
-				//doKeys();
-				timeToReloadSegment = true;
+			else
+				doKeys();
 		}
 		if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			break;
@@ -370,10 +359,12 @@ int main(void)
 		if (event.type == ALLEGRO_EVENT_TIMER &&
 			event.timer.source == reloadtimer){
 			timeToReloadSegment = true;
+			redraw = true;
 		}
 		if (event.type == ALLEGRO_EVENT_TIMER &&
 			event.timer.source == animationtimer){
 			animUpdateProc();
+			redraw = true;
 		}
 	}
 	flushImgFiles();

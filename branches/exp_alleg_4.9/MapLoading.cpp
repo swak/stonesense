@@ -251,6 +251,9 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 		if(isRampTerrain(t))
 			b->ramp.type = t;
 
+
+		//debug stuff
+		b->designations = designations[lx][ly];
 		//142,136,15
     //if(b->x == 142 && b->y == 136 && b->z == 15)
     //  int j = 10;

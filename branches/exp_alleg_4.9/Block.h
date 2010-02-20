@@ -46,6 +46,8 @@ public:
 	void Drawcreaturetext();
 	void DrawRamptops();
 	
+	//debugz!
+	t_designation designations;
 private:
 
 };

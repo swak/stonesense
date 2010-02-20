@@ -202,4 +202,4 @@ extern ALLEGRO_DISPLAY     *display;
 extern ALLEGRO_KEYBOARD_STATE keyboard;
 extern ALLEGRO_TIMER *reloadtimer;
 extern ALLEGRO_TIMER * animationtimer;
-extern ALLEGRO_MOUSE_STATE *mouse;
+extern ALLEGRO_MOUSE_STATE mouse;

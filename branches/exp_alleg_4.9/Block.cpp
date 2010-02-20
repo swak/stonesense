@@ -61,7 +61,10 @@ void Block::Draw(){
 	if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
 	if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
 	}*/
-
+	//debug overlays
+	int src, dst, alpha_src, alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
 	int32_t drawx = x;
 	int32_t drawy = y;
 	int32_t drawz = z; //- ownerSegment->sizez + 1;
@@ -76,6 +79,56 @@ void Block::Draw(){
 
 	ALLEGRO_COLOR tileBorderColor = al_map_rgb(85,85,85);
 
+	if(config.currentOverlay != none)
+		switch(config.currentOverlay){
+		case flow_size:
+			break;
+		case pile:
+			break;
+		case dig:
+			break;
+		case detail:
+			break;
+		case detail_event:
+			break;
+		case hidden:
+			break;
+		case geolayer_index:
+			break;
+		case light:
+			break;
+		case subterranean:
+			break;
+		case skyview:
+			break;
+		case biome:
+			break;
+		case liquid_type:
+			break;
+		case water_table:
+			break;
+		case rained:
+			break;
+		case traffic:
+			break;
+		case flow_forbid:
+			break;
+		case liquid_static:
+			break;
+		case moss:
+			break;
+		case feature_present:
+			break;
+		case liquid_character:
+			if(designations.bits.liquid_character == 1)
+				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 255, 0)); //yellow
+			if(designations.bits.liquid_character == 2)
+				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 0, 255)); //pink
+			if(designations.bits.liquid_character == 3)
+				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 255, 255)); //cyan
+			break;
+		//default:
+	}
 	//Draw Floor
 	if(floorType > 0 || wallType > 0 || ramp.type > 0 || stairType > 0){
 
@@ -271,6 +324,91 @@ void Block::Draw(){
 	// (no guarantee it is the right one)
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
 		DrawCreature(drawx, drawy, creature);
+	}
+	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
+	if(config.currentOverlay != none)
+		switch(config.currentOverlay){
+		case flow_size:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.flow_size);
+			break;
+		case pile:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.pile);
+			break;
+		case dig:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.dig);
+			break;
+		case detail:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.detail);
+			break;
+		case detail_event:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.detail_event);
+			break;
+		case hidden:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.hidden);
+			break;
+		case geolayer_index:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.geolayer_index);
+			break;
+		case light:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.light);
+			break;
+		case subterranean:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.subterranean);
+			break;
+		case skyview:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.skyview);
+			break;
+		case biome:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.biome);
+			break;
+		case liquid_type:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.liquid_type);
+			break;
+		case water_table:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.water_table);
+			break;
+		case rained:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.rained);
+			break;
+		case traffic:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.traffic);
+			break;
+		case flow_forbid:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.flow_forbid);
+			break;
+		case liquid_static:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.liquid_static);
+			break;
+		case moss:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.moss);
+			break;
+		case feature_present:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.feature_present);
+			break;
+		case liquid_character:
+			draw_textf_border(font, drawx + (SPRITEWIDTH/2), drawy-al_get_font_line_height(font), ALLEGRO_ALIGN_CENTRE,
+				"%i", designations.bits.liquid_character);
+			break;
+			//default:
 	}
 }
 

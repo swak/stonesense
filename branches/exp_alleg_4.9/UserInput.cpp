@@ -6,7 +6,7 @@
 #include "Creatures.h"
 extern int mouse_x, mouse_y, mouse_z;
 extern unsigned int mouse_b;
-ALLEGRO_MOUSE_STATE * mouse;
+ALLEGRO_MOUSE_STATE mouse;
 ALLEGRO_KEYBOARD_STATE board;
 extern ALLEGRO_TIMER * reloadtimer;
 void mouseProc(int flags){
@@ -76,10 +76,11 @@ void moveViewRelativeToRotation( int stepx, int stepy )
 void doKeys(){
 	
 	al_get_keyboard_state(&keyboard);
+	al_get_mouse_state(&mouse);
   char stepsize = (al_key_down(&keyboard,ALLEGRO_KEY_LSHIFT) || al_key_down(&keyboard,ALLEGRO_KEY_RSHIFT) ? MAPNAVIGATIONSTEPBIG : MAPNAVIGATIONSTEP);
   //mouse_callback = mouseProc;
   static int last_mouse_z;
-  if(mouse_z < last_mouse_z)
+  if(mouse.z < last_mouse_z)
   {
 	  config.follow_DFscreen = false;
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
@@ -95,9 +96,9 @@ void doKeys(){
 		  if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
 	  }
 	  timeToReloadSegment = true;
-	  last_mouse_z = mouse_z;
+	  last_mouse_z = mouse.z;
   }
-  if(mouse_z > last_mouse_z){
+  if(mouse.z > last_mouse_z){
 	  config.follow_DFscreen = false;
 	  if(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
 	  {
@@ -113,13 +114,13 @@ void doKeys(){
 		  if(DisplayedSegmentZ<0) DisplayedSegmentZ = 0;
 	  }
 	  timeToReloadSegment = true;
-	  last_mouse_z = mouse_z;
+	  last_mouse_z = mouse.z;
   }
-  if( mouse_b & 2 ){
+  if( mouse.buttons & 2 ){
 	  config.follow_DFscreen = false;
 	  int x, y;
-	  x = mouse_x;
-	  y = mouse_y;
+	  x = mouse.x;
+	  y = mouse.y;
 	  int blockx,blocky,blockz;
 	  ScreenToPoint(x,y,blockx,blocky,blockz);
 	  int diffx = blockx - config.segmentSize.x/2;
@@ -132,10 +133,11 @@ void doKeys(){
 	  timeToReloadSegment = true;
 	  //rest(50);
   }
-  if( mouse_b & 1 ){
+  if( mouse.buttons & 1 ){
+	  config.follow_DFcursor = false;
 	  int x, y;
-	  x = mouse_x;//pos >> 16;
-	  y = mouse_y; //pos & 0x0000ffff;
+	  x = mouse.x;//pos >> 16;
+	  y = mouse.y; //pos & 0x0000ffff;
 	  if(x >= MiniMapTopLeftX && x <= MiniMapBottomRightX && y >= MiniMapTopLeftY && y <= MiniMapBottomRightY){ // in minimap
 		  DisplayedSegmentX = (x-MiniMapTopLeftX-MiniMapSegmentWidth/2)/oneBlockInPixels;
 		  DisplayedSegmentY = (y-MiniMapTopLeftY-MiniMapSegmentHeight/2)/oneBlockInPixels;
