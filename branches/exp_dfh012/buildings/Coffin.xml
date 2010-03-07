@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Coffin" gameID="building_coffin">
+	<sprite index = 275 />
+</building> 
