@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm1000"
 				Optimization="0"
-				AdditionalIncludeDirectories="allegro"
+				AdditionalIncludeDirectories="loadpng\libpng\include;allegro"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_DEBUG;DEBUGMODE=1;ALLEGRO_POPUP_EXAMPLES;CMAKE_INTDIR=\&quot;Debug\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -200,7 +200,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="allegro"
+				AdditionalIncludeDirectories="loadpng\libpng\include;allegro"
 				PreprocessorDefinitions="ALLEGRO_MSVC;BENCHMARK"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -560,6 +560,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\init.txt"
+				>
+			</File>
 			<File
 				RelativePath=".\res.rc"
 				>

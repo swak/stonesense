@@ -124,6 +124,7 @@ ELSE(UNIX)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro
+            ${CMAKE_SOURCE_DIR}/loadpng/libpng/include/
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
@@ -137,6 +138,7 @@ ELSE(UNIX)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro
+            ${CMAKE_SOURCE_DIR}/loadpng/libpng/include
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}

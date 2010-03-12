@@ -16,7 +16,13 @@ Each entry expects the number of tiles to load.
 [SEGMENTSIZE_Z:5]
 
 Change this to off to skip the intro.
-[INTRO:OFF]
+[INTRO:ON]
+
+changes the interface font size.
+[FONTSIZE:10]
+
+Changes the fontfile to use.
+[FONT:DejaVuSans.ttf]
 
 Lifts the segment up to the top off the screen, equivalent to a given
 number of z levels.

@@ -222,6 +222,15 @@ void parseConfigLine( string line ){
 		int value = parseIntFromLine( "IMAGE_CACHE_SIZE", line);
 		config.imageCacheSize = value;
 	}
+	if( line.find("FONTSIZE") != -1){
+		int value = parseIntFromLine( "FONTSIZE", line);
+		if(value < 1) value = 1;
+		config.fontsize = value;
+	}
+	if( line.find("FONT") != -1){
+		string result = parseStrFromLine( "FONT", line );
+		config.font = al_create_path(result.c_str());
+	}
 }
 
 

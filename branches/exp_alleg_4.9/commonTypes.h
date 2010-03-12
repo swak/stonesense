@@ -69,7 +69,8 @@ typedef struct {
 	int automatic_reload_time;
 	int automatic_reload_step;
 	int animation_step;
-
+	int fontsize;
+	ALLEGRO_PATH * font;
 	int screenWidth;
 	int screenHeight;
 	bool Fullscreen;
@@ -83,7 +84,7 @@ typedef struct {
 	int backb;
 	bool fogenable;
 	Crd3D segmentSize;
-
+	
 	bool follow_DFcursor;
 	int dfCursorX;
 	int dfCursorY;

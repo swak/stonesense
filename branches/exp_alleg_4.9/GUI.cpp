@@ -98,6 +98,10 @@ void draw_textf_border(const ALLEGRO_FONT *font, float x, float y, int flags, co
 	al_draw_text(font, x-1, y+1, flags, al_cstr(buf));
 	al_draw_text(font, x+1, y+1, flags, al_cstr(buf));
 	al_draw_text(font, x+1, y-1, flags, al_cstr(buf));
+	al_draw_text(font, x-1, y, flags, al_cstr(buf));
+	al_draw_text(font, x, y+1, flags, al_cstr(buf));
+	al_draw_text(font, x+1, y, flags, al_cstr(buf));
+	al_draw_text(font, x, y-1, flags, al_cstr(buf));
 	al_restore_state(&backup);
 	al_draw_text(font, x, y, flags, al_cstr(buf));
 	al_ustr_free(buf);
@@ -115,6 +119,11 @@ void draw_text_border(const ALLEGRO_FONT *font, float x, float y, int flags, con
 	al_draw_text(font, x-1, y+1, flags, ustr);
 	al_draw_text(font, x+1, y+1, flags, ustr);
 	al_draw_text(font, x+1, y-1, flags, ustr);
+
+	al_draw_text(font, x-1, y, flags, ustr);
+	al_draw_text(font, x, y+1, flags, ustr);
+	al_draw_text(font, x+1, y, flags, ustr);
+	al_draw_text(font, x, y-1, flags, ustr);
 	al_restore_state(&backup);
 	al_draw_text(font, x, y, flags, ustr);
 }
@@ -131,6 +140,10 @@ void draw_ustr_border(const ALLEGRO_FONT *font, float x, float y, int flags, con
 	al_draw_ustr(font, x-1, y+1, flags, ustr);
 	al_draw_ustr(font, x+1, y+1, flags, ustr);
 	al_draw_ustr(font, x+1, y-1, flags, ustr);
+	al_draw_ustr(font, x-1, y, flags, ustr);
+	al_draw_ustr(font, x, y+1, flags, ustr);
+	al_draw_ustr(font, x+1, y, flags, ustr);
+	al_draw_ustr(font, x, y-1, flags, ustr);
 	al_restore_state(&backup);
 	al_draw_ustr(font, x, y, flags, ustr);
 }
@@ -254,51 +267,53 @@ void drawDebugCursorAndInfo(){
 		tform="stair";	 
 	}
 
-	if (tform != NULL)
-	{
-		const char* matName = lookupMaterialTypeName(b->material.type);
-		const char* subMatName = lookupMaterialName(b->material.type,b->material.index);
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"%s:%i Material:%s%s%s", tform, ttype, 
-			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
-	} 
-	draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-		"Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
-
-	if(b->water.index > 0 || b->tree.index != 0)
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+  if(b->water.index > 0 || b->tree.index != 0)
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 		"tree:%i water:%i", b->tree.index, b->water.index);
-	//building
-	//if(b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX){
-	//	const char* matName = lookupMaterialTypeName(b->building.info.material.type);
-	//	const char* subMatName = lookupMaterialName(b->building.info.material.type,b->building.info.material.index);
-	//	draw_textf_border(font, 2, config.screenHeight-20-(i--*al_get_font_line_height(font)), 0, 
-	//		"Building: %s(%i) Material: %s%s%s", 
-	//		contentLoader.buildingNameStrings.at(b->building.info.type).c_str(),
-	//		b->building.info.type, matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
-	//}
-	//creatures
-	if(b->creature != null){
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"Creature:%s(%i) Profession:%s", 
-			contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
-			dfMemoryInfo.getProfession( b->creature->profession ).c_str());
-		if(b->creature->current_job.active)
-			draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"Job: %s", dfMemoryInfo.getJob( b->creature->current_job.jobId).c_str());
-		char strCreature[150] = {0};
-		generateCreatureDebugString( b->creature, strCreature );
-		//memset(strCreature, -1, 50);
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"flag1: %s ", strCreature );
-		char strCreature2[150] = {0};
-		generateCreatureDebugString2( b->creature, strCreature2 );
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"flag2: %s ", strCreature2 );
-	}
-	//basecon
-	//textprintf(target, font, 2, config.screenHeight-20-(i--*al_get_font_line_height(font)), 0xFFFFFF, 
-	//   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
+  //building
+  if(b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX){
+	  const char* matName = lookupMaterialTypeName(b->building.info.material.type);
+	  const char* subMatName = lookupMaterialName(b->building.info.material.type,b->building.info.material.index);
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+      "Building: %s(%i,0x%x) Material: %s%s%s", 
+      contentLoader.buildingNameStrings.at(b->building.info.type).c_str(),
+      b->building.info.type, b->building.info.vtable,
+      matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
+  }
+  //creatures
+  if(b->creature != null){
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+      "Creature:%s(%i) Job:%s", 
+      contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
+      dfMemoryInfo.getProfession( b->creature->profession ).c_str());
+    
+    char strCreature[150] = {0};
+    generateCreatureDebugString( b->creature, strCreature );
+    //memset(strCreature, -1, 50);
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+      "flag1: %s ", strCreature );
+  }
+  if(b->designation.bits.dig || b->designation.bits.detail || b->designation.bits.detail_event)
+  {
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+               "Designation: %d,%d,%d", b->designation.bits.dig, b->designation.bits.detail, b->designation.bits.detail_event);
+  }
+    if(b->designation.bits.traffic)
+  {
+    draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
+               "Traffic: %d", b->designation.bits.traffic);
+  }
+    if(b->designation.bits.water_table)
+    {
+        draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,"Water table");
+    }
+    if(b->designation.bits.rained)
+    {
+        draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,"Rained");
+    }
+  //basecon
+  //textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
+   //   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );
 }
 
 void DrawMinimap(){
