@@ -10,7 +10,7 @@
 
 static API* pDFApiHandle = 0;
 
-memory_info dfMemoryInfo;
+const memory_info *dfMemoryInfo;
 bool memInfoHasBeenRead;
 
 inline bool IDisWall(int in){
@@ -199,7 +199,8 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
   
   //read local vein data
   vector <t_vein> veins;
-  DF.ReadVeins(CellX,CellY,CellZ,veins);
+  //**!!//
+  //**//DF.ReadVeins(CellX,CellY,CellZ,veins);
   uint32_t numVeins = (uint32_t)veins.size();
 	RESUME_DF;
 
@@ -361,7 +362,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   
 	//read world wide buildings
   vector<t_building> allBuildings;
-  ReadBuildings(DF, &allBuildings);
+  //**//ReadBuildings(DF, &allBuildings);
 
   /*if(GroundMaterialNamesTranslatedFromGame == false)
     TranslateGroundMaterialNames();*/
@@ -374,7 +375,10 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   
   // read constructions
   vector<t_construction> allConstructions;
-  uint32_t numconstructions = DF.InitReadConstructions();
+  uint32_t numconstructions = 0;
+
+    //**//uint32_t numconstructions = DF.InitReadConstructions();
+    /*
   t_construction tempcon;
   index = 0;
   while(index < numconstructions)
@@ -384,12 +388,13 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
         allConstructions.push_back(tempcon);
       index++;
   }
-  DF.FinishReadConstructions();
+  DF.FinishReadConstructions();*/
   
 	//merge buildings with segment
-  RESUME_DF;
+  //**//
+  /*RESUME_DF;
   MergeBuildingsToSegment(&allBuildings, segment);
-  SUSPEND_DF;
+  SUSPEND_DF;*/
 
 	//figure out what cells to read
 	int32_t firstTileToReadX = x;
@@ -425,8 +430,8 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 
   
 	//Read Vegetation
-  SUSPEND_DF;
-	uint32_t numtrees = DF.InitReadVegetation();
+	//**//
+	/*uint32_t numtrees = DF.InitReadVegetation();
 	t_tree_desc temptree;
 	index = 0;
 	while(index < numtrees )
@@ -438,11 +443,10 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 			b->tree = temptree.material;
 		index ++;
 	}
-	DF.FinishReadVegetation();
+	DF.FinishReadVegetation();*/
 
   //Read Creatures
-  ReadCreaturesToSegment( DF, segment );
-  RESUME_DF;
+  //**//ReadCreaturesToSegment( DF, segment );
 
 	//do misc beautification
   uint32_t numblocks = segment->getNumBlocks();

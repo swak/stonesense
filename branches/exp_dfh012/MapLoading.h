@@ -16,4 +16,4 @@ void reloadDisplayedSegment();
 void DisconnectFromDF();
 bool IsConnectedToDF();
 
-extern memory_info dfMemoryInfo;
+extern const memory_info *dfMemoryInfo;

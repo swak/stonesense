@@ -41,14 +41,14 @@ bool ContentLoader::Load(API& DF){
 //  SUSPEND_DF;
   
   //read data from DF
-  DF.ReadCreatureMatgloss( creatureNameStrings );
-  DF.InitReadBuildings( buildingNameStrings );
-  DF.FinishReadBuildings();
+  //**//DF.ReadCreatureMatgloss( creatureNameStrings );
+  //**//DF.InitReadBuildings( buildingNameStrings );
+  //**//DF.FinishReadBuildings();
   //read stone material types
-  DF.ReadStoneMatgloss( stoneNameStrings ); 
-  DF.ReadMetalMatgloss( metalNameStrings );
-  DF.ReadWoodMatgloss( woodNameStrings );
-  DF.ReadPlantMatgloss( plantNameStrings );
+  //**//DF.ReadStoneMatgloss( stoneNameStrings ); 
+  //**//DF.ReadMetalMatgloss( metalNameStrings );
+  //**//DF.ReadWoodMatgloss( woodNameStrings );
+  //**//DF.ReadPlantMatgloss( plantNameStrings );
   
 //  RESUME_DF;
   bool overallResult = parseContentIndexFile( "index.txt" );

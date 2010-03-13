@@ -32,11 +32,12 @@ SET(PROJECT_SRCS
     dfhack/library/tinyxml/tinyxmlerror.cpp
     dfhack/library/tinyxml/tinyxmlparser.cpp
 
-    dfhack/library/DFDataModel.cpp
     dfhack/library/DFHackAPI.cpp
     dfhack/library/DFMemInfo.cpp
     dfhack/library/DFMemInfoManager.cpp
     dfhack/library/DFTileTypes.cpp
+    dfhack/library/DFVector.cpp  
+    
     dfhack/library/md5/md5.cpp
     dfhack/library/md5/md5wrapper.cpp
     loadpng/loadpng.c
@@ -116,6 +117,8 @@ ELSE(UNIX)
     SET (PLATFORM_SRC
 	dfhack/library/DFProcess-windows.cpp
 	dfhack/library/DFProcessEnumerator-windows.cpp
+	dfhack/library/DFWindow-windows.cpp
+	dfhack/library/DFProcess-windows-SHM.cpp
 	)
     # use local allegro
     # MinGW is broken. doesn't link properly for some reason.
