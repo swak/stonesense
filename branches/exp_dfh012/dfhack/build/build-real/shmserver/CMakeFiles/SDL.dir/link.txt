@@ -1,0 +1,1 @@
+c:\MinGW\bin\g++.exe    -shared -o ..\..\..\output\libSDL.dll -Wl,--out-implib,..\..\..\output\libSDL.dll.a -Wl,--major-image-version,0,--minor-image-version,0 CMakeFiles\SDL.dir\shms-proto.cpp.obj CMakeFiles\SDL.dir\shms-windows.cpp.obj -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

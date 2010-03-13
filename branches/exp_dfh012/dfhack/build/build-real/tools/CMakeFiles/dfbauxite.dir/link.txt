@@ -1,0 +1,1 @@
+c:\MinGW\bin\g++.exe   -O3 -DNDEBUG   CMakeFiles\dfbauxite.dir\dfbauxite.cpp.obj  -o ..\..\..\output\dfbauxite.exe -Wl,--out-implib,..\..\..\output\libdfbauxite.dll.a -Wl,--major-image-version,0,--minor-image-version,0  ..\..\..\output\libdfhack.dll.a -lpsapi -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

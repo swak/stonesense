@@ -1,0 +1,328 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/../shmserver/shms.h
+windows.h
+-
+intrin.h
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+string
+-
+vector
+-
+map
+-
+fstream
+-
+iostream
+-
+integers.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/integers.h
+assert.h
+-
+string.h
+-
+sys/types.h
+-
+sys/ptrace.h
+-
+dirent.h
+-
+unistd.h
+-
+sys/stat.h
+-
+fcntl.h
+-
+sys/wait.h
+-
+windows.h
+-
+winnt.h
+-
+psapi.h
+-
+tlhelp32.h
+-
+DFTypes.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTypes.h
+DFProcess.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcess.h
+DFWindow.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFWindow.h
+DFProcessEnumerator.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcessEnumerator.h
+DFMemInfoManager.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfoManager.h
+DFVector.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFVector.h
+DFMemInfo.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfo.h
+DFError.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFError.h
+stdlib.h
+-
+tinyxml/tinyxml.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.h
+md5/md5wrapper.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5wrapper.h
+iostream
+-
+DFHackAPI.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFHackAPI.h
+config.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/config.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFError.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+string
+-
+sstream
+-
+exception
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFHackAPI.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFHackAPI.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+string
+-
+vector
+-
+map
+-
+integers.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/integers.h
+DFTileTypes.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTileTypes.h
+DFTypes.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTypes.h
+DFWindow.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFWindow.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfo.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+boost/multi_index_container.hpp
+-
+boost/multi_index/member.hpp
+-
+boost/multi_index/ordered_index.hpp
+-
+algorithm
+-
+iostream
+-
+iterator
+-
+string
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfo.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+map
+-
+vector
+-
+string
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfoManager.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFMemInfoManager.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcess-windows-SHM.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+../shmserver/shms.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/../shmserver/shms.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcess-windows.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcess.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcessEnumerator-windows.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFProcessEnumerator.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTileTypes.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+DFTileTypes.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTileTypes.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTileTypes.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFTypes.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFVector.cpp
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFVector.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFWindow-windows.cpp
+DFCommonInternal.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFCommonInternal.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/DFWindow.h
+Tranquility.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+Export.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Export.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/Tranquility.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/config.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/integers.h
+stdint.h
+-
+stdint_win.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/stdint_win.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/../integers.h
+stdint.h
+-
+stdint_win.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/../stdint_win.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/../stdint_win.h
+limits.h
+-
+wchar.h
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5.cpp
+md5.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5.h
+string
+-
+../integers.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/../integers.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5wrapper.cpp
+fstream
+-
+iostream
+-
+md5wrapper.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5wrapper.h
+md5.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/md5/md5wrapper.h
+string
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/stdint_win.h
+limits.h
+-
+wchar.h
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinystr.cpp
+tinystr.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinystr.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinystr.h
+assert.h
+-
+string.h
+-
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.cpp
+ctype.h
+-
+sstream
+-
+iostream
+-
+tinyxml.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.h
+ctype.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+assert.h
+-
+string
+-
+iostream
+-
+sstream
+-
+tinystr.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinystr.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxmlerror.cpp
+tinyxml.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.h
+
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxmlparser.cpp
+ctype.h
+-
+stddef.h
+-
+tinyxml.h
+D:/dloads/Copy of peterix-dfhack-0ab103d/peterix-dfhack-0ab103d/library/tinyxml/tinyxml.h
+windows.h
+-
+

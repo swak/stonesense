@@ -1,0 +1,1 @@
+c:\MinGW\bin\g++.exe   -O3 -DNDEBUG   CMakeFiles\dfsuspend.dir\suspendtest.cpp.obj  -o ..\..\..\output\dfsuspend.exe -Wl,--out-implib,..\..\..\output\libdfsuspend.dll.a -Wl,--major-image-version,0,--minor-image-version,0  ..\..\..\output\libdfhack.dll.a -lpsapi -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
