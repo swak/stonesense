@@ -171,7 +171,8 @@ void parseConfigLine( string line ){
 	}
 	if( line.find("FOG_ALPHA") != -1){
 		int value = parseIntFromLine( "FOG_ALPHA", line);
-		if(value < 1) value = 1;
+		if(value > 255) value = 255;
+		if(value < 0) value = 0;
 		config.foga = value;
 	}
 	if( line.find("SHOW_FOG") != -1){

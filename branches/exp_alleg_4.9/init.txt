@@ -18,7 +18,7 @@ Each entry expects the number of tiles to load.
 Change this to off to skip the intro.
 [INTRO:ON]
 
-changes the interface font size.
+Changes the interface font size.
 [FONTSIZE:10]
 
 Changes the fontfile to use.
@@ -74,7 +74,7 @@ Color and alpha ranges are 0 (min) to 255 (max)
 [FOG_RED:95]
 [FOG_GREEN:95]
 [FOG_BLUE:160]
-[FOG_ALPHA:255]
+[FOG_ALPHA:32]
 
 Background color. setting this the same as the fog color produces a nice effect.
 [BACK_RED:95]
@@ -100,5 +100,6 @@ When loading images, Stonesense stores them in a single large image, for better 
 If this is set to YES, Stonesense will save a copy of the image each time it changes.
 [LOG_IMAGECACHE:NO]
 
-This set's the size of the internal image cache. Idealy, this should be the largest size that your videocard supports.
+This set's the preferred size of the internal image cache. If your videocard does not support it, 
+a smaller size is used.
 [IMAGE_CACHE_SIZE:8192]
