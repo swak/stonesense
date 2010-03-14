@@ -37,20 +37,19 @@ bool ContentLoader::Load(API& DF){
   plantNameStrings.clear();
   buildingNameStrings.clear();
   
-  /// BAD
-//  SUSPEND_DF;
+  // This is an extra suspend/resume, but it only happens when reloading the config
+  // ie not enough to worry about
+  //DF.Suspend();
   
   //read data from DF
-  //**//DF.ReadCreatureMatgloss( creatureNameStrings );
-  //**//DF.InitReadBuildings( buildingNameStrings );
-  //**//DF.FinishReadBuildings();
-  //read stone material types
-  //**//DF.ReadStoneMatgloss( stoneNameStrings ); 
-  //**//DF.ReadMetalMatgloss( metalNameStrings );
-  //**//DF.ReadWoodMatgloss( woodNameStrings );
-  //**//DF.ReadPlantMatgloss( plantNameStrings );
+  DF.ReadCreatureMatgloss( creatureNameStrings );
+  DF.ReadStoneMatgloss( stoneNameStrings ); 
+  DF.ReadMetalMatgloss( metalNameStrings );
+  DF.ReadWoodMatgloss( woodNameStrings );
+  DF.ReadPlantMatgloss( plantNameStrings );
   
-//  RESUME_DF;
+  //DF.Resume();
+  
   bool overallResult = parseContentIndexFile( "index.txt" );
   translationComplete = false;
 

@@ -177,7 +177,6 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 	if(!DF.isValidBlock(CellX, CellY, CellZ))
 		return;
 
-  RESUME_DF;
   
 	//make boundries local
 	BoundrySX -= CellX * CELLEDGESIZE;
@@ -191,7 +190,6 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 	t_designation designations[16][16];
 	t_occupancy occupancies[16][16];
 	uint8_t regionoffsets[16];
-  SUSPEND_DF;
 	DF.ReadTileTypes(CellX, CellY, CellZ, (uint16_t *) tiletypes);
 	DF.ReadDesignations(CellX, CellY, CellZ, (uint32_t *) designations);
 	DF.ReadOccupancy(CellX, CellY, CellZ, (uint32_t *) occupancies);
@@ -391,10 +389,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   DF.FinishReadConstructions();*/
   
 	//merge buildings with segment
-  //**//
-  /*RESUME_DF;
-  MergeBuildingsToSegment(&allBuildings, segment);
-  SUSPEND_DF;*/
+  //**//MergeBuildingsToSegment(&allBuildings, segment);
 
 	//figure out what cells to read
 	int32_t firstTileToReadX = x;
@@ -625,7 +620,7 @@ void reloadDisplayedSegment(){
   	firstLoad=false;
   #endif
   
-  SUSPEND_DF;
+  DF.Suspend();
 
   if (firstLoad || config.follow_DFscreen)
   {
@@ -651,7 +646,7 @@ void reloadDisplayedSegment(){
 		timeToReloadConfig = true;
 	}
   if( pDFApiHandle ){
-    RESUME_DF;
+    DF.Resume();
   }
   TMR1_STOP;
 }
