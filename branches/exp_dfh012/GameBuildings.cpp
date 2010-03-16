@@ -65,15 +65,16 @@ void ReadBuildings(API& DF, vector<t_building>* buildingHolder){
   if(!buildingHolder) return;
 
   vector<string> dummy;
-	//**//uint32_t numbuildings = DF.InitReadBuildings(dummy);
+  uint32_t numbuildings = 0;
+	if (!DF.InitReadBuildings(numbuildings)) return;
 	t_building tempbuilding;
 
 	uint32_t index = 0;
-	//**//while(index < numbuildings){
+	while(index < numbuildings){
 		DF.ReadBuilding(index, tempbuilding);
     buildingHolder->push_back(tempbuilding);
     index++;
- //**// }
+  }
   DF.FinishReadBuildings();
 }
 

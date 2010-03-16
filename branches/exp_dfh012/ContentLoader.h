@@ -35,7 +35,8 @@ public:
   vector<t_matgloss> woodNameStrings;
   vector<t_matgloss> metalNameStrings;
   vector<t_matgloss> plantNameStrings;
-  vector<string> buildingNameStrings;
+  vector<string> classIdStrings;
+  memory_info *memoryInfo;
 };
 
 //singleton instance

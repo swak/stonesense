@@ -188,7 +188,7 @@ void drawDebugCursorAndInfo(BITMAP* target){
 	  const char* subMatName = lookupMaterialName(b->building.info.material.type,b->building.info.material.index);
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
       "Building: %s(%i,0x%x) Material: %s%s%s", 
-      contentLoader.buildingNameStrings.at(b->building.info.type).c_str(),
+      contentLoader.classIdStrings.at(b->building.info.type).c_str(),
       b->building.info.type, b->building.info.vtable,
       matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
   }
@@ -365,7 +365,7 @@ void paintboard(){
       textprintf_ex(buffer, font, 10,40, 0xFFFFFF,0, "Draw: %ims", DrawTime);
       textprintf_ex(buffer, font, 10,50, 0xFFFFFF,0, "D1: %i", blockFactory.getPoolSize());
 
-      drawDebugCursorAndInfo(buffer);
+      //**//drawDebugCursorAndInfo(buffer);
     }
 
     if(config.follow_DFscreen)

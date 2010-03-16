@@ -35,13 +35,17 @@ bool ContentLoader::Load(API& DF){
   creatureNameStrings.clear();
   woodNameStrings.clear();
   plantNameStrings.clear();
-  buildingNameStrings.clear();
+  classIdStrings.clear();
   
   // This is an extra suspend/resume, but it only happens when reloading the config
   // ie not enough to worry about
   //DF.Suspend();
   
   //read data from DF
+  const vector<string> *tempClasses = DF.getMemoryInfo()->getClassIDMapping();
+  // make a copy for our use
+  classIdStrings = *tempClasses;
+  
   DF.ReadCreatureMatgloss( creatureNameStrings );
   DF.ReadStoneMatgloss( stoneNameStrings ); 
   DF.ReadMetalMatgloss( metalNameStrings );

@@ -28,6 +28,8 @@ void DrawCreature( BITMAP* target, int drawx, int drawy, t_creature* creature ){
   t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
   //if(creature->x == 151 && creature->y == 145)
   //  int j = 10;
+  //**//
+  /*
   if( config.show_creature_names )
   	if (creature->nick_name[0] && config.names_use_nick)
   	{
@@ -56,7 +58,7 @@ void DrawCreature( BITMAP* target, int drawx, int drawy, t_creature* creature ){
     {
     	creatureSheet = getImgFile(sprite.fileIndex);
 	}    	
-  DrawSpriteFromSheet( sprite.sheetIndex, target, creatureSheet, drawx, drawy );
+  DrawSpriteFromSheet( sprite.sheetIndex, target, creatureSheet, drawx, drawy );*/
 }
 //t_creature* global = 0;
 

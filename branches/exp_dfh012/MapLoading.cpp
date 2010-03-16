@@ -360,7 +360,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   
 	//read world wide buildings
   vector<t_building> allBuildings;
-  //**//ReadBuildings(DF, &allBuildings);
+  ReadBuildings(DF, &allBuildings);
 
   /*if(GroundMaterialNamesTranslatedFromGame == false)
     TranslateGroundMaterialNames();*/
@@ -375,21 +375,22 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   vector<t_construction> allConstructions;
   uint32_t numconstructions = 0;
 
-    //**//uint32_t numconstructions = DF.InitReadConstructions();
-    /*
-  t_construction tempcon;
-  index = 0;
-  while(index < numconstructions)
-  {
-      DF.ReadConstruction(index, tempcon);
-      if(segment->CoordinateInsideSegment(tempcon.x, tempcon.y, tempcon.z))
-        allConstructions.push_back(tempcon);
-      index++;
-  }
-  DF.FinishReadConstructions();*/
+	if (DF.InitReadConstructions(numconstructions))
+	{
+		t_construction tempcon;
+		index = 0;
+		while(index < numconstructions)
+		{
+			DF.ReadConstruction(index, tempcon);
+			if(segment->CoordinateInsideSegment(tempcon.x, tempcon.y, tempcon.z))
+			allConstructions.push_back(tempcon);
+			index++;
+		}
+		DF.FinishReadConstructions();
+	}
   
 	//merge buildings with segment
-  //**//MergeBuildingsToSegment(&allBuildings, segment);
+    MergeBuildingsToSegment(&allBuildings, segment);
 
 	//figure out what cells to read
 	int32_t firstTileToReadX = x;
