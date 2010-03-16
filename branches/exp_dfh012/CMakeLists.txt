@@ -98,6 +98,9 @@ IF(UNIX)
     add_definitions(-DBUILD_DFHACK_LIB)
     SET (PLATFORM_SRC
     dfhack/library/DFProcess-linux.cpp
+    dfhack/library/DFProcess-linux-SHM.cpp
+    dfhack/library/DFProcess-linux-wine.cpp
+    dfhack/library/DFWindow-linux.cpp
     dfhack/library/DFProcessEnumerator-linux.cpp
     )
     
