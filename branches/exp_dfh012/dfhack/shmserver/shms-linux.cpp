@@ -33,13 +33,14 @@ distribution.
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
+#include <vector>
+#include <string>
 #include "shms.h"
-#include <sys/time.h>
-#include <time.h>
-#include <linux/futex.h>
-#include <sys/syscall.h>
-#include <signal.h>
+#include "mod-core.h"
+#include <sched.h>
 
 #define DFhackCExport extern "C" __attribute__ ((visibility("default")))
 
@@ -50,21 +51,81 @@ char *shm = 0;
 int shmid = 0;
 bool inited = 0;
 
+int fd_svlock = -1;
+int fd_cllock[SHM_MAX_CLIENTS];
+int fd_clSlock[SHM_MAX_CLIENTS];
+int held_clSlock[SHM_MAX_CLIENTS];
+int numheld = SHM_MAX_CLIENTS;
+
 /*******************************************************************************
 *                           SHM part starts here                               *
 *******************************************************************************/
-
-// FIXME: add error checking?
-bool isValidSHM()
+// is the other side still there?
+bool isValidSHM(int which)
 {
-    shmid_ds descriptor;
-    shmctl(shmid, IPC_STAT, &descriptor);
-    //fprintf(stderr,"ID %d, attached: %d\n",shmid, descriptor.shm_nattch);
-    return (descriptor.shm_nattch == 2);
+    // if we get the client lock here, the client process failed and we need to reclaim our suspend lock
+    if(lockf(fd_cllock[which],F_TLOCK,0) == 0)
+    {
+        // we get back our suspend lock from the cold, dead hands of the former client :P
+        OS_lockSuspendLock(which);
+        // free the client lock again
+        lockf(fd_cllock[which],F_ULOCK,0);
+        return false;
+    }
+    return true;
 }
-uint32_t getPID()
+
+uint32_t OS_getPID()
 {
     return getpid();
+}
+
+uint32_t OS_getAffinity()
+{
+    cpu_set_t mask;
+    sched_getaffinity(0,sizeof(cpu_set_t),&mask);
+    // FIXME: truncation
+    uint32_t affinity = *(uint32_t *) &mask;
+    return affinity;
+}
+
+void OS_lockSuspendLock(int which)
+{
+    if(numheld == SHM_MAX_CLIENTS)
+        return;
+    // lock not held by server and can be picked up. OK.
+    if(held_clSlock[which] == 0 && lockf(fd_clSlock[which],F_LOCK,0) == 0)
+    {
+        held_clSlock[which] = 1;
+        numheld++;
+    }
+    // lock couldn't be picked up!
+    else if (held_clSlock[which] == 0)
+    {
+        fprintf(stderr,"lock %d failed to lock\n", which);
+    }
+}
+
+void OS_releaseSuspendLock(int which)
+{
+    /*
+    if(which >=0 && which < SHM_MAX_CLIENTS)
+        return;
+    */
+    if(numheld != SHM_MAX_CLIENTS)
+    {
+        fprintf(stderr,"TOTAL FAILURE OF LOCKING SYSTEM\n");
+        return;
+    }
+    // lock hel by server and can be released -> OK
+    if(held_clSlock[which] == 1 && lockf(fd_clSlock[which],F_ULOCK,0) == 0)
+    {
+        numheld--;
+        held_clSlock[which] = 0;
+    }
+    // locked and not can't be released? FAIL!
+    else if (held_clSlock[which] == 1)
+        fprintf(stderr,"lock %d failed to unlock\n", which);
 }
 
 void SHM_Init ( void )
@@ -76,9 +137,33 @@ void SHM_Init ( void )
         return;
     }
     inited = true;
+    char name[256];
+    char name2[256];
+    // make folder structure for our lock files
+    sprintf(name, "/tmp/DFHack/%d",OS_getPID());
+    mode_t createmode = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH;
+    mkdir("/tmp/DFHack", createmode);
+    mkdir(name, createmode);
     
-    // name for the segment
-    key_t key = 123466;
+    // create and lock the server lock file
+    sprintf(name2, "%s/SVlock",name);
+    fd_svlock = open(name2,O_WRONLY | O_CREAT, createmode);
+    lockf( fd_svlock, F_LOCK, 0 );
+    
+    for(int i = 0; i < SHM_MAX_CLIENTS; i++)
+    {
+        // create the client lock file
+        sprintf(name2, "%s/CLlock%d",name,i);
+        fd_cllock[i] = open(name2,O_WRONLY | O_CREAT, createmode);
+        // get and lock the suspend locks
+        sprintf(name2, "%s/CLSlock%d",name,i);
+        fd_clSlock[i] = open(name2,O_WRONLY | O_CREAT, createmode);
+        lockf(fd_clSlock[i],F_LOCK,0);
+        held_clSlock[i] = 1;
+    }
+    
+    // name for the segment, an accident waiting to happen
+    key_t key = SHM_KEY + OS_getPID();
     
     // find previous segment, check if it's used by some processes.
     // if it isn't, kill it with fire
@@ -109,13 +194,18 @@ void SHM_Init ( void )
     }
     full_barrier
     // make sure we don't stall or do crazy stuff
-    ((shm_cmd *)shm)->pingpong = DFPP_RUNNING;
+    for(int i = 0; i < SHM_MAX_CLIENTS;i++)
+    {
+        ((uint32_t *)shm)[i] = CORE_RUNNING;
+    }
+    InitModules();
 }
 
 void SHM_Destroy ( void )
 {
     if(inited && !errorstate)
     {
+        KillModules();
         shmid_ds descriptor;
         shmctl(shmid, IPC_STAT, &descriptor);
         shmdt(shm);
@@ -124,6 +214,31 @@ void SHM_Destroy ( void )
             shmctl(shmid, IPC_STAT, &descriptor);
         }
         shmctl(shmid,IPC_RMID,NULL);
+        
+        char name[256];
+        char name2[256];
+        sprintf(name, "/tmp/DFHack/%d",OS_getPID());
+        
+        // unlock and close server lock, close client lock, destroy files
+        lockf(fd_svlock,F_ULOCK,0);
+        for(int i = 0; i < SHM_MAX_CLIENTS; i++)
+        {
+            close(fd_cllock[i]);
+            fd_cllock[i] = 0;
+            close(fd_clSlock[i]);
+            fd_clSlock[i] = 0;
+            held_clSlock[i] = 0;
+            sprintf(name2, "%s/CLlock%d",name,i);
+            unlink(name2);
+            sprintf(name2, "%s/CLSlock%d",name,i);
+            unlink(name2);
+        }
+        close(fd_svlock);
+        fd_svlock = 0;
+        sprintf(name2, "%s/SVlock",name);
+        unlink(name2);
+        // remove the PID folder
+        rmdir(name);
         fprintf(stderr,"dfhack: destroyed shared segment.\n");
         inited = false;
     }
@@ -144,7 +259,7 @@ DFhackCExport void SDL_GL_SwapBuffers(void)
 {
     if(_SDL_GL_SwapBuffers)
     {
-        if(!errorstate && ((shm_cmd *)shm)->pingpong != DFPP_RUNNING)
+        if(!errorstate)
         {
             SHM_Act();
         }
@@ -158,7 +273,7 @@ DFhackCExport int SDL_Flip(void * some_ptr)
 {
     if(_SDL_Flip)
     {
-        if(!errorstate && ((shm_cmd *)shm)->pingpong != DFPP_RUNNING)
+        if(!errorstate)
         {
             SHM_Act();
         }
@@ -216,7 +331,7 @@ DFhackCExport int refresh (void)
 {
     if(_refresh)
     {
-        if(!errorstate && ((shm_cmd *)shm)->pingpong != DFPP_RUNNING)
+        if(!errorstate)
         {
             SHM_Act();
         }

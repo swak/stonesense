@@ -135,6 +135,8 @@ namespace DFHack
          */
         uint32_t getBlockPtr (uint32_t blockx, uint32_t blocky, uint32_t blockz);
         
+        bool ReadBlock40d(uint32_t blockx, uint32_t blocky, uint32_t blockz, mapblock40d * buffer);
+        
         bool ReadTileTypes(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint16_t *buffer); // 256 * sizeof(uint16_t)
         bool WriteTileTypes(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint16_t *buffer); // 256 * sizeof(uint16_t)
         
@@ -200,7 +202,8 @@ namespace DFHack
         bool setCursorCoords (const int32_t x, const int32_t y, const int32_t z);
 
         /// This returns false if there is nothing under the cursor, it puts the addresses in a vector if there is
-        bool getCurrentCursorCreatures(std::vector<uint32_t> &addresses); 
+        bool getCurrentCursorCreature (uint32_t & creature_index);
+        
 
         bool InitViewSize();
         bool getWindowSize(int32_t & width, int32_t & height);
@@ -221,12 +224,10 @@ namespace DFHack
         vector<t_trait> getTraits(const uint32_t &index);
         vector<t_labor> getLabors(const uint32_t &index);
         */
-        bool InitReadNameTables (std::map< std::string, std::vector<std::string> > & nameTable);
+        bool InitReadNameTables (std::vector< std::vector<std::string> > & translations , std::vector< std::vector<std::string> > & foreign_languages);
         void FinishReadNameTables();
 
-        std::string TranslateName(const t_lastname & last, const std::map< std::string, std::vector< std::string > > &nameTable,const std::string & language="GENERIC");
-        std::string TranslateName(const t_squadname & squad, const std::map< std::string, std::vector< std::string > > &nameTable,const std::string & language="GENERIC");
-        std::string TranslateName (const int names[], int size, const std::map<std::string, std::vector<std::string> > &nameTable, const std::string & language="GENERIC");
+        std::string TranslateName(const t_name & name,const std::vector< std::vector<std::string> > & translations ,const std::vector< std::vector<std::string> > & foreign_languages, bool inEnglish=true);
         
         void WriteLabors(const uint32_t index, uint8_t labors[NUM_CREATURE_LABORS]);
         

@@ -186,7 +186,7 @@ namespace DFHack
         bool getCursorCoords (int32_t &x, int32_t &y, int32_t &z);
         bool setCursorCoords (const int32_t x, const int32_t y, const int32_t z);
 
-        bool getCurrentCursorCreatures(std::vector<uint32_t> &OUTPUT); 
+        bool getCurrentCursorCreature(uint32_t &OUTPUT);
 
         bool InitViewSize();
         
@@ -196,12 +196,10 @@ namespace DFHack
         bool getItemIndexesInBox(std::vector<uint32_t> &indexes,
                                 const uint16_t x1, const uint16_t y1, const uint16_t z1,
                                 const uint16_t x2, const uint16_t y2, const uint16_t z2);
-        bool InitReadNameTables (std::map< std::string, std::vector<std::string> > & OUTPUT);
+        bool InitReadNameTables (std::vector< std::vector<std::string> > & translations , std::vector< std::vector<std::string> > & foreign_languages);
         void FinishReadNameTables();
-
-        std::string TranslateName(const t_lastname & last, const std::map< std::string, std::vector< std::string > > &nameTable,const std::string & language="GENERIC");
-        std::string TranslateName(const t_squadname & squad, const std::map< std::string, std::vector< std::string > > &nameTable,const std::string & language="GENERIC");
-        std::string TranslateName (const int names[], int size, const std::map<std::string, std::vector<std::string> > &nameTable, const std::string & language="GENERIC");
+        
+        std::string TranslateName(const t_name & name,const std::vector< std::vector<std::string> > & translations ,const std::vector< std::vector<std::string> > & foreign_languages, bool inEnglish=true);
         
         void WriteLabors(const uint32_t index, uint8_t labors[NUM_CREATURE_LABORS]);
         

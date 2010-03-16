@@ -28,6 +28,7 @@ distribution.
 #include <sys/ipc.h>
 #include <time.h>
 #include "../shmserver/shms.h"
+#include "../shmserver/mod-core.h"
 #include <sys/time.h>
 #include <time.h>
 #include <sched.h>
@@ -42,171 +43,253 @@ class SHMProcess::Private
     public:
     Private()
     {
-        my_descriptor = NULL;
-        my_pid = 0;
-        my_shm = 0;
-        my_shmid = -1;
-        my_window = NULL;
+        memdescriptor = NULL;
+        process_ID = 0;
+        shm_addr = 0;
+        //shm_addr_with_cl_idx = 0;
+        shm_ID = -1;
+        window = NULL;
         attached = false;
-        suspended = false;
         identified = false;
+        useYield = false;
+        server_lock = -1;
+        client_lock = -1;
+        suspend_lock = -1;
+        attachmentIdx = 0;
+        locked = false;
     };
     ~Private(){};
-    memory_info * my_descriptor;
-    DFWindow * my_window;
-    pid_t my_pid;
-    char *my_shm;
-    int my_shmid;
+    memory_info * memdescriptor;
+    DFWindow * window;
+    pid_t process_ID;
+    char *shm_addr;
+    int shm_ID;
+    Process* q;
+    int server_lock;
+    int client_lock;
+    int suspend_lock;
+    int attachmentIdx;
+    
+
     
     bool attached;
-    bool suspended;
+    bool locked;
     bool identified;
+    bool useYield;
     
-    bool validate(char* exe_file, uint32_t pid, std::vector< memory_info* >& known_versions);
-    bool waitWhile (DF_PINGPONG state);
-    bool DF_TestBridgeVersion(bool & ret);
-    bool DF_GetPID(pid_t & ret);
+    bool validate(std::vector< memory_info* >& known_versions);
+    
+    bool Aux_Core_Attach(bool & versionOK, pid_t & PID);
+    //bool waitWhile (uint32_t state);
+    bool SetAndWait (uint32_t state);
+    bool GetLocks();
+    bool AreLocksOk();
+    void FreeLocks();
 };
 
-bool SHMProcess::Private::waitWhile (DF_PINGPONG state)
+#define SHMCMD ( (uint32_t *) shm_addr)[attachmentIdx]
+#define D_SHMCMD ( (uint32_t *) (d->shm_addr))[d->attachmentIdx]
+
+#define SHMHDR ((shm_core_hdr *)shm_addr)
+#define D_SHMHDR ((shm_core_hdr *)(d->shm_addr))
+
+#define SHMDATA(type) ((type *)(shm_addr + SHM_HEADER))
+#define D_SHMDATA(type) ((type *)(d->shm_addr + SHM_HEADER))
+
+bool SHMProcess::Private::SetAndWait (uint32_t state)
 {
     uint32_t cnt = 0;
-    struct shmid_ds descriptor;
-    while (((shm_cmd *)my_shm)->pingpong == state)
+    if(!attached) return false;
+    SHMCMD = state;
+    while (SHMCMD == state)
     {
-        if(cnt == 10000)
+        if(cnt == 10000)// check if the other process is still there, don't hammer the kernel too much.
         {
-            
-            shmctl(my_shmid, IPC_STAT, &descriptor); 
-            if(descriptor.shm_nattch == 1)// DF crashed?
+            if(!AreLocksOk())
             {
-                gcc_barrier
-                ((shm_cmd *)my_shm)->pingpong = DFPP_RUNNING;
-                attached = suspended = false;
-                return false;
+                //detach the shared memory
+                shmdt(shm_addr);
+                FreeLocks();
+                attached = locked = identified = false;
+                // we aren't the current process anymore
+                g_pProcess = NULL;
+                throw Error::SHMServerDisappeared();
             }
             else
             {
                 cnt = 0;
             }
         }
-        SCHED_YIELD
+        if(useYield)
+        {
+            SCHED_YIELD
+        }
         cnt++;
     }
-    if(((shm_cmd *)my_shm)->pingpong == DFPP_SV_ERROR)
+    // server returned a generic error
+    if(SHMCMD == CORE_ERROR)
     {
-        ((shm_cmd *)my_shm)->pingpong = DFPP_RUNNING;
-        attached = suspended = false;
-        cerr << "shm server error!" << endl;
-        assert (false);
         return false;
     }
     return true;
 }
 
-bool SHMProcess::Private::DF_TestBridgeVersion(bool & ret)
+/*
+Yeah. with no way to synchronize things (locks are slow, the OS doesn't give us enough control over scheduling)
+we end up with this silly thing
+*/
+bool SHMProcess::SetAndWait (uint32_t state)
 {
-    ((shm_cmd *)my_shm)->pingpong = DFPP_VERSION;
-    gcc_barrier
-    if(!waitWhile(DFPP_VERSION))
-        return false;
-    gcc_barrier
-    ((shm_cmd *)my_shm)->pingpong = DFPP_SUSPENDED;
-    ret =( ((shm_retval *)my_shm)->value == PINGPONG_VERSION );
-    return true;
+    return d->SetAndWait(state);
 }
 
-bool SHMProcess::Private::DF_GetPID(pid_t & ret)
+uint32_t OS_getAffinity()
 {
-    ((shm_cmd *)my_shm)->pingpong = DFPP_PID;
-    gcc_barrier
-    if(!waitWhile(DFPP_PID))
-        return false;
-    gcc_barrier
-    ((shm_cmd *)my_shm)->pingpong = DFPP_SUSPENDED;
-    ret = ((shm_retval *)my_shm)->value;
-    return true;
+    cpu_set_t mask;
+    sched_getaffinity(0,sizeof(cpu_set_t),&mask);
+    // FIXME: truncation
+    uint32_t affinity = *(uint32_t *) &mask;
+    return affinity;
 }
 
-SHMProcess::SHMProcess(vector <memory_info *> & known_versions)
+// test if we have client and server locks and the server is present
+bool SHMProcess::Private::AreLocksOk()
+{
+    // both locks are inited (we hold our lock)
+    if(client_lock != -1 && server_lock != -1) 
+    {
+        if(lockf(server_lock,F_TEST,0) == -1) // and server holds its lock
+        {
+            return true; // OK, locks are good
+        }
+    }
+    // locks are bad
+    return false;
+}
+
+void SHMProcess::Private::FreeLocks()
+{
+    attachmentIdx = -1;
+    if(client_lock != -1)
+    {
+        lockf(client_lock,F_ULOCK,0);
+        close(client_lock);
+        client_lock = -1;
+    }
+    if(server_lock != -1)
+    {
+        close(server_lock);
+        server_lock = -1;
+    }
+    if(suspend_lock != -1)
+    {
+        close(suspend_lock);
+        locked = false;
+        suspend_lock = -1;
+    }
+}
+
+bool SHMProcess::Private::GetLocks()
+{
+    char name[256];
+    // try to acquire locks
+    // look at the server lock, if it's locked, the server is present
+    sprintf(name, "/tmp/DFHack/%d/SVlock",process_ID);
+    server_lock = open(name,O_WRONLY);
+    if(server_lock == -1)
+    {
+        // cerr << "can't open sv lock" << endl;
+        return false;
+    }
+    
+    if(lockf( server_lock, F_TEST, 0 ) != -1)
+    {
+        cerr << "sv lock not locked" << endl;
+        close(server_lock);
+        server_lock = -1;
+        return false;
+    }
+    
+    for(int i = 0; i < SHM_MAX_CLIENTS; i++)
+    {
+        // open the client suspend locked
+        sprintf(name, "/tmp/DFHack/%d/CLSlock%d",process_ID,i);
+        suspend_lock = open(name,O_WRONLY);
+        if(suspend_lock == -1)
+        {
+            cerr << "can't open cl S-lock " << i << endl;
+            // couldn't open lock
+            continue;
+        }
+
+        // open the client lock, try to lock it
+        sprintf(name, "/tmp/DFHack/%d/CLlock%d",process_ID,i);
+        client_lock = open(name,O_WRONLY);
+        if(client_lock == -1)
+        {
+            cerr << "can't open cl lock " << i << endl;
+            close(suspend_lock);
+            locked = false;
+            suspend_lock = -1;
+            // couldn't open lock
+            continue;
+        }
+        if(lockf(client_lock,F_TLOCK, 0) == -1)
+        {
+            // couldn't acquire lock
+            cerr << "can't acquire cl lock " << i << endl;
+            close(suspend_lock);
+            locked = false;
+            suspend_lock = -1;
+            close(client_lock);
+            client_lock = -1;
+            continue;
+        }
+        // ok, we have all the locks we need!
+        attachmentIdx = i;
+        return true;
+    }
+    close(server_lock);
+    server_lock = -1;
+    cerr << "can't get any client locks" << endl;
+    return false;
+}
+
+SHMProcess::SHMProcess(uint32_t PID, vector< memory_info* >& known_versions)
 : d(new Private())
 {
-    char exe_link_name [256];
-    char target_name[1024];
-    int target_result;
-    
-    /*
-     * Locate the segment.
-     */
-    if ((d->my_shmid = shmget(SHM_KEY, SHM_SIZE, 0666)) < 0)
+    d->process_ID = PID;
+    if(!attach())
     {
+        // couldn't attach to process
         return;
     }
-    
     /*
-     * Attach the segment
-     */
-    if ((d->my_shm = (char *) shmat(d->my_shmid, NULL, 0)) == (char *) -1)
-    {
-        return;
-    }
-    
-    /*
-     * Check if there are two processes connected to the segment
-     */
-    shmid_ds descriptor;
-    shmctl(d->my_shmid, IPC_STAT, &descriptor); 
-    if(descriptor.shm_nattch != 2)// badness
-    {
-        fprintf(stderr,"dfhack: %d : invalid no. of processes connected\n", (int) descriptor.shm_nattch);
-        fprintf(stderr,"detach: %d",shmdt(d->my_shm));
-        return;
-    }
-    
-    /*
-     * Test bridge version, will also detect when we connect to something that doesn't respond
+     * Test bridge version, get PID, sync Yield
      */
     bool bridgeOK;
-    if(!d->DF_TestBridgeVersion(bridgeOK))
+    if(!d->Aux_Core_Attach(bridgeOK,d->process_ID))
     {
-        fprintf(stderr,"DF terminated during reading\n");
-        return;
+        detach();
+        throw Error::SHMAttachFailure();
     }
     if(!bridgeOK)
     {
-        fprintf(stderr,"SHM bridge version mismatch\n");
-        return;
+        detach();
+        throw Error::SHMVersionMismatch();
     }
-    /*
-     * get the PID from DF
-     */
-    if(d->DF_GetPID(d->my_pid))
-    {
-        // find its binary
-        sprintf(exe_link_name,"/proc/%d/exe", d->my_pid);
-        target_result = readlink(exe_link_name, target_name, sizeof(target_name)-1);
-        if (target_result == -1)
-        {
-            perror("readlink");
-            return;
-        }
-        // make sure we have a null terminated string...
-        // see http://www.opengroup.org/onlinepubs/000095399/functions/readlink.html
-        target_name[target_result] = 0;
-        
-        // try to identify the DF version
-        d->validate(target_name, d->my_pid, known_versions);
-        d->my_window = new DFWindow(this);
-    }
-    gcc_barrier
-    // at this point, DF is stopped and waiting for commands. make it run again
-    ((shm_cmd *)d->my_shm)->pingpong = DFPP_RUNNING;
-    shmdt(d->my_shm); // detach so we don't attach twice when attach() is called
+    
+    // try to identify the DF version (md5 the binary, compare with known versions)
+    d->validate(known_versions);
+    d->window = new DFWindow(this);
+    
+    // detach
+    detach();
 }
 
 bool SHMProcess::isSuspended()
 {
-    return d->suspended;
+    return d->locked;
 }
 bool SHMProcess::isAttached()
 {
@@ -218,13 +301,28 @@ bool SHMProcess::isIdentified()
     return d->identified;
 }
 
-bool SHMProcess::Private::validate(char * exe_file, uint32_t pid, vector <memory_info *> & known_versions)
+bool SHMProcess::Private::validate(vector <memory_info *> & known_versions)
 {
+    char exe_link_name [256];
+    char target_name[1024];
+    int target_result;
+    // find the binary
+    sprintf(exe_link_name,"/proc/%d/exe", process_ID);
+    target_result = readlink(exe_link_name, target_name, sizeof(target_name)-1);
+    if (target_result == -1)
+    {
+        perror("readlink");
+        return false;
+    }
+    // make sure we have a null terminated string...
+    // see http://www.opengroup.org/onlinepubs/000095399/functions/readlink.html
+    target_name[target_result] = 0;
+    
     md5wrapper md5;
     // get hash of the running DF process
-    string hash = md5.getHashFromFile(exe_file);
+    string hash = md5.getHashFromFile(target_name);
     vector<memory_info *>::iterator it;
-    cerr << exe_file << " " << hash <<  endl;
+    // cerr << exe_file << " " << hash <<  endl;
     // iterate over the list of memory locations
     for ( it=known_versions.begin() ; it < known_versions.end(); it++ )
     {
@@ -232,10 +330,9 @@ bool SHMProcess::Private::validate(char * exe_file, uint32_t pid, vector <memory
             if(hash == (*it)->getString("md5")) // are the md5 hashes the same?
             {
                 memory_info * m = *it;
-                my_descriptor = m;
-                my_pid = pid;
+                memdescriptor = m;
                 identified = true;
-                cerr << "identified " << m->getVersion() << endl;
+                // cerr << "identified " << m->getVersion() << endl;
                 return true;
             }
         }
@@ -254,31 +351,37 @@ SHMProcess::~SHMProcess()
         detach();
     }
     // destroy data model. this is assigned by processmanager
-    if(d->my_window)
+    if(d->window)
     {
-        delete d->my_window;
+        delete d->window;
     }
     delete d;
 }
 
 memory_info * SHMProcess::getDescriptor()
 {
-    return d->my_descriptor;
+    return d->memdescriptor;
 }
 
 DFWindow * SHMProcess::getWindow()
 {
-    return d->my_window;
+    return d->window;
 }
 
 int SHMProcess::getPID()
 {
-    return d->my_pid;
+    return d->process_ID;
 }
 
-//FIXME: implement
+// there is only one we care about.
 bool SHMProcess::getThreadIDs(vector<uint32_t> & threads )
 {
+    if(d->attached)
+    {
+        threads.clear();
+        threads.push_back(d->process_ID);
+        return true;
+    }
     return false;
 }
 
@@ -288,7 +391,7 @@ void SHMProcess::getMemRanges( vector<t_memrange> & ranges )
     char buffer[1024];
     char permissions[5]; // r/-, w/-, x/-, p/s, 0
     
-    sprintf(buffer, "/proc/%lu/maps", d->my_pid);
+    sprintf(buffer, "/proc/%lu/maps", d->process_ID);
     FILE *mapFile = ::fopen(buffer, "r");
     uint64_t offset, device1, device2, node;
     
@@ -315,37 +418,79 @@ bool SHMProcess::suspend()
     {
         return false;
     }
-    if(d->suspended)
+    if(d->locked)
     {
         return true;
     }
-    ((shm_cmd *)d->my_shm)->pingpong = DFPP_SUSPEND;
-    if(!d->waitWhile(DFPP_SUSPEND))
+    
+    // FIXME: this should be controlled on the server side
+    // FIXME: IF server got CORE_RUN in this frame, interpret CORE_SUSPEND as CORE_STEP
+    // did we just resume a moment ago?
+    if(D_SHMCMD == CORE_RUN)
     {
-        return false;
+        //fprintf(stderr,"%d invokes step\n",d->attachmentIdx);
+        // wait for the next window
+        if(!d->SetAndWait(CORE_STEP))
+        {
+            throw Error::SHMLockingError("if(!d->SetAndWait(CORE_STEP))");
+        }
     }
-    d->suspended = true;
-    return true;
+    else
+    {
+        //fprintf(stderr,"%d invokes suspend\n",d->attachmentIdx);
+        // lock now
+        if(!d->SetAndWait(CORE_SUSPEND))
+        {
+            throw Error::SHMLockingError("if(!d->SetAndWait(CORE_SUSPEND))");
+        }
+    }
+    //fprintf(stderr,"waiting for lock\n");
+    // we wait for the server to give up our suspend lock (held by default)
+    if(lockf(d->suspend_lock,F_LOCK,0) == 0)
+    {
+        d->locked = true;
+        return true;
+    }
+    return false;
 }
 
+// FIXME: needs a good think-through
 bool SHMProcess::asyncSuspend()
 {
     if(!d->attached)
     {
         return false;
     }
-    if(d->suspended)
+    if(d->locked)
     {
         return true;
     }
-    if(((shm_cmd *)d->my_shm)->pingpong == DFPP_SUSPENDED)
+    uint32_t cmd = D_SHMCMD;
+    if(cmd == CORE_SUSPENDED)
     {
-        d->suspended = true;
-        return true;
+        // we have to hold the lock to be really suspended
+        if(lockf(d->suspend_lock,F_LOCK,0) == 0)
+        {
+            d->locked = true;
+            return true;
+        }
+        return false;
     }
     else
     {
-        ((shm_cmd *)d->my_shm)->pingpong = DFPP_SUSPEND;
+        // did we just resume a moment ago?
+        if(cmd == CORE_STEP)
+        {
+            return false;
+        }
+        else if(cmd == CORE_RUN)
+        {
+            D_SHMCMD = CORE_STEP;
+        }
+        else
+        {
+            D_SHMCMD = CORE_SUSPEND;
+        }
         return false;
     }
 }
@@ -355,45 +500,71 @@ bool SHMProcess::forceresume()
     return resume();
 }
 
+// FIXME: wait for the server to advance a step!
 bool SHMProcess::resume()
 {
     if(!d->attached)
         return false;
-    if(!d->suspended)
+    if(!d->locked)
         return true;
-    ((shm_cmd *)d->my_shm)->pingpong = DFPP_RUNNING;
-    d->suspended = false;
-    return true;
+    // unlock the suspend lock
+    if(lockf(d->suspend_lock,F_ULOCK,0) == 0)
+    {
+        d->locked = false;
+        if(d->SetAndWait(CORE_RUN)) // we have to make sure the server responds!
+        {
+            return true;
+        }
+        throw Error::SHMLockingError("if(d->SetAndWait(CORE_RUN))");
+    }
+    throw Error::SHMLockingError("if(lockf(d->suspend_lock,F_ULOCK,0) == 0)");
+    return false;
 }
 
 
 bool SHMProcess::attach()
 {
-    int status;
     if(g_pProcess != 0)
     {
-        cerr << "there's already a different process attached" << endl;
+        // FIXME: throw exception here - programmer error
+        cerr << "client is already attached to a process!" << endl;
         return false;
     }
+    if(!d->GetLocks())
+    {
+        //cerr << "server is full or not really there!" << endl;
+        return false;
+    }
+
+    /*
+    * Locate the segment.
+    */
+    if ((d->shm_ID = shmget(SHM_KEY + d->process_ID, SHM_SIZE, 0666)) < 0)
+    {
+        d->FreeLocks();
+        cerr << "can't find segment" << endl; // FIXME: throw
+        return false;
+    }
+    
     /*
     * Attach the segment
     */
-    if ((d->my_shm = (char *) shmat(d->my_shmid, NULL, 0)) != (char *) -1)
+    if ((d->shm_addr = (char *) shmat(d->shm_ID, NULL, 0)) == (char *) -1)
     {
-        d->attached = true;
-        if(suspend())
-        {
-            d->suspended = true;
-            g_pProcess = this;
-            return true;
-        }
-        d->attached = false;
-        cerr << "unable to suspend" << endl;
-        // FIXME: detach sehment here
+        d->FreeLocks();
+        cerr << "can't attach segment" << endl; // FIXME: throw
         return false;
     }
-    cerr << "unable to attach" << endl;
-    return false;
+    d->attached = true;
+    if(!suspend())
+    {
+        shmdt(d->shm_addr);
+        d->FreeLocks();
+        cerr << "unable to suspend" << endl;
+        return false;
+    }
+    g_pProcess = this;
+    return true;
 }
 
 bool SHMProcess::detach()
@@ -402,35 +573,38 @@ bool SHMProcess::detach()
     {
         return false;
     }
-    if(d->suspended)
+    if(d->locked)
     {
         resume();
     }
     // detach segment
-    if(shmdt(d->my_shm) != -1)
+    if(shmdt(d->shm_addr) != -1)
     {
+        d->FreeLocks();
+        d->locked = false;
         d->attached = false;
-        d->suspended = false;
-        d->my_shm = 0;
+        d->shm_addr = 0;
         g_pProcess = 0;
         return true;
     }
     // fail if we can't detach
+    // FIXME: throw exception here??
     perror("failed to detach shared segment");
     return false;
 }
 
 void SHMProcess::read (uint32_t src_address, uint32_t size, uint8_t *target_buffer)
 {
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
     // normal read under 1MB
     if(size <= SHM_BODY)
     {
-        ((shm_read *)d->my_shm)->address = src_address;
-        ((shm_read *)d->my_shm)->length = size;
+        D_SHMHDR->address = src_address;
+        D_SHMHDR->length = size;
         gcc_barrier
-        ((shm_read *)d->my_shm)->pingpong = DFPP_READ;
-        d->waitWhile(DFPP_READ);
-        memcpy (target_buffer, d->my_shm + SHM_HEADER,size);
+        d->SetAndWait(CORE_READ);
+        memcpy (target_buffer, D_SHMDATA(void),size);
     }
     // a big read, we pull data over the shm in iterations
     else
@@ -440,12 +614,11 @@ void SHMProcess::read (uint32_t src_address, uint32_t size, uint8_t *target_buff
         while (size)
         {
             // read to_read bytes from src_cursor
-            ((shm_read *)d->my_shm)->address = src_address;
-            ((shm_read *)d->my_shm)->length = to_read;
+            D_SHMHDR->address = src_address;
+            D_SHMHDR->length = to_read;
             gcc_barrier
-            ((shm_read *)d->my_shm)->pingpong = DFPP_READ;
-            d->waitWhile(DFPP_READ);
-            memcpy (target_buffer, d->my_shm + SHM_HEADER,size);
+            d->SetAndWait(CORE_READ);
+            memcpy (target_buffer, D_SHMDATA(void) ,size);
             // decrease size by bytes read
             size -= to_read;
             // move the cursors
@@ -459,55 +632,61 @@ void SHMProcess::read (uint32_t src_address, uint32_t size, uint8_t *target_buff
 
 uint8_t SHMProcess::readByte (const uint32_t offset)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_BYTE;
-    d->waitWhile(DFPP_READ_BYTE);
-    return ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_BYTE);
+    return D_SHMHDR->value;
 }
 
 void SHMProcess::readByte (const uint32_t offset, uint8_t &val )
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_BYTE;
-    d->waitWhile(DFPP_READ_BYTE);
-    val = ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_BYTE);
+    val = D_SHMHDR->value;
 }
 
 uint16_t SHMProcess::readWord (const uint32_t offset)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_WORD;
-    d->waitWhile(DFPP_READ_WORD);
-    return ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_WORD);
+    return D_SHMHDR->value;
 }
 
 void SHMProcess::readWord (const uint32_t offset, uint16_t &val)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_WORD;
-    d->waitWhile(DFPP_READ_WORD);
-    val = ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_WORD);
+    val = D_SHMHDR->value;
 }
 
 uint32_t SHMProcess::readDWord (const uint32_t offset)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_DWORD;
-    d->waitWhile(DFPP_READ_DWORD);
-    return ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_DWORD);
+    return D_SHMHDR->value;
 }
 void SHMProcess::readDWord (const uint32_t offset, uint32_t &val)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
     gcc_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_DWORD;
-    d->waitWhile(DFPP_READ_DWORD);
-    val = ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_DWORD);
+    val = D_SHMHDR->value;
 }
 
 /*
@@ -516,43 +695,47 @@ void SHMProcess::readDWord (const uint32_t offset, uint32_t &val)
 
 void SHMProcess::writeDWord (uint32_t offset, uint32_t data)
 {
-    ((shm_write_small *)d->my_shm)->address = offset;
-    ((shm_write_small *)d->my_shm)->value = data;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
+    D_SHMHDR->value = data;
     gcc_barrier
-    ((shm_write_small *)d->my_shm)->pingpong = DFPP_WRITE_DWORD;
-    d->waitWhile(DFPP_WRITE_DWORD);
+    d->SetAndWait(CORE_WRITE_DWORD);
 }
 
 // using these is expensive.
 void SHMProcess::writeWord (uint32_t offset, uint16_t data)
 {
-    ((shm_write_small *)d->my_shm)->address = offset;
-    ((shm_write_small *)d->my_shm)->value = data;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
+    D_SHMHDR->value = data;
     gcc_barrier
-    ((shm_write_small *)d->my_shm)->pingpong = DFPP_WRITE_WORD;
-    d->waitWhile(DFPP_WRITE_WORD);
+    d->SetAndWait(CORE_WRITE_WORD);
 }
 
 void SHMProcess::writeByte (uint32_t offset, uint8_t data)
 {
-    ((shm_write_small *)d->my_shm)->address = offset;
-    ((shm_write_small *)d->my_shm)->value = data;
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
+    D_SHMHDR->address = offset;
+    D_SHMHDR->value = data;
     gcc_barrier
-    ((shm_write_small *)d->my_shm)->pingpong = DFPP_WRITE_BYTE;
-    d->waitWhile(DFPP_WRITE_BYTE);
+    d->SetAndWait(CORE_WRITE_BYTE);
 }
 
 void SHMProcess::write (uint32_t dst_address, uint32_t size, uint8_t *source_buffer)
 {
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
     // normal write under 1MB
     if(size <= SHM_BODY)
     {
-        ((shm_write *)d->my_shm)->address = dst_address;
-        ((shm_write *)d->my_shm)->length = size;
-        memcpy(d->my_shm+SHM_HEADER,source_buffer, size);
+        D_SHMHDR->address = dst_address;
+        D_SHMHDR->length = size;
+        memcpy(D_SHMDATA(void),source_buffer, size);
         gcc_barrier
-        ((shm_write *)d->my_shm)->pingpong = DFPP_WRITE;
-        d->waitWhile(DFPP_WRITE);
+        d->SetAndWait(CORE_WRITE);
     }
     // a big write, we push this over the shm in iterations
     else
@@ -562,12 +745,11 @@ void SHMProcess::write (uint32_t dst_address, uint32_t size, uint8_t *source_buf
         while (size)
         {
             // write to_write bytes to dst_cursor
-            ((shm_write *)d->my_shm)->address = dst_address;
-            ((shm_write *)d->my_shm)->length = to_write;
-            memcpy(d->my_shm+SHM_HEADER,source_buffer, to_write);
+            D_SHMHDR->address = dst_address;
+            D_SHMHDR->length = to_write;
+            memcpy(D_SHMDATA(void),source_buffer, to_write);
             gcc_barrier
-            ((shm_write *)d->my_shm)->pingpong = DFPP_WRITE;
-            d->waitWhile(DFPP_WRITE);
+            d->SetAndWait(CORE_WRITE);
             // decrease size by bytes written
             size -= to_write;
             // move the cursors
@@ -582,6 +764,8 @@ void SHMProcess::write (uint32_t dst_address, uint32_t size, uint8_t *source_buf
 // FIXME: butt-fugly
 const std::string SHMProcess::readCString (uint32_t offset)
 {
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
     std::string temp;
     char temp_c[256];
     int counter = 0;
@@ -599,6 +783,8 @@ const std::string SHMProcess::readCString (uint32_t offset)
 
 DfVector SHMProcess::readVector (uint32_t offset, uint32_t item_size)
 {
+    if(!d->locked) throw Error::SHMAccessDenied();
+    
     /*
         GNU libstdc++ vector is three pointers long
         ptr start
@@ -615,42 +801,96 @@ DfVector SHMProcess::readVector (uint32_t offset, uint32_t item_size)
 
 const std::string SHMProcess::readSTLString(uint32_t offset)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
+    D_SHMHDR->address = offset;
     full_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_STL_STRING;
-    d->waitWhile(DFPP_READ_STL_STRING);
-    //int length = ((shm_retval *)d->my_shm)->value;
-    return(string( (char *)d->my_shm+SHM_HEADER));
+    d->SetAndWait(CORE_READ_STL_STRING);
+    return(string( D_SHMDATA(char) ));
 }
 
 size_t SHMProcess::readSTLString (uint32_t offset, char * buffer, size_t bufcapacity)
 {
-    ((shm_read_small *)d->my_shm)->address = offset;
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
+    D_SHMHDR->address = offset;
     full_barrier
-    ((shm_read_small *)d->my_shm)->pingpong = DFPP_READ_STL_STRING;
-    d->waitWhile(DFPP_READ_STL_STRING);
-    size_t length = ((shm_retval *)d->my_shm)->value;
+    d->SetAndWait(CORE_READ_STL_STRING);
+    size_t length = D_SHMHDR->value;
     size_t fit = min(bufcapacity - 1, length);
-    strncpy(buffer,(char *)d->my_shm+SHM_HEADER,fit);
+    strncpy(buffer,D_SHMDATA(char),fit);
     buffer[fit] = 0;
     return fit;
 }
 
 void SHMProcess::writeSTLString(const uint32_t address, const std::string writeString)
 {
-    ((shm_write_small *)d->my_shm)->address = address;
-    strncpy(d->my_shm+SHM_HEADER,writeString.c_str(),writeString.length()+1); // length + 1 for the null terminator
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
+    D_SHMHDR->address = address;
+    strncpy(D_SHMDATA(char),writeString.c_str(),writeString.length()+1); // length + 1 for the null terminator
     full_barrier
-    ((shm_write_small *)d->my_shm)->pingpong = DFPP_WRITE_STL_STRING;
-    d->waitWhile(DFPP_WRITE_STL_STRING);
+    d->SetAndWait(CORE_WRITE_STL_STRING);
 }
 
 string SHMProcess::readClassName (uint32_t vptr)
 {
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
     int typeinfo = readDWord(vptr - 0x4);
     int typestring = readDWord(typeinfo + 0x4);
     string raw = readCString(typestring);
     size_t  start = raw.find_first_of("abcdefghijklmnopqrstuvwxyz");// trim numbers
     size_t end = raw.length();
     return raw.substr(start,end-start - 2); // trim the 'st' from the end
+}
+
+// get module index by name and version. bool 0 = error
+bool SHMProcess::getModuleIndex (const char * name, const uint32_t version, uint32_t & OUTPUT)
+{
+    if(!d->locked) throw Error::SHMAccessDenied();
+        
+    modulelookup * payload = D_SHMDATA(modulelookup);
+    payload->version = version;
+    
+    strncpy(payload->name,name,255);
+    payload->name[255] = 0;
+    
+    if(!SetAndWait(CORE_ACQUIRE_MODULE))
+    {
+        return false; // FIXME: throw a fatal exception instead
+    }
+    if(D_SHMHDR->error)
+    {
+        return false;
+    }
+    //fprintf(stderr,"%s v%d : %d\n", name, version, D_SHMHDR->value);
+    OUTPUT = D_SHMHDR->value;
+    return true;
+}
+
+char * SHMProcess::getSHMStart (void)
+{
+    if(!d->locked) return 0; //THROW HERE!
+        
+    return /*d->shm_addr_with_cl_idx*/ d->shm_addr;
+}
+
+bool SHMProcess::Private::Aux_Core_Attach(bool & versionOK, pid_t & PID)
+{
+    if(!locked) throw Error::SHMAccessDenied();
+    
+    SHMDATA(coreattach)->cl_affinity = OS_getAffinity();
+    if(!SetAndWait(CORE_ATTACH)) return false;
+    /*
+    cerr <<"CORE_VERSION" << CORE_VERSION << endl;
+    cerr <<"server CORE_VERSION" << SHMDATA(coreattach)->sv_version << endl;
+    */
+    versionOK =( SHMDATA(coreattach)->sv_version == CORE_VERSION );
+    PID = SHMDATA(coreattach)->sv_PID;
+    useYield = SHMDATA(coreattach)->sv_useYield;
+    #ifdef DEBUG
+        if(useYield) cerr << "Using Yield!" << endl;
+    #endif
+    return true;
 }
