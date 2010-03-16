@@ -426,8 +426,9 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 
   
 	//Read Vegetation
-	//**//
-	/*uint32_t numtrees = DF.InitReadVegetation();
+	uint32_t numtrees;
+	if (DF.InitReadVegetation(numtrees))
+	{
 	t_tree_desc temptree;
 	index = 0;
 	while(index < numtrees )
@@ -439,8 +440,9 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 			b->tree = temptree.material;
 		index ++;
 	}
-	DF.FinishReadVegetation();*/
-
+	DF.FinishReadVegetation();
+	}
+	
   //Read Creatures
   ReadCreaturesToSegment( DF, segment );
 
