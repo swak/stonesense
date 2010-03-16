@@ -205,11 +205,6 @@ void drawDebugCursorAndInfo(BITMAP* target){
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
       "flag1: %s ", strCreature );
   }
-  //**//if(b->designation.bits.dig || b->designation.bits.detail || b->designation.bits.detail_event)
-  //**//{
-  //**//  textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
-  //**//             "Designation: %d,%d,%d", b->designation.bits.dig, b->designation.bits.detail, b->designation.bits.detail_event);
-  //**//}
     if(b->designation.bits.traffic)
   {
     textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
@@ -365,7 +360,7 @@ void paintboard(){
       textprintf_ex(buffer, font, 10,40, 0xFFFFFF,0, "Draw: %ims", DrawTime);
       textprintf_ex(buffer, font, 10,50, 0xFFFFFF,0, "D1: %i", blockFactory.getPoolSize());
 
-      //**//drawDebugCursorAndInfo(buffer);
+      drawDebugCursorAndInfo(buffer);
     }
 
     if(config.follow_DFscreen)
