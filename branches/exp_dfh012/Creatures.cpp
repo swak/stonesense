@@ -70,7 +70,8 @@ void ReadCreaturesToSegment(API& DF, WorldSegment* segment)
   int y2 = segment->y + segment->sizey;
   int z1 = segment->z;
   int z2 = segment->z + segment->sizez;
-  //**//uint32_t numcreatures = DF.InitReadCreatures();
+  uint32_t numcreatures;
+  if (!DF.InitReadCreatures(numcreatures)) return;
 	
   if(x1<0) x1=0;
   if(y1<0) y1=0;

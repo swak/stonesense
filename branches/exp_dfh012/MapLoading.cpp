@@ -442,7 +442,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 	DF.FinishReadVegetation();*/
 
   //Read Creatures
-  //**//ReadCreaturesToSegment( DF, segment );
+  ReadCreaturesToSegment( DF, segment );
 
 	//do misc beautification
   uint32_t numblocks = segment->getNumBlocks();
