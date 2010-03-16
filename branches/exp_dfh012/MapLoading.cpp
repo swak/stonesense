@@ -197,8 +197,9 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
   
   //read local vein data
   vector <t_vein> veins;
-  //**!!//
-  //**//DF.ReadVeins(CellX,CellY,CellZ,veins);
+  vector <t_frozenliquidvein> ices;
+  
+  DF.ReadVeins(CellX,CellY,CellZ,veins,ices);
   uint32_t numVeins = (uint32_t)veins.size();
 	RESUME_DF;
 
