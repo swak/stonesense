@@ -201,7 +201,7 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
   
   DF.ReadVeins(CellX,CellY,CellZ,veins,ices);
   uint32_t numVeins = (uint32_t)veins.size();
-	RESUME_DF;
+
 
 	//parse cell
 	for(uint32_t ly = BoundrySY; ly <= BoundryEY; ly++){
