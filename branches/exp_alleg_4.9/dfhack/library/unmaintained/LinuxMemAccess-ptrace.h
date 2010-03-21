@@ -26,83 +26,82 @@ distribution.
  * DO NOT USE THIS FILE DIRECTLY! USE MemAccess.h INSTEAD!
  */
 #include "integers.h"
-#include <iostream>
-#include <string>
-#include <errno.h>
-using namespace std;
-
-// danger: uses recursion!
-inline
-void Mread (const uint32_t &offset, const uint32_t &size, uint8_t *target)
-{
-    if(size == 0) return;
-    
-    int result;
-    result = pread(DFHack::g_ProcessMemFile, target,size,offset);
-    if(result != size)
-    {
-        if(result == -1)
-        {
-            cerr << "pread failed: can't read " << size << " bytes at addres " << offset << endl;
-            cerr << "errno: " << errno << endl;
-            errno = 0;
-        }
-        else
-        {
-            Mread(offset + result, size - result, target + result);
-        }
-    }
-}
 
 inline
 uint8_t MreadByte (const uint32_t &offset)
 {
-    uint8_t val;
-    Mread(offset, 1, &val);
-    return val;
+    return ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
 }
 
 inline
 void MreadByte (const uint32_t &offset, uint8_t &val )
 {
-    Mread(offset, 1, &val);
+    val = ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
 }
 
 inline
 uint16_t MreadWord (const uint32_t &offset)
 {
-    uint16_t val;
-    Mread(offset, 2, (uint8_t *) &val);
-    return val;
+    return ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
 }
 
 inline
 void MreadWord (const uint32_t &offset, uint16_t &val)
 {
-    Mread(offset, 2, (uint8_t *) &val);
+    val = ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
 }
 
 inline
 uint32_t MreadDWord (const uint32_t &offset)
 {
-    uint32_t val;
-    Mread(offset, 4, (uint8_t *) &val);
-    return val;
+    return ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
 }
 inline
 void MreadDWord (const uint32_t &offset, uint32_t &val)
 {
-    Mread(offset, 4, (uint8_t *) &val);
+    val = ptrace(PTRACE_PEEKDATA,g_ProcessHandle, offset, NULL);
+}
+
+// extremely terrible braindamage
+inline
+bool Mread ( uint32_t offset, uint32_t size, uint8_t *target)
+{
+    uint8_t *mover = target;
+    while (size)
+    {
+        if(size >= 4)
+        {
+            * (uint32_t *)mover = MreadDWord(offset);
+            mover+=4;
+            offset +=4;
+            size -=4;
+        }
+        else if(size >= 2)
+        {
+            * (uint16_t *)mover = MreadWord(offset);
+            mover+=2;
+            offset +=2;
+            size -=2;
+        }
+        else if(size == 1)
+        {
+            * (uint8_t *)mover = MreadByte(offset);
+            mover+=1;
+            offset ++;
+            size --;
+        }
+    }
+    return true;
 }
 
 /*
- * WRITING
- */
+* WRITING
+*/
 
 inline
 void MwriteDWord (uint32_t offset, uint32_t data)
 {
-    ptrace(PTRACE_POKEDATA,DFHack::g_ProcessHandle, offset, data);
+    ptrace(PTRACE_POKEDATA,g_ProcessHandle, offset, data);
 }
 
 // using these is expensive.
@@ -116,7 +115,7 @@ void MwriteWord (uint32_t offset, uint16_t data)
     orig |= 0x0000FFFF;
     orig &= data;
     */
-    ptrace(PTRACE_POKEDATA,DFHack::g_ProcessHandle, offset, orig);
+    ptrace(PTRACE_POKEDATA,g_ProcessHandle, offset, orig);
 }
 
 inline
@@ -129,7 +128,7 @@ void MwriteByte (uint32_t offset, uint8_t data)
     orig |= 0x000000FF;
     orig &= data;
     */
-    ptrace(PTRACE_POKEDATA,DFHack::g_ProcessHandle, offset, orig);
+    ptrace(PTRACE_POKEDATA,g_ProcessHandle, offset, orig);
 }
 
 // blah. I hate the kernel devs for crippling /proc/PID/mem. THIS IS RIDICULOUS

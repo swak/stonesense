@@ -23,12 +23,16 @@ distribution.
 */
 
 #include "DFCommonInternal.h"
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <time.h>
+#include "../shmserver/shms.h"
+
 using namespace DFHack;
 
 /// HACK: global variables (only one process can be attached at the same time.)
 Process * DFHack::g_pProcess; ///< current process. non-NULL when picked
-ProcessHandle DFHack::g_ProcessHandle; ///< cache of handle to current process. used for speed reasons
-int DFHack::g_ProcessMemFile; ///< opened /proc/PID/mem, valid when attached
 
 class DFHack::ProcessEnumerator::Private
 {
@@ -42,19 +46,6 @@ bool ProcessEnumerator::findProcessess()
 {
     DIR *dir_p;
     struct dirent *dir_entry_p;
-    string dir_name;
-    string exe_link;
-    string cwd_link;
-    string cmdline_path;
-    string cmdline;
-
-    // ALERT: buffer overrun potential
-
-    int errorcount;
-    int result;
-
-    errorcount=0;
-    result=0;
     // Open /proc/ directory
     dir_p = opendir("/proc/");
     // Reading /proc/ entries
@@ -65,15 +56,37 @@ bool ProcessEnumerator::findProcessess()
         {
             continue;
         }
-        Process *p = new Process(atoi(dir_entry_p->d_name),d->meminfo->meminfo);
-        if(p->isIdentified())
+        Process *p1 = new SHMProcess(atoi(dir_entry_p->d_name),d->meminfo->meminfo);
+        if(p1->isIdentified())
         {
-            d->processes.push_back(p);
+            d->processes.push_back(p1);
+            continue;
         }
         else
         {
-            delete p;
+            delete p1;
         }
+        Process *p2 = new NormalProcess(atoi(dir_entry_p->d_name),d->meminfo->meminfo);
+        if(p2->isIdentified())
+        {
+            d->processes.push_back(p2);
+            continue;
+        }
+        else
+        {
+            delete p2;
+        }
+        Process *p3 = new WineProcess(atoi(dir_entry_p->d_name),d->meminfo->meminfo);
+        if(p3->isIdentified())
+        {
+            d->processes.push_back(p3);
+            continue;
+        }
+        else
+        {
+            delete p3;
+        }
+
     }
     closedir(dir_p);
     // return value depends on if we found some DF processes
@@ -87,14 +100,14 @@ bool ProcessEnumerator::findProcessess()
 uint32_t ProcessEnumerator::size()
 {
     return d->processes.size();
-};
+}
 
 
 Process * ProcessEnumerator::operator[](uint32_t index)
 {
     assert(index < d->processes.size());
     return d->processes[index];
-};
+}
 
 
 ProcessEnumerator::ProcessEnumerator( string path_to_xml )
@@ -103,14 +116,19 @@ ProcessEnumerator::ProcessEnumerator( string path_to_xml )
     d->meminfo = new MemInfoManager(path_to_xml);
 }
 
-
-ProcessEnumerator::~ProcessEnumerator()
+void ProcessEnumerator::purge()
 {
-    // delete all processes
     for(uint32_t i = 0;i < d->processes.size();i++)
     {
         delete d->processes[i];
     }
+    d->processes.clear();
+}
+
+ProcessEnumerator::~ProcessEnumerator()
+{
+    // delete all processes
+    purge();
     delete d->meminfo;
     delete d;
 }

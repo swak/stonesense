@@ -4,6 +4,7 @@
 #include "MapLoading.h"
 #include "GUI.h"
 #include "ContentLoader.h"
+#include "dfhack/library/DFError.h"
 
 #include "dfhack/library/tinyxml/tinyxml.h"
 
@@ -42,7 +43,7 @@ void DumpProfessionsToDisk(){
   FILE* fp = fopen("dump.txt", "w");
   if(!fp) return;
   string proffStr;
-  for(int j=0; (proffStr = dfMemoryInfo.getProfession(j)) != "" ; j++){
+  for(int j=0; (proffStr = dfMemoryInfo->getProfession(j)) != "" ; j++){
     fprintf(fp, "%i:%s\n",j, proffStr.c_str());
   }
   fclose(fp);
@@ -54,16 +55,23 @@ int translateProfession(const char* currentProf)
 		return INVALID_INDEX;
     uint32_t j;
     string proffStr;
-    for(j=0; (proffStr = dfMemoryInfo.getProfession(j)) != "" ; j++)
+    try
+    {
+	    for(j=0; true; j++)
     {   
+		  proffStr = dfMemoryInfo->getProfession(j);
       if( proffStr.compare( currentProf ) == 0)
       {
         //assign ID
         return j;
       }
     }
+	}
+	catch (Error::MissingMemoryDefinition)
+	{
 	WriteErr("Unable to match profession '%s' to anything in-game\n", currentProf);
 	return INT_MAX; //if it is left at INVALID_INDEX, the condition is ignored entierly.
+	}
 }
 
 void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures, unsigned int gameID, CreatureConfiguration& cre)
@@ -165,7 +173,6 @@ bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<vector<Creature
     CreatureConfiguration cre( professionID, customStr , cresex, crespec, sprite, shadow);
     //add a copy to known creatures
     pushCreatureConfig(knownCreatures, gameID, cre);
-
     elemVariant = elemVariant->NextSiblingElement("variant");
   }
 

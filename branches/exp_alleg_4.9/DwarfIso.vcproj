@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\allegro;&quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Include&quot;"
+				AdditionalIncludeDirectories=".\allegro;.\dfhack\library;.\dfhack\library\md5;.\dfhack\library\tinyxml"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -139,7 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="true"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro.lib allegro_primitives.lib allegro_font.lib allegro_ttf.lib allegro_image.lib allegro_dialog.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib $(NOINHERIT)"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro.lib allegro_primitives.lib allegro_font.lib allegro_ttf.lib allegro_image.lib allegro_dialog.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib $(NOINHERIT)"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -393,8 +393,44 @@
 				>
 			</File>
 			<Filter
-				Name="dfHack"
+				Name="dfhack"
 				>
+				<File
+					RelativePath=".\dfhack\library\DFHackAPI.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFMemInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFMemInfoManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFProcess-windows-SHM.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFProcess-windows.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFProcessEnumerator-windows.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFTileTypes.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFVector.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFWindow-windows.cpp"
+					>
+				</File>
 				<Filter
 					Name="tinyxml"
 					>
@@ -414,6 +450,22 @@
 						RelativePath=".\dfhack\library\tinyxml\tinyxmlparser.cpp"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="md5"
+					>
+					<File
+						RelativePath=".\dfhack\library\md5\md5.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\library\md5\md5wrapper.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="shmserver"
+					>
 				</Filter>
 			</Filter>
 			<Filter
@@ -459,6 +511,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\dfhack\library\argstream\argstream.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Block.h"
 				>
 			</File>
@@ -479,11 +535,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dfhack\library\config.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Constructions.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Creatures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\dfhack\library\Export.h"
 				>
 			</File>
 			<File
@@ -496,6 +560,10 @@
 			</File>
 			<File
 				RelativePath=".\buildings\index.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\dfhack\library\integers.h"
 				>
 			</File>
 			<File
@@ -523,6 +591,10 @@
 				</File>
 				<File
 					RelativePath=".\dfhack\library\dftypes.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\Tranquility.h"
 					>
 				</File>
 			</Filter>

@@ -32,11 +32,12 @@ SET(PROJECT_SRCS
     dfhack/library/tinyxml/tinyxmlerror.cpp
     dfhack/library/tinyxml/tinyxmlparser.cpp
 
-    dfhack/library/DFDataModel.cpp
     dfhack/library/DFHackAPI.cpp
     dfhack/library/DFMemInfo.cpp
     dfhack/library/DFMemInfoManager.cpp
     dfhack/library/DFTileTypes.cpp
+    dfhack/library/DFVector.cpp  
+    
     dfhack/library/md5/md5.cpp
     dfhack/library/md5/md5wrapper.cpp
 
@@ -94,6 +95,9 @@ IF(UNIX)
     add_definitions(-DBUILD_DFHACK_LIB)
     SET (PLATFORM_SRC
     dfhack/library/DFProcess-linux.cpp
+    dfhack/library/DFProcess-linux-SHM.cpp
+    dfhack/library/DFProcess-linux-wine.cpp
+    dfhack/library/DFWindow-linux.cpp
     dfhack/library/DFProcessEnumerator-linux.cpp
     )
     
@@ -103,7 +107,7 @@ IF(UNIX)
 #    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
  
 #    SET(PROJECT_LIBS ${ALLEGRO5_LIBRARIES} ${PROJECT_LIBS})
-    SET(PROJECT_LIBS allegro-4.9 allegro_primitives-4.9 allegro_color-4.9 allegro_dialog-4.9 allegro_flac-4.9 allegro_font-4.9 allegro_image-4.9 allegro_main-4.9 allegro_memfile-4.9 allegro_ttf-4.9 allegro_vorbis-4.9 ${PROJECT_LIBS})
+    SET(PROJECT_LIBS allegro allegro_primitives allegro_color allegro_dialog allegro_flac allegro_font allegro_image allegro_main allegro_memfile allegro_ttf allegro_vorbis ${PROJECT_LIBS})
     
     ADD_EXECUTABLE(stonesense ${PROJECT_SRCS} ${PLATFORM_SRC})
     TARGET_LINK_LIBRARIES(stonesense ${PROJECT_LIBS})
@@ -114,17 +118,18 @@ ELSE(UNIX)
     SET (PLATFORM_SRC
 	dfhack/library/DFProcess-windows.cpp
 	dfhack/library/DFProcessEnumerator-windows.cpp
+	dfhack/library/DFWindow-windows.cpp
+	dfhack/library/DFProcess-windows-SHM.cpp
 	)
     # use local allegro
     # MinGW is broken. doesn't link properly for some reason.
     
     IF(MINGW)
         add_definitions()
-        SET(PROJECT_LIBS liballegro-4.9.a liballegro_primitives-4.9.a liballegro_image-4.9.a liballegro_font-4.9.a liballegro_dialog-4.9.a liballegro_ttf-4.9.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
+        SET(PROJECT_LIBS liballegro.a liballegro_primitives.a liballegro_image.a liballegro_font.a liballegro_dialog.a liballegro_ttf.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro
-            ${CMAKE_SOURCE_DIR}/loadpng/libpng/include/
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}
@@ -134,11 +139,10 @@ ELSE(UNIX)
     # MSVC
     ELSE(MINGW)
         add_definitions()
-        SET(PROJECT_LIBS alleg psapi)
+        SET(PROJECT_LIBS kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro.lib allegro_primitives.lib allegro_font.lib allegro_ttf.lib allegro_image.lib allegro_dialog.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib $(NOINHERIT))
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro
-            ${CMAKE_SOURCE_DIR}/loadpng/libpng/include
 	    )
 	    LINK_DIRECTORIES(
 		    ${LINK_DIRECTORIES}

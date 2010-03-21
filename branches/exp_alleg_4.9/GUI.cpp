@@ -287,7 +287,7 @@ void drawDebugCursorAndInfo(){
 		const char* subMatName = lookupMaterialName(b->building.info.material.type,b->building.info.material.index);
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Building: %s(%i,0x%x) Material: %s%s%s", 
-			contentLoader.buildingNameStrings.at(b->building.info.type).c_str(),
+			contentLoader.classIdStrings.at(b->building.info.type).c_str(),
 			b->building.info.type, b->building.info.vtable,
 			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
 	}
@@ -295,19 +295,14 @@ void drawDebugCursorAndInfo(){
 	if(b->creature != null){
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Creature:%s(%i) Job:%s", 
-			contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
-			dfMemoryInfo.getProfession( b->creature->profession ).c_str());
+      contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
+      dfMemoryInfo->getProfession( b->creature->profession ).c_str());
 
 		char strCreature[150] = {0};
 		generateCreatureDebugString( b->creature, strCreature );
 		//memset(strCreature, -1, 50);
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"flag1: %s ", strCreature );
-	}
-	if(b->designation.bits.dig || b->designation.bits.detail || b->designation.bits.detail_event)
-	{
-		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-			"Designation: %d,%d,%d", b->designation.bits.dig, b->designation.bits.detail, b->designation.bits.detail_event);
 	}
 	if(b->designation.bits.traffic)
 	{

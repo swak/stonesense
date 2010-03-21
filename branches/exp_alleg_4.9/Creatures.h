@@ -9,7 +9,7 @@ static t_SpriteWithOffset spriteCre_NA = {0, 0, 0,-1,1+2+4+8+16+32};
 
 void ReadCreaturesToSegment(API& DF, WorldSegment* segment);
 
-void DrawCreature(int drawx, int drawy, t_creature* c );
+void DrawCreature(int drawx, int drawy, t_creature* creature );
 void DrawCreatureText(int drawx, int drawy, t_creature* creature );
 t_SpriteWithOffset GetCreatureSpriteMap( t_creature* c );
 int GetCreatureShadowMap( t_creature* c );

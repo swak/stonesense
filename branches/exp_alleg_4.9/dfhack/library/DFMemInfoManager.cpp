@@ -25,7 +25,17 @@ distribution.
 #include "DFCommonInternal.h"
 using namespace DFHack;
 
-void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info& mem)
+MemInfoManager::~MemInfoManager()
+{
+    // for each in std::vector<memory_info*> meminfo;, delete
+    for(int i = 0; i < meminfo.size();i++)
+    {
+        delete meminfo[i];
+    }
+    meminfo.clear();
+}
+
+void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info* mem)
 {
     TiXmlElement* pClassEntry;
     TiXmlElement* pClassSubEntry;
@@ -34,7 +44,7 @@ void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info& mem)
     if(rebase)
     {
         int32_t rebase_offset = strtol(rebase, NULL, 16);
-        mem.RebaseVTable(rebase_offset);
+        mem->RebaseVTable(rebase_offset);
     }
     // parse vtable entries
     pClassEntry = vtable->FirstChildElement();
@@ -43,17 +53,23 @@ void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info& mem)
         string type = pClassEntry->Value();
         const char *cstr_name = pClassEntry->Attribute("name");
         const char *cstr_vtable = pClassEntry->Attribute("vtable");
+        uint32_t vtable = 0;
+        if(cstr_vtable)
+            vtable = strtol(cstr_vtable, NULL, 16);
         // it's a simple class
         if(type== "class")
         {
-            mem.setClass(cstr_name, cstr_vtable);
+            mem->setClass(cstr_name, vtable);
         }
         // it's a multi-type class
         else if (type == "multiclass")
         {
             // get offset of the type variable
             const char *cstr_typeoffset = pClassEntry->Attribute("typeoffset");
-            int mclass = mem.setMultiClass(cstr_name, cstr_vtable, cstr_typeoffset);
+            uint32_t typeoffset = 0;
+            if(cstr_typeoffset)
+                typeoffset = strtol(cstr_typeoffset, NULL, 16);
+            t_class * mclass = mem->setClass(cstr_name, vtable, typeoffset);
             // parse class sub-entries
             pClassSubEntry = pClassEntry->FirstChildElement();
             for(;pClassSubEntry;pClassSubEntry=pClassSubEntry->NextSiblingElement())
@@ -64,7 +80,7 @@ void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info& mem)
                     // type is a value loaded from type offset
                     cstr_name = pClassSubEntry->Attribute("name");
                     const char *cstr_value = pClassSubEntry->Attribute("type");
-                    mem.setMultiClassChild(mclass,cstr_name,cstr_value);
+                    mem->setClassChild(mclass,cstr_name,cstr_value);
                 }
             }
         }
@@ -73,7 +89,7 @@ void MemInfoManager::ParseVTable(TiXmlElement* vtable, memory_info& mem)
 
 
 
-void MemInfoManager::ParseEntry (TiXmlElement* entry, memory_info& mem, map <string ,TiXmlElement *>& knownEntries)
+void MemInfoManager::ParseEntry (TiXmlElement* entry, memory_info* mem, map <string ,TiXmlElement *>& knownEntries)
 {
     TiXmlElement* pMemEntry;
     const char *cstr_version = entry->Attribute("version");
@@ -85,37 +101,35 @@ void MemInfoManager::ParseEntry (TiXmlElement* entry, memory_info& mem, map <str
         string base = cstr_base;
         ParseEntry(knownEntries[base], mem, knownEntries);
     }
+
+    if (!cstr_version)
+        throw Error::MemoryXmlBadAttribute("version");
+    if (!cstr_os)
+        throw Error::MemoryXmlBadAttribute("os");
     
-    // mandatory attributes missing?
-    if(!(cstr_version && cstr_os))
-    {
-        cerr << "Bad entry in memory.xml detected, version or os attribute is missing.";
-        // skip if we don't have valid attributes
-        return;
-    }
     string os = cstr_os;
-    mem.setVersion(cstr_version);
-    mem.setOS(cstr_os);
+    mem->setVersion(cstr_version);
+    mem->setOS(cstr_os);
     
     // offset inherited addresses by 'rebase'.
     int32_t rebase = 0;
     if(cstr_rebase)
     {
-        rebase = mem.getBase() + strtol(cstr_rebase, NULL, 16);
-        mem.RebaseAddresses(rebase);
+        rebase = mem->getBase() + strtol(cstr_rebase, NULL, 16);
+        mem->RebaseAddresses(rebase);
     }
     
     //set base to default, we're overwriting this because the previous rebase could cause havoc on Vista/7
     if(os == "windows")
     {
         // set default image base. this is fixed for base relocation later
-        mem.setBase(0x400000);
+        mem->setBase(0x400000);
     }
     else if(os == "linux")
     {
         // this is wrong... I'm not going to do base image relocation on linux though.
         // users are free to use a sane kernel that doesn't do this kind of **** by default
-        mem.setBase(0x0);
+        mem->setBase(0x0);
     }
     else if ( os == "all")
     {
@@ -123,8 +137,7 @@ void MemInfoManager::ParseEntry (TiXmlElement* entry, memory_info& mem, map <str
     }
     else
     {
-        cerr << "unknown operating system " << os << endl;
-        return;
+        throw Error::MemoryXmlBadAttribute("os");
     }
     
     // process additional entries
@@ -144,52 +157,51 @@ void MemInfoManager::ParseEntry (TiXmlElement* entry, memory_info& mem, map <str
             ParseVTable(pMemEntry, mem);
             continue;
         }
-        if( !(cstr_name && cstr_value))
+        if(!(cstr_name && cstr_value))
         {
-            cerr << "underspecified MemInfo entry" << endl;
-            continue;
+            throw Error::MemoryXmlUnderspecifiedEntry(cstr_version);
         }
         name = cstr_name;
         value = cstr_value;
         if (type == "HexValue")
         {
-            mem.setHexValue(name, value);
+            mem->setHexValue(name, value);
         }
         else if (type == "Address")
         {
-            mem.setAddress(name, value);
+            mem->setAddress(name, value);
         }
         else if (type == "Offset")
         {
-            mem.setOffset(name, value);
+            mem->setOffset(name, value);
         }
         else if (type == "String")
         {
-            mem.setString(name, value);
+            mem->setString(name, value);
         }
         else if (type == "Profession")
         {
-            mem.setProfession(value,name);
+            mem->setProfession(value,name);
         }
         else if (type == "Job")
         {
-            mem.setJob(value,name);
+            mem->setJob(value,name);
         }
         else if (type == "Skill")
         {
-            mem.setSkill(value,name);
+            mem->setSkill(value,name);
         }
         else if (type == "Trait")
         {
-            mem.setTrait(value, name,pMemEntry->Attribute("level_0"),pMemEntry->Attribute("level_1"),pMemEntry->Attribute("level_2"),pMemEntry->Attribute("level_3"),pMemEntry->Attribute("level_4"),pMemEntry->Attribute("level_5"));
+            mem->setTrait(value, name,pMemEntry->Attribute("level_0"),pMemEntry->Attribute("level_1"),pMemEntry->Attribute("level_2"),pMemEntry->Attribute("level_3"),pMemEntry->Attribute("level_4"),pMemEntry->Attribute("level_5"));
         }
         else if (type == "Labor")
         {
-            mem.setLabor(value,name);
+            mem->setLabor(value,name);
         }
         else
         {
-            cerr << "Unknown MemInfo type: " << type << endl;
+            throw Error::MemoryXmlUnknownType(type.c_str());
         }
     } // for
 } // method
@@ -204,67 +216,65 @@ MemInfoManager::MemInfoManager(string path_to_xml)
 bool MemInfoManager::loadFile(string path_to_xml)
 {
     TiXmlDocument doc( path_to_xml.c_str() );
-    bool loadOkay = doc.LoadFile();
+    //bool loadOkay = doc.LoadFile();
+    if (!doc.LoadFile())
+    {
+        error = true;
+        throw Error::MemoryXmlParse(doc.ErrorDesc(), doc.ErrorId(), doc.ErrorRow(), doc.ErrorCol());
+    }
     TiXmlHandle hDoc(&doc);
     TiXmlElement* pElem;
     TiXmlHandle hRoot(0);
     memory_info mem;
-    
-    if ( loadOkay )
+
+    // block: name
     {
-        // block: name
+        pElem=hDoc.FirstChildElement().Element();
+        // should always have a valid root but handle gracefully if it does
+        if (!pElem)
         {
-            pElem=hDoc.FirstChildElement().Element();
-            // should always have a valid root but handle gracefully if it does
-            if (!pElem)
-            {
-                cerr << "no pElem found" << endl;
-                return false;
-            }
-            string m_name=pElem->Value();
-            if(m_name != "DFExtractor")
-            {
-                cerr << "DFExtractor != " << m_name << endl;
-                return false;
-            }
-            //cout << "got DFExtractor XML!" << endl;
-            // save this for later
-            hRoot=TiXmlHandle(pElem);
+            error = true;
+            throw Error::MemoryXmlNoRoot();
         }
-        // transform elements
+        string m_name=pElem->Value();
+        if(m_name != "DFExtractor")
         {
-            // trash existing list
-            meminfo.clear();
-            TiXmlElement* pMemInfo=hRoot.FirstChild( "MemoryDescriptors" ).FirstChild( "Entry" ).Element();
-            map <string ,TiXmlElement *> map_pNamedEntries;
-            vector <TiXmlElement *> v_pEntries;
-            for( ; pMemInfo; pMemInfo=pMemInfo->NextSiblingElement("Entry"))
-            {
-                v_pEntries.push_back(pMemInfo);
-                const char *id;
-                if(id= pMemInfo->Attribute("id"))
-                {
-                    string str_id = id;
-                    map_pNamedEntries[str_id] = pMemInfo;
-                }
-            }
-            for(uint32_t i = 0; i< v_pEntries.size();i++)
-            {
-                memory_info mem;
-                //FIXME: add a set of entries processed in a step of this cycle, use it to check for infinite loops
-                /* recursive */ParseEntry( v_pEntries[i] , mem , map_pNamedEntries);
-                meminfo.push_back(mem);
-            }
-            // process found things here
+            error = true;
+            throw Error::MemoryXmlNoDFExtractor(m_name.c_str());
         }
-        error = false;
-        return true;
+        // save this for later
+        hRoot=TiXmlHandle(pElem);
     }
-    else
+    // transform elements
     {
-        // load failed
-        cerr << "Can't load memory offsets from memory.xml" << endl;
-        error = true;
-        return false;
+        // trash existing list
+        for(int i = 0; i < meminfo.size(); i++)
+        {
+            delete meminfo[i];
+        }
+        meminfo.clear();
+        TiXmlElement* pMemInfo=hRoot.FirstChild( "MemoryDescriptors" ).FirstChild( "Entry" ).Element();
+        map <string ,TiXmlElement *> map_pNamedEntries;
+        vector <TiXmlElement *> v_pEntries;
+        for( ; pMemInfo; pMemInfo=pMemInfo->NextSiblingElement("Entry"))
+        {
+            v_pEntries.push_back(pMemInfo);
+            const char *id = pMemInfo->Attribute("id");
+            if(id)
+            {
+                string str_id = id;
+                map_pNamedEntries[str_id] = pMemInfo;
+            }
+        }
+        for(uint32_t i = 0; i< v_pEntries.size();i++)
+        {
+            memory_info *mem = new memory_info();
+            //FIXME: add a set of entries processed in a step of this cycle, use it to check for infinite loops
+            /* recursive */ParseEntry( v_pEntries[i] , mem , map_pNamedEntries);
+            meminfo.push_back(mem);
+        }
+        // process found things here
     }
+    error = false;
+    return true;
 }

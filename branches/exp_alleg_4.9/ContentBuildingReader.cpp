@@ -300,7 +300,7 @@ bool addSingleBuildingConfig( TiXmlElement* elemRoot,  vector<BuildingConfigurat
 	  return false;
   }
   
-  int gameID = TranslateBuildingName(strGameID, contentLoader.buildingNameStrings );
+  int gameID = TranslateBuildingName(strGameID, contentLoader.classIdStrings );
   
   if (gameID == INVALID_INDEX) {
   	//warning was already given

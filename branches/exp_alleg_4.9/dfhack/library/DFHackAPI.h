@@ -25,11 +25,15 @@ distribution.
 #ifndef SIMPLEAPI_H_INCLUDED
 #define SIMPLEAPI_H_INCLUDED
 
+#include "Tranquility.h"
 #include "Export.h"
 #include <string>
 #include <vector>
+#include <map>
 #include "integers.h"
 #include "DFTileTypes.h"
+#include "DFTypes.h"
+#include "DFWindow.h"
 
 namespace DFHack
 {
@@ -40,17 +44,29 @@ namespace DFHack
         class Private;
         Private * const d;
     public:
-        API(const string path_to_xml);
+        API(const std::string path_to_xml);
         ~API();
         bool Attach();
         bool Detach();
         bool isAttached();
         
+        //true if paused, false if not
+        bool ReadPauseState(); 
+        
+        // read the DF menu view state (stock screen, unit screen, other screens
+        bool ReadViewScreen(t_viewscreen &);
+        
+        // read the DF menu state (designation menu ect)
+        uint32_t ReadMenuState();
+        
         // stop DF from executing
         bool Suspend();
+        // stop DF from executing, asynchronous, use with polling
+        bool AsyncSuspend();
         // resume DF
         bool Resume();
         /**
+         * Force resume
          * be careful with this one
          */
         bool ForceResume();
@@ -60,11 +76,12 @@ namespace DFHack
          * I'll keep it like this, even with the code duplication as it will hopefully get more features and separate data types later.
          * Yay for nebulous plans for a rock survey tool that tracks how much of which metal could be smelted from available resorces
          */
-        bool ReadStoneMatgloss(vector<t_matgloss> & output);
-        bool ReadWoodMatgloss (vector<t_matgloss> & output);
-        bool ReadMetalMatgloss(vector<t_matgloss> & output);
-        bool ReadPlantMatgloss(vector<t_matgloss> & output);
-        bool ReadCreatureMatgloss(vector<t_matgloss> & output);
+        bool ReadStoneMatgloss(std::vector<t_matgloss> & output);
+        bool ReadWoodMatgloss (std::vector<t_matgloss> & output);
+        bool ReadMetalMatgloss(std::vector<t_matgloss> & output);
+        bool ReadPlantMatgloss(std::vector<t_matgloss> & output);
+        bool ReadPlantMatgloss (std::vector<t_matglossPlant> & plants);
+        bool ReadCreatureMatgloss(std::vector<t_matgloss> & output);
 
         // read region surroundings, get their vectors of geolayers so we can do translation (or just hand the translation table to the client)
         // returns an array of 9 vectors of indices into stone matgloss
@@ -97,7 +114,7 @@ namespace DFHack
                 }
             }
          */
-        bool ReadGeology( vector < vector <uint16_t> >& assign );
+        bool ReadGeology( std::vector < std::vector <uint16_t> >& assign );
 
         /*
          * BLOCK DATA
@@ -113,6 +130,12 @@ namespace DFHack
          * Return false/0 on failure, buffer allocated by client app, 256 items long
          */
         bool isValidBlock(uint32_t blockx, uint32_t blocky, uint32_t blockz);
+        /**
+         * Get the address of a block or 0 if block is not valid
+         */
+        uint32_t getBlockPtr (uint32_t blockx, uint32_t blocky, uint32_t blockz);
+        
+        bool ReadBlock40d(uint32_t blockx, uint32_t blocky, uint32_t blockz, mapblock40d * buffer);
         
         bool ReadTileTypes(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint16_t *buffer); // 256 * sizeof(uint16_t)
         bool WriteTileTypes(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint16_t *buffer); // 256 * sizeof(uint16_t)
@@ -122,51 +145,80 @@ namespace DFHack
         
         bool ReadOccupancy(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint32_t *buffer); // 256 * sizeof(uint32_t)
         bool WriteOccupancy(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint32_t *buffer); // 256 * sizeof(uint32_t)
+
+        bool ReadDirtyBit(uint32_t blockx, uint32_t blocky, uint32_t blockz, bool &dirtybit);
+        bool WriteDirtyBit(uint32_t blockx, uint32_t blocky, uint32_t blockz, bool dirtybit);
         
         /// read region offsets of a block
         bool ReadRegionOffsets(uint32_t blockx, uint32_t blocky, uint32_t blockz, uint8_t *buffer); // 16 * sizeof(uint8_t)
         
         /// read aggregated veins of a block
-        bool ReadVeins(uint32_t blockx, uint32_t blocky, uint32_t blockz, vector <t_vein> & veins);
+        bool ReadVeins(uint32_t blockx, uint32_t blocky, uint32_t blockz, std::vector <t_vein> & veins, std::vector <t_frozenliquidvein>& ices);
         
         /**
          * Buildings, constructions, plants, all pretty straighforward. InitReadBuildings returns all the building types as a mapping between a numeric values and strings
          */
-        uint32_t InitReadConstructions();
-        bool ReadConstruction(const int32_t &index, t_construction & construction);
+        bool InitReadConstructions( uint32_t & numconstructions );
+        bool ReadConstruction(const int32_t index, t_construction & construction);
         void FinishReadConstructions();
 
-        uint32_t InitReadBuildings(vector <string> &v_buildingtypes);
-        bool ReadBuilding(const int32_t &index, t_building & building);
+        bool InitReadBuildings ( uint32_t & numbuildings );
+        bool ReadBuilding(const int32_t index, t_building & building);
         void FinishReadBuildings();
+        
+        bool InitReadEffects ( uint32_t & numeffects );
+        bool ReadEffect(const int32_t index, t_effect_df40d & effect);
+        bool WriteEffect(const int32_t index, const t_effect_df40d & effect);
+        void FinishReadEffects();
 
-        uint32_t InitReadVegetation();
-        bool ReadVegetation(const int32_t &index, t_tree_desc & shrubbery);
+        bool InitReadVegetation( uint32_t & numplants );
+        bool ReadVegetation(const int32_t index, t_tree_desc & shrubbery);
         void FinishReadVegetation();
         
-        uint32_t InitReadCreatures();
-        // returns index of creature actually read or -1 if no creature can be found
-        int32_t ReadCreatureInBox(int32_t index, t_creature & furball,
-                                  const uint16_t &x1, const uint16_t &y1,const uint16_t &z1,
-                                  const uint16_t &x2, const uint16_t &y2,const uint16_t &z2);
-        bool ReadCreature(const int32_t &index, t_creature & furball);
+        bool InitReadCreatures( uint32_t & numcreatures );
+        /// returns index of creature actually read or -1 if no creature can be found
+        int32_t ReadCreatureInBox(const int32_t index, t_creature & furball,
+                                  const uint16_t x1, const uint16_t y1,const uint16_t z1,
+                                  const uint16_t x2, const uint16_t y2,const uint16_t z2);
+        bool ReadCreature(const int32_t index, t_creature & furball);
         void FinishReadCreatures();
         
-        void ReadRaw (const uint32_t &offset, const uint32_t &size, uint8_t *target);
-        void WriteRaw (const uint32_t &offset, const uint32_t &size, uint8_t *source);
+        void ReadRaw (const uint32_t offset, const uint32_t size, uint8_t *target);
+        void WriteRaw (const uint32_t offset, const uint32_t size, uint8_t *source);
         
         bool InitViewAndCursor();
+
+        bool InitReadNotes( uint32_t & numnotes );
+        bool ReadNote(const int32_t index, t_note & note);
+        void FinishReadNotes();
+
+        bool InitReadSettlements( uint32_t & numsettlements );
+        bool ReadSettlement(const int32_t index, t_settlement & settlement);
+        bool ReadCurrentSettlement(t_settlement & settlement);
+        void FinishReadSettlements();
+
+        bool InitReadHotkeys( );
+        bool ReadHotkeys(t_hotkey hotkeys[]);
         
         bool getViewCoords (int32_t &x, int32_t &y, int32_t &z);
-        bool setViewCoords (const int32_t &x, const int32_t &y, const int32_t &z);
+        bool setViewCoords (const int32_t x, const int32_t y, const int32_t z);
         
         bool getCursorCoords (int32_t &x, int32_t &y, int32_t &z);
-        bool setCursorCoords (const int32_t &x, const int32_t &y, const int32_t &z);
+        bool setCursorCoords (const int32_t x, const int32_t y, const int32_t z);
+
+        /// This returns false if there is nothing under the cursor, it puts the addresses in a vector if there is
+        bool getCurrentCursorCreature (uint32_t & creature_index);
+        
 
         bool InitViewSize();
         bool getWindowSize(int32_t & width, int32_t & height);
+        /* unimplemented
         bool setWindowSize(const int32_t & width, const int32_t & height);
+        */
         
+        bool getItemIndexesInBox(std::vector<uint32_t> &indexes,
+                                const uint16_t x1, const uint16_t y1, const uint16_t z1,
+                                const uint16_t x2, const uint16_t y2, const uint16_t z2);
         /*
         // FIXME: add a real creature class, move these
         string getLastName(const uint32_t &index, bool);
@@ -177,16 +229,25 @@ namespace DFHack
         vector<t_trait> getTraits(const uint32_t &index);
         vector<t_labor> getLabors(const uint32_t &index);
         */
-        
-        void InitReadNameTables();
+        bool InitReadNameTables (std::vector< std::vector<std::string> > & translations , std::vector< std::vector<std::string> > & foreign_languages);
         void FinishReadNameTables();
 
-        uint32_t InitReadItems();
-        bool ReadItem(const uint32_t &index, t_item & item);
-        void FinishReadItems();
+        std::string TranslateName(const t_name & name,const std::vector< std::vector<std::string> > & translations ,const std::vector< std::vector<std::string> > & foreign_languages, bool inEnglish=true);
         
-        memory_info getMemoryInfo();
+        void WriteLabors(const uint32_t index, uint8_t labors[NUM_CREATURE_LABORS]);
+        
+        bool InitReadItems(uint32_t & numitems);
+        bool ReadItem(const uint32_t index, t_item & item);
+        void FinishReadItems();
+
+        memory_info *getMemoryInfo();
         Process * getProcess();
+        DFWindow * getWindow();
+        /*
+            // FIXME: BAD!
+            bool ReadAllMatgloss(vector< vector< string > > & all);
+        */
+        bool ReadItemTypes(std::vector< std::vector< t_itemType > > & itemTypes);
     };
 } // namespace DFHack
 #endif // SIMPLEAPI_H_INCLUDED

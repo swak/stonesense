@@ -22,13 +22,23 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#ifndef PROCESSUTIL_H_INCLUDED
-#define PROCESSUTIL_H_INCLUDED
+#include "Tranquility.h"
+#include "DFCommonInternal.h"
 
-#ifdef LINUX_BUILD
-    #include "MemAccess-linux.h"
-#else
-    #include "MemAccess-windows.h"
-#endif
+using namespace DFHack;
 
-#endif // PROCESSUTIL_H_INCLUDED
+DfVector::DfVector(uint32_t _start, uint32_t _size, uint32_t _item_size): start(_start),size(_size),item_size(_item_size)
+{
+    data = (uint8_t *) new char[size * item_size];
+    g_pProcess->read(start,size*item_size, (uint8_t *)data);
+};
+DfVector::DfVector()
+{
+    data = 0;
+};
+            
+DfVector::~DfVector()
+{
+    if(data)
+        delete [] data;
+};

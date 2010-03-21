@@ -5,7 +5,7 @@
 #include "ContentLoader.h"
 #include "GUI.h"
 
-extern ALLEGRO_FONT *font;
+
 
 //vector<t_matgloss> v_creatureNames;
 //vector<CreatureConfiguration> creatureTypes;
@@ -25,110 +25,45 @@ bool IsCreatureVisible( t_creature* c ){
 }
 
 void DrawCreature(int drawx, int drawy, t_creature* creature ){
-	t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
-	//if(creature->x == 151 && creature->y == 145)
-	//  int j = 10;
-
-	ALLEGRO_BITMAP* creatureSheet;
-	if (sprite.fileIndex == -1)
-	{
-		creatureSheet = IMGCreatureSheet;
+  t_SpriteWithOffset sprite = GetCreatureSpriteMap( creature );
+  //if(creature->x == 151 && creature->y == 145)
+  //  int j = 10;    	
+  	ALLEGRO_BITMAP* creatureSheet;
+    if (sprite.fileIndex == -1)
+    {
+    	creatureSheet = IMGCreatureSheet;
 	}
-	else
-	{
-		creatureSheet = getImgFile(sprite.fileIndex);
+    else
+    {
+    	creatureSheet = getImgFile(sprite.fileIndex);
 	}    	
-	DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
+  DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
 }
-void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
-	//if(creature->x == 151 && creature->y == 145)
-	//  int j = 10;
-	
-	if( config.show_creature_names ){
-		char buffer[128];
-		ALLEGRO_USTR* string;
-		if (creature->nick_name[0] && config.names_use_nick)
-		{
-			strncpy(buffer,creature->nick_name,127);
-			buffer[127]=0;
-			if (buffer[0]>90)
-				buffer[0] -= 32;
-		}
-		else if (creature->first_name[0])
-		{
-			strncpy(buffer,creature->first_name,127);
-			buffer[127]=0;
-			if (buffer[0]>90)
-				buffer[0] -= 32;
-		}
-		else if (config.names_use_species)
-		{
-			strncpy(buffer,contentLoader.creatureNameStrings.at(creature->type).id,127);
-			buffer[127]=0;
-			if (buffer[0]>90)
-				buffer[0] -= 32;
-		}
-		//printf("%s\n",buffer);
-		string = al_ustr_new(buffer);
-		//printf("%s\n",al_cstr(string));
-		////al_ustr_find_replace_cstr(string, 0, 127, "¦");
-		////al_ustr_find_replace_cstr(string, 0, "€", "Ç");
-		//al_ustr_find_replace_cstr(string, 0, "", "ü");
-		//al_ustr_find_replace_cstr(string, 0, "‚", "é");
-		//al_ustr_find_replace_cstr(string, 0, "ƒ", "â");
-		//al_ustr_find_replace_cstr(string, 0, "„", "ä");
-		//al_ustr_find_replace_cstr(string, 0, "…", "à");
-		//al_ustr_find_replace_cstr(string, 0, "†", "å");
-		////al_ustr_find_replace_cstr(string, 0, "‡", "ç");
-		//al_ustr_find_replace_cstr(string, 0, "ˆ", "ê");
-		//al_ustr_find_replace_cstr(string, 0, "‰", "ë");
-		//al_ustr_find_replace_cstr(string, 0, "Š", "è");
-		//al_ustr_find_replace_cstr(string, 0, "‹", "ï");
-		////al_ustr_find_replace_cstr(string, 0, "Œ", "î");
-		////al_ustr_find_replace_cstr(string, 0, "", "ì");
-		////al_ustr_find_replace_cstr(string, 0, "Ž", "Ä");
-		//al_ustr_find_replace_cstr(string, 0, "", "Å");
-		////al_ustr_find_replace_cstr(string, 0, "", "É");
-		////al_ustr_find_replace_cstr(string, 0, "‘", "æ");
-		////al_ustr_find_replace_cstr(string, 0, "’", "Æ");
-		////al_ustr_find_replace_cstr(string, 0, "“", "ô");
-		////al_ustr_find_replace_cstr(string, 0, "”", "ö");
-		//al_ustr_find_replace_cstr(string, 0, "•", "ò");
-		//al_ustr_find_replace_cstr(string, 0, "–", "û");
-		////al_ustr_find_replace_cstr(string, 0, "—", "ù");
-		////al_ustr_find_replace_cstr(string, 0, "˜˜", "ÿ");
-		////al_ustr_find_replace_cstr(string, 0, "™", "Ö");
-		////al_ustr_find_replace_cstr(string, 0, "š", "Ü");
-		////al_ustr_find_replace_cstr(string, 0, "›", "¢");
-		////al_ustr_find_replace_cstr(string, 0, "œ", "£");
-		////al_ustr_find_replace_cstr(string, 0, "", "¥");
-		////al_ustr_find_replace_cstr(string, 0, "ž", "P");
-		////al_ustr_find_replace_cstr(string, 0, "Ÿ", "ƒ");
-		////al_ustr_find_replace_cstr(string, 0, " ", "á");
-		////al_ustr_find_replace_cstr(string, 0, "¡", "í");
-		//al_ustr_find_replace_cstr(string, 0, "¢", "ó");
-		////al_ustr_find_replace_cstr(string, 0, "£", "ú");
-		////al_ustr_find_replace_cstr(string, 0, "¤", "ñ");
-		////al_ustr_find_replace_cstr(string, 0, "¥", "Ñ");
 
-		al_ustr_find_replace_cstr(string, 0, "", "u");
-		al_ustr_find_replace_cstr(string, 0, "‚", "e");
-		al_ustr_find_replace_cstr(string, 0, "ƒ", "a");
-		al_ustr_find_replace_cstr(string, 0, "„", "a");
-		al_ustr_find_replace_cstr(string, 0, "…", "a");
-		al_ustr_find_replace_cstr(string, 0, "†", "a");
-		al_ustr_find_replace_cstr(string, 0, "ˆ", "e");
-		al_ustr_find_replace_cstr(string, 0, "‰", "e");
-		al_ustr_find_replace_cstr(string, 0, "Š", "e");
-		al_ustr_find_replace_cstr(string, 0, "‹", "i");
-		al_ustr_find_replace_cstr(string, 0, "", "A");
-		al_ustr_find_replace_cstr(string, 0, "•", "o");
-		al_ustr_find_replace_cstr(string, 0, "–", "u");
-		al_ustr_find_replace_cstr(string, 0, "¢", "o");
-		//printf("%s\n",al_cstr(string));
-		draw_ustr_border(font, drawx, drawy-20, 0, string);
+void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
+  if( config.show_creature_names )
+  	if (creature->name.nickname[0] && config.names_use_nick)
+  	{
+  		draw_textf_border(font, drawx, drawy-20, 0, 
+			"%s", creature->name.nickname );
+	}
+  	else if (creature->name.first_name[0])
+  	{
+	  	char buffer[128];
+	  	strncpy(buffer,creature->name.first_name,127);
+	  	buffer[127]=0;
+	  	if (buffer[0]>90)
+	  		buffer[0] -= 32;
+    	draw_textf_border(font, drawx, drawy-20, 0,
+			"%s", buffer );
+	}
+    else if (config.names_use_species)
+    {
+    	draw_textf_border(font, drawx, drawy-20, 0, 
+			"[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
 	}
 }
+
 //t_creature* global = 0;
 
 void ReadCreaturesToSegment(API& DF, WorldSegment* segment)
@@ -139,7 +74,8 @@ void ReadCreaturesToSegment(API& DF, WorldSegment* segment)
   int y2 = segment->y + segment->sizey;
   int z1 = segment->z;
   int z2 = segment->z + segment->sizez;
-	uint32_t numcreatures = DF.InitReadCreatures();
+  uint32_t numcreatures;
+  if (!DF.InitReadCreatures(numcreatures)) return;
 	
   if(x1<0) x1=0;
   if(y1<0) y1=0;
@@ -274,79 +210,6 @@ int GetCreatureShadowMap( t_creature* c )
 	if (testConfig == NULL)
 		return 4;
 	return testConfig->shadow;
-}
-void generateCreatureDebugString2( t_creature* c, char* strbuffer){
-	if(c->flags2.bits.swimming)
-		strcat(strbuffer, "swimming ");
-	if(c->flags2.bits.sparring)
-		strcat(strbuffer, "sparring ");
-	if(c->flags2.bits.no_notify) // Do not notify about level gains (for embark etc)
-		strcat(strbuffer, "no_notify ");
-	if(c->flags2.bits.unused)
-		strcat(strbuffer, "unused ");
-
-	if(c->flags2.bits.calculated_nerves)
-		strcat(strbuffer, "calculated_nerves ");
-	if(c->flags2.bits.calculated_bodyparts)
-		strcat(strbuffer, "calculated_bodyparts ");
-	if(c->flags2.bits.important_historical_figure) // slight variation
-		strcat(strbuffer, "Historical ");
-	if(c->flags2.bits.killed) // killed by kill() function
-		strcat(strbuffer, "killed ");
-
-	if(c->flags2.bits.cleanup_1) // Must be forgotten by forget function (just cleanup)
-		strcat(strbuffer, "cleanup_1 ");
-	if(c->flags2.bits.cleanup_2) // Must be deleted (cleanup)
-		strcat(strbuffer, "cleanup_2 ");
-	if(c->flags2.bits.cleanup_3) // Recently forgotten (cleanup)
-		strcat(strbuffer, "cleanup_3 ");
-	if(c->flags2.bits.for_trade) // Offered for trade
-		strcat(strbuffer, "for_trade ");
-
-	if(c->flags2.bits.trade_resolved)
-		strcat(strbuffer, "trade_resolved ");
-	if(c->flags2.bits.has_breaks)
-		strcat(strbuffer, "has_breaks ");
-	if(c->flags2.bits.gutted)
-		strcat(strbuffer, "gutted ");
-	if(c->flags2.bits.circulatory_spray)
-		strcat(strbuffer, "circulatory_spray ");
-
-	if(c->flags2.bits.locked_in_for_trading)
-		strcat(strbuffer, "locked_in_for_trading ");
-	if(c->flags2.bits.slaughter) // marked for slaughter
-		strcat(strbuffer, "slaughter ");
-	if(c->flags2.bits.underworld) // Underworld creature
-		strcat(strbuffer, "underworld ");
-	if(c->flags2.bits.resident) // Current resident
-		strcat(strbuffer, "resident ");
-
-	if(c->flags2.bits.cleanup_4) // Marked for special cleanup as unused load from unit block on disk
-		strcat(strbuffer, "cleanup_4 ");
-	if(c->flags2.bits.calculated_insulation) // Insulation from clothing calculated
-		strcat(strbuffer, "calculated_insulation ");
-	if(c->flags2.bits.visitor_uninvited) // Uninvited guest
-		strcat(strbuffer, "visitor_uninvited ");
-	if(c->flags2.bits.visitor) // visitor
-		strcat(strbuffer, "visitor ");
-
-	if(c->flags2.bits.calculated_inventory) // Inventory order calculated
-		strcat(strbuffer, "calculated_inventory ");
-	if(c->flags2.bits.vision_good) // Vision -- have good part
-		strcat(strbuffer, "goodEyes ");
-	if(c->flags2.bits.vision_damaged) // Vision -- have damaged part
-		strcat(strbuffer, "damagedEyes ");
-	if(c->flags2.bits.vision_missing) // Vision -- have missing part
-		strcat(strbuffer, "noEyes ");
-
-	if(c->flags2.bits.breathing_good) // Breathing -- have good part
-		strcat(strbuffer, "canBreathe ");
-	if(c->flags2.bits.breathing_problem) // Breathing -- having a problem
-		strcat(strbuffer, "can'tBreathe ");
-	if(c->flags2.bits.roaming_wilderness_population_source)
-		strcat(strbuffer, "roaming_wilderness_population_source ");
-	if(c->flags2.bits.roaming_wilderness_population_source_not_a_map_feature)
-		strcat(strbuffer, "roaming_wilderness_population_source_not_a_map_feature ");
 }
 
 void generateCreatureDebugString( t_creature* c, char* strbuffer){

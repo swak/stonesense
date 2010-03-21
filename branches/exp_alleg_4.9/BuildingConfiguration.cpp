@@ -29,8 +29,8 @@ BuildingConfiguration::~BuildingConfiguration(void)
 void DumpBuildingNamesToDisk(){
   FILE* fp = fopen("buildingdump.txt", "w");
   if(!fp) return;
-  for(uint32_t j=0; j < contentLoader.buildingNameStrings.size(); j++){
-    fprintf(fp, "%i:%s\n",j, contentLoader.buildingNameStrings[j].c_str());
+  for(uint32_t j=0; j < contentLoader.classIdStrings.size(); j++){
+    fprintf(fp, "%i:%s\n",j, contentLoader.classIdStrings[j].c_str());
   }
   fclose(fp);
 }
