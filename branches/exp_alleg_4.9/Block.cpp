@@ -139,6 +139,13 @@ void Block::Draw(){
 			drawy -= (WALLHEIGHT);
 	}
 
+	//draw surf
+	if(eff_oceanwave > 0)
+	{
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(128, 128, 128, (255*eff_oceanwave/100)));
+		DrawSpriteFromSheet( 127, IMGObjectSheet, drawx, drawy );
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	}
 	//Draw Ramp
 	if(ramp.type > 0){
 		sprite = GetBlockSpriteMap(ramp.type, material);
@@ -275,6 +282,25 @@ void Block::Draw(){
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
 		DrawCreature(drawx, drawy, creature);
 	}
+
+	if(eff_miasma > 0)
+	{
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_miasma/100)));
+		DrawSpriteFromSheet( 180, IMGObjectSheet, drawx, drawy );
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	}
+	if(eff_water > 0)
+	{
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_water/100)));
+		DrawSpriteFromSheet( 181, IMGObjectSheet, drawx, drawy );
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	}
+	if(eff_smoke > 0)
+	{
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_smoke/100)));
+		DrawSpriteFromSheet( 182, IMGObjectSheet, drawx, drawy );
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	}
 	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 }
 
@@ -301,6 +327,7 @@ void Block::Drawcreaturetext(){
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
 		DrawCreatureText(drawx, drawy, creature);
 	}
+
 }
 
 void Block::DrawRamptops(){

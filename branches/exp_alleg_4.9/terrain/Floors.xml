@@ -124,9 +124,6 @@
 	<!-- below grass stair -->
 	<terrain value= 51 />
 	<terrain value= 54 />
-	<!-- fires -->
-	<terrain value= 67 />
-	<terrain value= 70 />
 	<!-- below grass ramp -->
 	<terrain value= 233 />
 	<terrain value= 234 />
@@ -154,6 +151,15 @@
 	<terrain value= 359 />
 </floor>
 
+<floor sprite= 46 >	
+	<!-- fires -->
+	<terrain value= 70 />
+</floor>
+
+<floor sprite= 47 >	
+	<!-- fires -->
+	<terrain value= 67 />
+</floor>
 <!-- hfspit -->
 <floor sprite = 33 >
 	<terrain value= 42 />

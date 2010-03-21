@@ -169,23 +169,23 @@ bool isBlockOnVisibleEdgeOfSegment(WorldSegment* segment, Block* b)
 void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int CellZ,
 					   uint32_t BoundrySX, uint32_t BoundrySY,
 					   uint32_t BoundryEX, uint32_t BoundryEY, 
-						 uint16_t Flags/*not in use*/, 
-             vector<t_building>* allBuildings, 
-             vector<t_construction>* allConstructions,
-             vector< vector <uint16_t> >* allLayers)
+					   uint16_t Flags/*not in use*/, 
+					   vector<t_building>* allBuildings, 
+					   vector<t_construction>* allConstructions,
+					   vector< vector <uint16_t> >* allLayers)
 {
-  //boundry check
-  int celldimX, celldimY, celldimZ;
+	//boundry check
+	int celldimX, celldimY, celldimZ;
 	DF.getSize((unsigned int &)celldimX, (unsigned int &)celldimY, (unsigned int &)celldimZ);
-  if( CellX < 0 || CellX >= celldimX ||
-      CellY < 0 || CellY >= celldimY ||
-      CellZ < 0 || CellZ >= celldimZ
-    ) return;
+	if( CellX < 0 || CellX >= celldimX ||
+		CellY < 0 || CellY >= celldimY ||
+		CellZ < 0 || CellZ >= celldimZ
+		) return;
 
 	if(!DF.isValidBlock(CellX, CellY, CellZ))
 		return;
 
-  
+
 	//make boundries local
 	BoundrySX -= CellX * CELLEDGESIZE;
 	BoundryEX -= CellX * CELLEDGESIZE;
@@ -202,118 +202,119 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 	DF.ReadDesignations(CellX, CellY, CellZ, (uint32_t *) designations);
 	DF.ReadOccupancy(CellX, CellY, CellZ, (uint32_t *) occupancies);
 	DF.ReadRegionOffsets(CellX,CellY,CellZ, regionoffsets);
-  
-  //read local vein data
-  vector <t_vein> veins;
-  vector <t_frozenliquidvein> ices;
-  
-  DF.ReadVeins(CellX,CellY,CellZ,veins,ices);
-  uint32_t numVeins = (uint32_t)veins.size();
+
+	//read local vein data
+	vector <t_vein> veins;
+	vector <t_frozenliquidvein> ices;
+
+	DF.ReadVeins(CellX,CellY,CellZ,veins,ices);
+	uint32_t numVeins = (uint32_t)veins.size();
 
 
 	//parse cell
 	for(uint32_t ly = BoundrySY; ly <= BoundryEY; ly++){
-	for(uint32_t lx = BoundrySX; lx <= BoundryEX; lx++){
-		uint32_t gx = lx + (CellX * CELLEDGESIZE);
-		uint32_t gy = ly + (CellY * CELLEDGESIZE);
-		if( !segment.CoordinateInsideSegment( gx, gy, CellZ) )
-		{ 
-			continue;
-		}
-		bool createdBlock = false;
-		Block* b = segment.getBlock( gx, gy, CellZ);
-		
-		if (!b)
-		{
-		  createdBlock = true;
-		  b = new Block ( &segment );
-		  b->x = gx;
-		  b->y = gy;
-		  b->z = CellZ;
-	  }
-    
-    b->occ = occupancies[lx][ly];
-    b->designation = designations[lx][ly];
+		for(uint32_t lx = BoundrySX; lx <= BoundryEX; lx++){
+			uint32_t gx = lx + (CellX * CELLEDGESIZE);
+			uint32_t gy = ly + (CellY * CELLEDGESIZE);
+			if( !segment.CoordinateInsideSegment( gx, gy, CellZ) )
+			{ 
+				continue;
+			}
+			bool createdBlock = false;
+			Block* b = segment.getBlock( gx, gy, CellZ);
 
-    //liquids
-		if(designations[lx][ly].bits.flow_size > 0){
-			b->water.type  = designations[lx][ly].bits.liquid_type;
-			b->water.index = designations[lx][ly].bits.flow_size;
-		}
+			if (!b)
+			{
+				createdBlock = true;
+				b = new Block ( &segment );
+				b->x = gx;
+				b->y = gy;
+				b->z = CellZ;
+			}
 
-		//read tiletype
-		int t = tiletypes[lx][ly];
-    	if(IDisWall(t)) 
-			b->wallType = t;
-		if(IDisFloor(t))
-			b->floorType = t;
-		if(isStairTerrain(t))
-			b->stairType = t;
-		if(isRampTerrain(t))
-			b->ramp.type = t;
+			b->occ = occupancies[lx][ly];
+			b->designation = designations[lx][ly];
+
+			//liquids
+			if(designations[lx][ly].bits.flow_size > 0){
+				b->water.type  = designations[lx][ly].bits.liquid_type;
+				b->water.index = designations[lx][ly].bits.flow_size;
+			}
+
+			//read tiletype
+			int t = tiletypes[lx][ly];
+			if(IDisWall(t)) 
+				b->wallType = t;
+			if(IDisFloor(t))
+				b->floorType = t;
+			if(isStairTerrain(t))
+				b->stairType = t;
+			if(isRampTerrain(t))
+				b->ramp.type = t;
 
 
-		//debug stuff
-		b->designations = designations[lx][ly];
-		//142,136,15
-    //if(b->x == 142 && b->y == 136 && b->z == 15)
-    //  int j = 10;
+			//debug stuff
+			b->designations = designations[lx][ly];
+			//142,136,15
+			//if(b->x == 142 && b->y == 136 && b->z == 15)
+			//  int j = 10;
 
-		//save in segment
-		bool isHidden = designations[lx][ly].bits.hidden;
-    //option for including hidden blocks
-    isHidden &= !config.show_hidden_blocks;
-    bool shouldBeIncluded = (!isOpenTerrain(t) || b->water.index) && !isHidden;
-    //include hidden blocks as shaded black 
-    if(config.shade_hidden_blocks && isHidden && isBlockOnVisibleEdgeOfSegment(&segment, b))
-    {
-      b->wallType = 0;
-      b->floorType = 0;
-      b->stairType = 0;
-      b->ramp.type = 0;
-      b->water.index = 0;
-      b->building.info.type = BUILDINGTYPE_BLACKBOX;
-      t_SpriteWithOffset sprite = {SPRITEOBJECT_BLACK, 0, 0,-1,ALL_FRAMES};
-      sprite.y=4;
-      b->building.sprites.push_back( sprite );
-      sprite.y=0;
-      b->building.sprites.push_back( sprite );
-      shouldBeIncluded= true;
-    }
-    
-		if( shouldBeIncluded ){
-      //this only needs to be done for included blocks
+			//save in segment
+			bool isHidden = designations[lx][ly].bits.hidden;
+			//option for including hidden blocks
+			isHidden &= !config.show_hidden_blocks;
+			//bool shouldBeIncluded = (!isOpenTerrain(t) || b->water.index) && !isHidden;
+			bool shouldBeIncluded = 1;
+			//include hidden blocks as shaded black 
+			if(config.shade_hidden_blocks && isHidden && isBlockOnVisibleEdgeOfSegment(&segment, b))
+			{
+				b->wallType = 0;
+				b->floorType = 0;
+				b->stairType = 0;
+				b->ramp.type = 0;
+				b->water.index = 0;
+				b->building.info.type = BUILDINGTYPE_BLACKBOX;
+				t_SpriteWithOffset sprite = {SPRITEOBJECT_BLACK, 0, 0,-1,ALL_FRAMES};
+				sprite.y=4;
+				b->building.sprites.push_back( sprite );
+				sprite.y=0;
+				b->building.sprites.push_back( sprite );
+				shouldBeIncluded= true;
+			}
 
-      //determine rock/soil type
-      int rockIndex = (*allLayers) [regionoffsets[designations[lx][ly].bits.biome]] [designations[lx][ly].bits.geolayer_index];
-      //check veins
-      for(uint32_t i=0; i<numVeins; i++){
-				//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
+			if( shouldBeIncluded ){
+				//this only needs to be done for included blocks
 
-        //if((uint32_t)veins[i].type >= groundTypes.size())
+				//determine rock/soil type
+				int rockIndex = (*allLayers) [regionoffsets[designations[lx][ly].bits.biome]] [designations[lx][ly].bits.geolayer_index];
+				//check veins
+				for(uint32_t i=0; i<numVeins; i++){
+					//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
+
+					//if((uint32_t)veins[i].type >= groundTypes.size())
 					//continue;
-					
-		// DANGER: THIS CODE MAY BE BUGGY
-		// This was apparently causing a crash in previous version
-		// But works fine for me
-        uint16_t row = veins[i].assignment[ly];
-        bool set = (row & (1 << lx)) != 0;
-				if(set){
-					rockIndex = veins[i].type;
-				}
-      }
-      b->material.type = Mat_Stone;
-      b->material.index = rockIndex;
-      //string name = v_stonetypes[j].id;
-      if (createdBlock)
-      {
-      	segment.addBlock(b);
-  	  }
-    }else if (createdBlock){
-      delete(b);
-    }
 
-	}
+					// DANGER: THIS CODE MAY BE BUGGY
+					// This was apparently causing a crash in previous version
+					// But works fine for me
+					uint16_t row = veins[i].assignment[ly];
+					bool set = (row & (1 << lx)) != 0;
+					if(set){
+						rockIndex = veins[i].type;
+					}
+				}
+				b->material.type = Mat_Stone;
+				b->material.index = rockIndex;
+				//string name = v_stonetypes[j].id;
+				if (createdBlock)
+				{
+					segment.addBlock(b);
+				}
+			}else if (createdBlock){
+				delete(b);
+			}
+
+		}
 	}
 }
 
@@ -387,7 +388,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
   
 	//read cursor
   pDFApiHandle->getCursorCoords(config.dfCursorX, config.dfCursorY, config.dfCursorZ);
-  
+
   // read constructions
   vector<t_construction> allConstructions;
   uint32_t numconstructions = 0;
@@ -460,6 +461,56 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 	DF.FinishReadVegetation();
 	}
 	
+	//Read Effects
+	uint32_t numeffects;
+	if (DF.InitReadEffects(numeffects))
+	{
+	t_effect_df40d tempeffect;
+	index = 0;
+	while(index < numeffects )
+	{
+		DF.ReadEffect(index, tempeffect);
+		//want hashtable :(
+		Block* b;
+		if( b = segment->getBlock( tempeffect.x, tempeffect.y, tempeffect.z) )
+			if(!(tempeffect.isHidden))
+			{
+				b->blockeffects.type = tempeffect.type;
+				b->blockeffects.canCreateNew = tempeffect.canCreateNew;
+				b->blockeffects.lifetime = tempeffect.lifetime;
+				b->blockeffects.material = tempeffect.material;
+				b->blockeffects.x_direction = tempeffect.x_direction;
+				b->blockeffects.y_direction = tempeffect.y_direction;
+				b->blockeffects.count +=1;
+				if(tempeffect.type == 0)
+					b->eff_miasma = tempeffect.lifetime;
+				if(tempeffect.type == 1)
+					b->eff_water = tempeffect.lifetime;
+				if(tempeffect.type == 2)
+					b->eff_water2 = tempeffect.lifetime;
+				if(tempeffect.type == 3)
+					b->eff_blood = tempeffect.lifetime;
+				if(tempeffect.type == 4)
+					b->eff_dust = tempeffect.lifetime;
+				if(tempeffect.type == 5)
+					b->eff_magma = tempeffect.lifetime;
+				if(tempeffect.type == 6)
+					b->eff_smoke = tempeffect.lifetime;
+				if(tempeffect.type == 7)
+					b->eff_dragonfire = tempeffect.lifetime;
+				if(tempeffect.type == 8)
+					b->eff_fire = tempeffect.lifetime;
+				if(tempeffect.type == 9)
+					b->eff_webing = tempeffect.lifetime;
+				if(tempeffect.type == 10)
+					b->eff_boiling = tempeffect.lifetime;
+				if(tempeffect.type == 11)
+					b->eff_oceanwave = tempeffect.lifetime;
+			}
+		index ++;
+	}
+	DF.FinishReadEffects();
+	}
   //Read Creatures
   ReadCreaturesToSegment( DF, segment );
 

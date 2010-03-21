@@ -566,7 +566,7 @@
         <Skill name="Organizer">71</Skill>
         <Skill name="Record Keeper">72</Skill>
         <Skill name="Liar">73</Skill>
-        <Skill name="Intimitador">74</Skill>
+        <Skill name="Intimidator">74</Skill>
         <Skill name="Conversationalist">75</Skill>
         <Skill name="Comedian">76</Skill>
         <Skill name="Flatterer">77</Skill>
@@ -787,7 +787,7 @@
                        and
                      W I N E
      <Entry version="v0.27.176.38a" os="windows" id="38awin" base="meta-40d">
-        
+     
         <HexValue name="pe_timestamp">0x47b6fac2</HexValue>
         <String name="md5">48c831b6f3950913b8e1aeada563d2db</String>
         <Address name="buildings">0x014639f4</Address>
@@ -820,7 +820,7 @@
         <Address name="y_count">0x014a4ec8</Address>
         <Address name="z_count">0x014a4ecc</Address>
         
-        <!-- job object offsets -->
+                <!-- job object offsets -->
         <Offset name="current_job_id">0x08</Offset>
 
         <!-- map block offsets -->
@@ -1473,6 +1473,7 @@
     <Entry version="v0.28.181.40d16" os="windows" id="40d16win" base="40d15win" rebase="0x0">
         <HexValue name="pe_timestamp">0x4a9b1a72</HexValue>
         <String name="md5">59ab29021aca9f3c66b1ab102fb3ceea</String>
+        <Address name="effects_vector">0x01747F20</Address>
     </Entry>
     <Entry version="v0.28.181.40d17" os="windows" id="40d17win" base="40d16win">
         <HexValue name="pe_timestamp">0x4b6b7879</HexValue>
@@ -1647,7 +1648,7 @@
         
         <!-- tree and shrub offsets -->
         <Offset name="tree_desc_offset">0x40</Offset>
-        
+              
         <!-- map block offsets -->
         <Offset name="v_vein">0x08</Offset>
         <HexValue name="v_vein_size">0x2C</HexValue>
@@ -1682,7 +1683,7 @@
         <Offset name="hotkey_mode">0x4</Offset>
         <Offset name="hotkey_xyz">0x8</Offset>
         <HexValue name="hotkey_size">0x14</HexValue>
-                
+              
         <Offset name="settlement_name">0x00</Offset>
         <Offset name="settlement_world_xy">0x4a</Offset>
         <Offset name="settlement_local_xy">0x94</Offset>
@@ -1895,9 +1896,11 @@
     </Entry>
     <Entry version="v0.28.181.40d15" os="linux" id="40d15lin" base="40d14lin" rebase="0x0">
         <String name="md5">4f55a1dcc326786271f221de23c425b5</String>
+        
     </Entry>
     <Entry version="v0.28.181.40d16" os="linux" id="40d16lin" base="40d15lin" rebase="0x0">
         <String name="md5">022b933926e08da49c6df8649295f2b7</String>
+        <Address name="effects_vector">0x0893F2D0</Address>
     </Entry>
     <Entry version="v0.28.181.40d17" os="linux" id="40d17lin" base="40d16lin">
         <String name="md5">8f55a6250f2550e28535b79db43d5f1a</String>
@@ -1930,9 +1933,10 @@
         <Address name="x_count">0x08fa2d50</Address>
         <Address name="y_count">0x08fa2d54</Address>
         <Address name="z_count">0x08fa2d58</Address>
+        <Address name="effects_vector">0x08947438</Address>
     </Entry>
     <Entry version="v0.28.181.40d18" os="linux" id="40d18lin" base="40d17lin">
-    <String name="md5">777e7d674d8908042307994cb75250ff</String>
+        <String name="md5">777e7d674d8908042307994cb75250ff</String>
         <Address name="buildings">0x09009860</Address>
         <Address name="constructions">0x08ff5a38</Address>
         <Address name="creatures">0x09009380</Address>
@@ -1962,6 +1966,7 @@
         <Address name="x_count">0x09049cf0</Address>
         <Address name="y_count">0x09049cf4</Address>
         <Address name="z_count">0x09049cf8</Address>
+        <Address name="effects_vector">0x089EE3D8</Address>
     </Entry>
     <Entry version="v0.28.181.40d19" os="linux" id="40d19lin" base="40d18lin">
         <String name="md5">04c3ad13c657f59ba6fc135e156d721d</String>
@@ -1994,6 +1999,7 @@
         <Address name="x_count">0x09048d10</Address>
         <Address name="y_count">0x09048d14</Address>
         <Address name="z_count">0x09048d18</Address>
+        <Address name="effects_vector">0x089ED3F8</Address>
     </Entry>
 </MemoryDescriptors>
 <!-- Windows logo by M$, spiderweb by jgs -->

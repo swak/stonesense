@@ -34,6 +34,30 @@ public:
   //bool mirroredBuilding;
 	t_matglossPair tree;
 
+	struct BlockEffects //size 40
+{
+	uint16_t count;
+    uint16_t type;
+    t_matglossPair material;
+    int16_t lifetime;
+    int16_t x_direction;
+    int16_t y_direction;
+    uint8_t canCreateNew;//??
+} blockeffects;
+
+	//individual effects
+	int16_t eff_miasma;
+	int16_t eff_water;
+	int16_t eff_water2;
+	int16_t eff_blood;
+	int16_t eff_dust;
+	int16_t eff_magma;
+	int16_t eff_smoke;
+	int16_t eff_dragonfire;
+	int16_t eff_fire;
+	int16_t eff_webing;
+	int16_t eff_boiling;
+	int16_t eff_oceanwave;
   struct {
     t_building info;
     vector<t_SpriteWithOffset> sprites;
