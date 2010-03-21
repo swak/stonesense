@@ -47,12 +47,15 @@ R: reload memory from DF
 G: reload sprites & config from disk
 F10: display available sprites
 Numpad numbers: Move debug cursor (if available)
+Ctrl+F: Toggle Cursor Follow Mode
 
 -- Follow mode --
 
 When you turn on follow mode, the screen will jump to the location of the DF window.
 You can adjust the position of the follow mode relative to the DF window by
 holding Ctrl while using the keyboard window movement keys.
+
+When you turn on cursor follow mode, the debug cursor will follow the DF cursor when it exists.
 
 --== Contacts ==--
 
