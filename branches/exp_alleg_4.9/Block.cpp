@@ -79,56 +79,6 @@ void Block::Draw(){
 
 	ALLEGRO_COLOR tileBorderColor = al_map_rgb(85,85,85);
 
-	if(config.currentOverlay != none)
-		switch(config.currentOverlay){
-		case flow_size:
-			break;
-		case pile:
-			break;
-		case dig:
-			break;
-		case detail:
-			break;
-		case detail_event:
-			break;
-		case hidden:
-			break;
-		case geolayer_index:
-			break;
-		case light:
-			break;
-		case subterranean:
-			break;
-		case skyview:
-			break;
-		case biome:
-			break;
-		case liquid_type:
-			break;
-		case water_table:
-			break;
-		case rained:
-			break;
-		case traffic:
-			break;
-		case flow_forbid:
-			break;
-		case liquid_static:
-			break;
-		case moss:
-			break;
-		case feature_present:
-			break;
-		case liquid_character:
-			if(designations.bits.liquid_character == 1)
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(255, 255, 0)); //yellow
-			if(designations.bits.liquid_character == 2)
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(255, 0, 255)); //pink
-			if(designations.bits.liquid_character == 3)
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(0, 255, 255)); //cyan
-			break;
-		//default:
-	}
 	//Draw Floor
 	if(floorType > 0 || wallType > 0 || ramp.type > 0 || stairType > 0){
 

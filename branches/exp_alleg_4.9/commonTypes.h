@@ -18,31 +18,6 @@ typedef struct Crd3D {
 	int32_t x,y,z;
 }Crd3D;
 
-enum overlayEnum
-	{
-		none,
-		flow_size,
-		pile,
-		dig,
-		detail,
-		detail_event,
-		hidden,
-		geolayer_index,
-		light,
-		subterranean,
-		skyview,
-		biome,
-		liquid_type,
-		water_table,
-		rained,
-		traffic,
-		flow_forbid,
-		liquid_static,
-		moss,
-		feature_present,
-		liquid_character
-	};
-
 
 typedef struct {
 	bool show_zones;
@@ -95,7 +70,6 @@ typedef struct {
 
 	bool saveImageCache;
 	int imageCacheSize;
-	overlayEnum currentOverlay;
 } GameConfiguration;
 
 

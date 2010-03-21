@@ -167,7 +167,6 @@ int main(void)
 	al_set_system_mouse_cursor(ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT);
 	WriteErr("\nStonesense launched\n");
 
-	config.currentOverlay = none;
 	config.debug_mode = false;
 	config.hide_outer_blocks = false;
 	config.shade_hidden_blocks = true;
