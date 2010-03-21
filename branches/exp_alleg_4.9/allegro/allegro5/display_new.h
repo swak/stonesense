@@ -23,7 +23,10 @@
 //#define ALLEGRO_SINGLEBUFFER 32
 #define ALLEGRO_NOFRAME      64
 #define ALLEGRO_GENERATE_EXPOSE_EVENTS 128
-
+//is something using 256? didn't seem to work...
+#define ALLEGRO_FULLSCREEN_WINDOW 512
+/* This is set to mark a display used only internally. */
+#define ALLEGRO_INTERNAL 1024
 
 /* Possible parameters for al_set_display_option.
  * Make sure to update ALLEGRO_EXTRA_DISPLAY_SETTINGS if you modify
@@ -146,7 +149,7 @@ AL_FUNC(void, al_get_new_window_position, (int *x, int *y));
 AL_FUNC(void, al_set_window_position, (ALLEGRO_DISPLAY *display, int x, int y));
 AL_FUNC(void, al_get_window_position, (ALLEGRO_DISPLAY *display, int *x, int *y));
 
-AL_FUNC(void, al_set_window_title, (AL_CONST char *title));
+AL_FUNC(void, al_set_window_title, (const char *title));
 
 /* Defined in display_settings.c */
 AL_FUNC(void, al_set_new_display_option, (int option, int value, int importance));

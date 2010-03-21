@@ -6,6 +6,7 @@ void ScreenToPoint(int x,int y,int &x1, int &y1, int &z1);
 void pointToScreen(int *inx, int *iny, int inz);
 Crd2D WorldBlockToScreen(int32_t x, int32_t y, int32_t z);
 Crd2D LocalBlockToScreen(int32_t x, int32_t y, int32_t z);
+void DrawCurrentLevelOutline(bool backPart);
 void DrawMinimap();
 void paintboard();
 void draw_textf_border(const ALLEGRO_FONT *font, float x, float y, int flags, const char *format, ...);

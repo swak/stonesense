@@ -66,10 +66,10 @@ void draw_textf_border(const ALLEGRO_FONT *font, float x, float y, int flags, co
 {
 	ALLEGRO_STATE backup;
 	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
-	int src, dst, alpha_src, alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
-	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
 
 	ALLEGRO_USTR *buf;
 	va_list arglist;
@@ -110,10 +110,10 @@ void draw_text_border(const ALLEGRO_FONT *font, float x, float y, int flags, con
 {
 	ALLEGRO_STATE backup;
 	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
-	int src, dst, alpha_src, alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
-	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
 
 	al_draw_text(font, x-1, y-1, flags, ustr);
 	al_draw_text(font, x-1, y+1, flags, ustr);
@@ -131,10 +131,10 @@ void draw_ustr_border(const ALLEGRO_FONT *font, float x, float y, int flags, con
 {
 	ALLEGRO_STATE backup;
 	al_store_state(&backup, ALLEGRO_STATE_BLENDER);
-	int src, dst, alpha_src, alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
-	al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
+	al_set_separate_blender(op, src, dst,alpha_op, alpha_src, alpha_dst, al_map_rgb(0, 0, 0));
 
 	al_draw_ustr(font, x-1, y-1, flags, ustr);
 	al_draw_ustr(font, x-1, y+1, flags, ustr);
@@ -446,7 +446,7 @@ void paintboard(){
 	}
 
 
-	if (config.show_osd) DrawCurrentLevelOutline(true);
+	
 	viewedSegment->drawAllBlocks();
 	if (config.show_osd) DrawCurrentLevelOutline(false);
 
@@ -620,12 +620,9 @@ int loadImgFile(char* filename)
 		foundSize = true;
 		al_destroy_bitmap(test);
 	}
-	int src;
-	int dst;
-	int alpha_src;
-	int alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
 	ALLEGRO_BITMAP* currentTarget = al_get_target_bitmap();
 	uint32_t numFiles = (uint32_t)IMGFilelist.size();
 	for(uint32_t i = 0; i < numFiles; i++)
@@ -654,7 +651,7 @@ int loadImgFile(char* filename)
 	}
 	if((yOffset + al_get_bitmap_height(tempfile)) <= config.imageCacheSize)
 	{
-		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
 		al_set_target_bitmap(IMGCache[currentCache]);
 		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
@@ -666,7 +663,7 @@ int loadImgFile(char* filename)
 		yOffset = 0;
 		xOffset += columnWidth;
 		columnWidth = 0;
-		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
 		al_set_target_bitmap(IMGCache[currentCache]);
 		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
@@ -680,7 +677,7 @@ int loadImgFile(char* filename)
 		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
 		currentCache = IMGCache.size() -1;
 		LogVerbose("Creating image cache #%d\n",currentCache);
-		al_set_blender(ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
 		al_set_target_bitmap(IMGCache[currentCache]);
 		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
 		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
@@ -692,7 +689,7 @@ int loadImgFile(char* filename)
 	al_destroy_bitmap(tempfile);
 	al_set_target_bitmap(al_get_backbuffer());
 	IMGFilenames.push_back(new string(filename));
-	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
+	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 	if(config.saveImageCache)
 		saveImage(IMGCache[currentCache]);
 	al_clear_to_color(al_map_rgb(0,0,0));

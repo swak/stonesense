@@ -62,9 +62,9 @@ void Block::Draw(){
 	if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
 	}*/
 	//debug overlays
-	int src, dst, alpha_src, alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
 	int32_t drawx = x;
 	int32_t drawy = y;
 	int32_t drawz = z; //- ownerSegment->sizez + 1;
@@ -121,11 +121,11 @@ void Block::Draw(){
 			break;
 		case liquid_character:
 			if(designations.bits.liquid_character == 1)
-				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 255, 0)); //yellow
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(255, 255, 0)); //yellow
 			if(designations.bits.liquid_character == 2)
-				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(255, 0, 255)); //pink
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(255, 0, 255)); //pink
 			if(designations.bits.liquid_character == 3)
-				al_set_separate_blender(src, dst, alpha_src, alpha_dst, al_map_rgb(0, 255, 255)); //cyan
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(0, 255, 255)); //cyan
 			break;
 		//default:
 	}
@@ -325,7 +325,7 @@ void Block::Draw(){
 	if(creature != null && (occ.bits.unit || occ.bits.unit_grounded)){
 		DrawCreature(drawx, drawy, creature);
 	}
-	al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
+	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 	if(config.currentOverlay != none)
 		switch(config.currentOverlay){
 		case flow_size:

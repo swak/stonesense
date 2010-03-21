@@ -63,6 +63,11 @@ struct ALLEGRO_DISPLAY_WIN
     */
    volatile bool end_thread;    /* The display thread should end */
    volatile bool thread_ended;  /* The display thread has ended */
+
+   /* For internal use by drivers, when this has been set to true
+    * after al_resize_display called you can call acknowledge_resize
+    */
+   bool can_acknowledge;
 };
 
 
@@ -138,7 +143,7 @@ HICON _al_win_create_icon(HWND wnd, ALLEGRO_BITMAP *sprite, int xfocus, int yfoc
 void _al_win_set_window_position(HWND window, int x, int y);
 void _al_win_get_window_position(HWND window, int *x, int *y);
 void _al_win_toggle_window_frame(ALLEGRO_DISPLAY *display, HWND window, int w, int h, bool onoff);
-void _al_win_set_window_title(ALLEGRO_DISPLAY *display, AL_CONST char *title);
+void _al_win_set_window_title(ALLEGRO_DISPLAY *display, const char *title);
 
 /* cursor routines */
 typedef struct ALLEGRO_MOUSE_CURSOR_WIN ALLEGRO_MOUSE_CURSOR_WIN;

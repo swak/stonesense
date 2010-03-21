@@ -30,7 +30,17 @@
 
 #include <OpenGLES/ES1/gl.h>
 #include <OpenGLES/ES1/glext.h>
-       
+
+/* Apple defines OES versions for these - however the separated alpha ones
+ * don't seem to work on the device and just crash.
+ */
+#define glBlendEquation glBlendEquationOES
+#define glBlendFuncSeparate glBlendFuncSeparateOES
+#define glBlendEquationSeparate glBlendEquationSeparateOES
+#define GL_FUNC_ADD GL_FUNC_ADD_OES
+#define GL_FUNC_SUBTRACT GL_FUNC_SUBTRACT_OES
+#define GL_FUNC_REVERSE_SUBTRACT GL_FUNC_REVERSE_SUBTRACT_OES
+
 #elif defined ALLEGRO_MACOSX
 
 #include <OpenGL/OpenGL.h>
@@ -106,8 +116,8 @@
 
 
 AL_FUNC(float,                 al_get_opengl_version,            (void));
-AL_FUNC(int,                   al_is_opengl_extension_supported, (AL_CONST char *extension));
-AL_FUNC(void*,                 al_get_opengl_proc_address,       (AL_CONST char *name));
+AL_FUNC(int,                   al_is_opengl_extension_supported, (const char *extension));
+AL_FUNC(void*,                 al_get_opengl_proc_address,       (const char *name));
 AL_FUNC(ALLEGRO_OGL_EXT_LIST*, al_get_opengl_extension_list,     (void));
 AL_FUNC(GLuint,                al_get_opengl_texture,            (ALLEGRO_BITMAP *bitmap));
 AL_FUNC(void,                  al_remove_opengl_fbo,             (ALLEGRO_BITMAP *bitmap));

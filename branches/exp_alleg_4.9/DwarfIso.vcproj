@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="D:\allegro-4.9.17\allegro\include;D:\allegro-4.9.17\allegro\Build\build-msvc\include;&quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Include&quot;;D:\allegro-4.9.17\allegro\examples\..\addons\acodec;D:\allegro-4.9.17\allegro\examples\..\addons\audio;D:\allegro-4.9.17\allegro\examples\..\addons\color;D:\allegro-4.9.17\allegro\examples\..\addons\font;D:\allegro-4.9.17\allegro\examples\..\addons\image;D:\allegro-4.9.17\allegro\examples\..\addons\main;D:\allegro-4.9.17\allegro\examples\..\addons\memfile;D:\allegro-4.9.17\allegro\examples\..\addons\native_dialog;D:\allegro-4.9.17\allegro\examples\..\addons\physfs;D:\allegro-4.9.17\allegro\examples\..\addons\primitives;D:\allegro-4.9.17\allegro\examples\..\addons\ttf;"
+				AdditionalIncludeDirectories=".\allegro;&quot;C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (February 2005)\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -139,7 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="true"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro-4.9.17.lib allegro_primitives-4.9.17.lib allegro_font-4.9.17.lib allegro_ttf-4.9.17.lib allegro_image-4.9.17.lib allegro_dialog-4.9.17.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib $(NOINHERIT)"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib allegro.lib allegro_primitives.lib allegro_font.lib allegro_ttf.lib allegro_image.lib allegro_dialog.lib libpng.lib zdll.lib winmm.lib psapi.lib opengl32.lib glu32.lib dfhack/build/dfhack.lib $(NOINHERIT)"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

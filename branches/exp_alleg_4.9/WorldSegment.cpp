@@ -154,30 +154,37 @@ void WorldSegment::drawAllBlocks(){
 	int32_t vsymax = viewedSegment->sizey-1;
 	int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
 	//al_hold_bitmap_drawing(true);
-	int src, dst, alpha_src, alpha_dst;
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
-	al_get_separate_blender(&src, &dst, &alpha_src, &alpha_dst, &color);
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
 
 	for(int32_t vsz=0; vsz < vszmax; vsz++)
 	{
-		if(!fog)
+		if(config.fogenable && config.foga)
 		{
-			fog = al_create_bitmap(al_get_bitmap_width(temp), al_get_bitmap_height(temp));
-			al_set_target_bitmap(fog);
-			al_clear_to_color(al_map_rgb(config.fogr, config.fogg, config.fogb));
-			al_set_target_bitmap(temp);
+			if(!fog)
+			{
+				fog = al_create_bitmap(al_get_bitmap_width(temp), al_get_bitmap_height(temp));
+				al_set_target_bitmap(fog);
+				al_clear_to_color(al_map_rgb(config.fogr, config.fogg, config.fogb));
+				al_set_target_bitmap(temp);
+			}
+			if(!((al_get_bitmap_width(fog) == al_get_bitmap_width(temp)) && (al_get_bitmap_height(fog) == al_get_bitmap_height(temp))))
+			{
+				al_destroy_bitmap(fog);
+				fog = al_create_bitmap(al_get_bitmap_width(temp), al_get_bitmap_height(temp));
+				al_set_target_bitmap(fog);
+				al_clear_to_color(al_map_rgb(config.fogr, config.fogg, config.fogb));
+				al_set_target_bitmap(temp);
+			}
+			al_set_separate_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ADD, ALLEGRO_ZERO, ALLEGRO_ONE, al_map_rgba(255, 255, 255, config.foga));
+			al_draw_bitmap(fog, 0, 0, 0);
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 		}
-		if(!((al_get_bitmap_width(fog) == al_get_bitmap_width(temp)) && (al_get_bitmap_height(fog) == al_get_bitmap_height(temp))))
+		if(vsz == vszmax-1)
 		{
-			al_destroy_bitmap(fog);
-			fog = al_create_bitmap(al_get_bitmap_width(temp), al_get_bitmap_height(temp));
-			al_set_target_bitmap(fog);
-			al_clear_to_color(al_map_rgb(config.fogr, config.fogg, config.fogb));
-			al_set_target_bitmap(temp);
+			if (config.show_osd) DrawCurrentLevelOutline(true);
 		}
-		al_set_separate_blender(ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ZERO, ALLEGRO_ONE, al_map_rgba(255, 255, 255, config.foga));
-		al_draw_bitmap(fog, 0, 0, 0);
-		al_set_separate_blender(src, dst, alpha_src, alpha_dst, color);
 		al_hold_bitmap_drawing(true);
 		for(int32_t vsx=1; vsx < vsxmax; vsx++)
 		{

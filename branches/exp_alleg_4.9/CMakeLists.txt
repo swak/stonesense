@@ -103,7 +103,7 @@ IF(UNIX)
 #    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
  
 #    SET(PROJECT_LIBS ${ALLEGRO5_LIBRARIES} ${PROJECT_LIBS})
-    SET(PROJECT_LIBS allegro-4.9.17 allegro_primitives-4.9.17 allegro_color-4.9.17 allegro_dialog-4.9.17 allegro_flac-4.9.17 allegro_font-4.9.17 allegro_image-4.9.17 allegro_main-4.9.17 allegro_memfile-4.9.17 allegro_ttf-4.9.17 allegro_vorbis-4.9.17 ${PROJECT_LIBS})
+    SET(PROJECT_LIBS allegro-4.9 allegro_primitives-4.9 allegro_color-4.9 allegro_dialog-4.9 allegro_flac-4.9 allegro_font-4.9 allegro_image-4.9 allegro_main-4.9 allegro_memfile-4.9 allegro_ttf-4.9 allegro_vorbis-4.9 ${PROJECT_LIBS})
     
     ADD_EXECUTABLE(stonesense ${PROJECT_SRCS} ${PLATFORM_SRC})
     TARGET_LINK_LIBRARIES(stonesense ${PROJECT_LIBS})
@@ -120,7 +120,7 @@ ELSE(UNIX)
     
     IF(MINGW)
         add_definitions()
-        SET(PROJECT_LIBS liballegro-4.9.17.a liballegro_primitives-4.9.17.a liballegro_image-4.9.17.a liballegro_font-4.9.17.a liballegro_dialog-4.9.17.a liballegro_ttf-4.9.17.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
+        SET(PROJECT_LIBS liballegro-4.9.a liballegro_primitives-4.9.a liballegro_image-4.9.a liballegro_font-4.9.a liballegro_dialog-4.9.a liballegro_ttf-4.9.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro

@@ -93,11 +93,6 @@
 /* Define if constructor attribute is supported. */
 /* #undef ALLEGRO_USE_CONSTRUCTOR */
 
-/* Define if sched_yield is provided by some library. */
-
-/* Define if you need to use a magic main. */
-/* #undef ALLEGRO_WITH_MAGIC_MAIN */
-
 /* Define if dynamically loaded modules are supported. */
 /* #undef ALLEGRO_WITH_MODULES */
 
