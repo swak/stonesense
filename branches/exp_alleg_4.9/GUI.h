@@ -18,6 +18,7 @@ void flushImgFiles();
 int loadImgFile(char* filename);
 int loadImgFile(ALLEGRO_PATH* filepath);
 void DrawSpriteFromSheet( int spriteNum,ALLEGRO_BITMAP* spriteSheet, int x, int y);
+ALLEGRO_BITMAP * CreateSpriteFromSheet( int spriteNum, ALLEGRO_BITMAP* spriteSheet);
 ALLEGRO_BITMAP* load_bitmap_withWarning(char* path);
 void DrawSpriteIndexOverlay(int i);
 void DoSpriteIndexOverlay();
@@ -25,6 +26,7 @@ void loadGraphicsFromDisk();
 void saveScreenshot();
 void saveMegashot();
 void saveImage(ALLEGRO_BITMAP* image);
+void draw_particle_cloud(int count, float centerX, float centerY, float rangeX, float rangeY, ALLEGRO_BITMAP *sprite);
 extern WorldSegment* viewedSegment;//current, loaded
 extern int DisplayedSegmentX;
 extern int DisplayedSegmentY;

@@ -199,6 +199,12 @@ int main(void)
 	config.fontsize = 10;
 	config.font = al_create_path("DejaVuSans.ttf");
 
+	for(int i = 0; i < 500; i++)
+	{
+		srand(i);
+		WriteErr("%d, ", rand());
+	}
+
 	loadConfigFile();
 	loadfont();
 	//set debug cursor

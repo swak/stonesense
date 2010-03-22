@@ -530,6 +530,7 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 			  b->water.index = 8;
 	  }
 		
+
       //setup ramps
       if(b->ramp.type > 0) 
         b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);

@@ -11,8 +11,18 @@
 
 
 
-
-
+ALLEGRO_BITMAP *sprite_miasma = 0;
+ALLEGRO_BITMAP *sprite_water = 0;
+ALLEGRO_BITMAP *sprite_water2 = 0;
+ALLEGRO_BITMAP *sprite_blood = 0;
+ALLEGRO_BITMAP *sprite_dust = 0;
+ALLEGRO_BITMAP *sprite_magma = 0;
+ALLEGRO_BITMAP *sprite_smoke = 0;
+ALLEGRO_BITMAP *sprite_dragonfire = 0;
+ALLEGRO_BITMAP *sprite_fire = 0;
+ALLEGRO_BITMAP *sprite_webing = 0;
+ALLEGRO_BITMAP *sprite_boiling = 0;
+ALLEGRO_BITMAP *sprite_oceanwave = 0;
 
 Block::Block(WorldSegment* ownerSegment)
 {
@@ -142,8 +152,14 @@ void Block::Draw(){
 	//draw surf
 	if(eff_oceanwave > 0)
 	{
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(128, 128, 128, (255*eff_oceanwave/100)));
-		DrawSpriteFromSheet( 127, IMGObjectSheet, drawx, drawy );
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_oceanwave)/100));
+		al_draw_bitmap(sprite_oceanwave, drawx, drawy - (WALLHEIGHT), 0);
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	}
+	if(eff_webing > 0)
+	{
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_webing)/100));
+		al_draw_bitmap(sprite_webing, drawx, drawy - (WALLHEIGHT), 0);
 		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 	}
 	//Draw Ramp
@@ -285,21 +301,49 @@ void Block::Draw(){
 
 	if(eff_miasma > 0)
 	{
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_miasma/100)));
-		DrawSpriteFromSheet( 180, IMGObjectSheet, drawx, drawy );
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+		draw_particle_cloud(eff_miasma, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_miasma);
 	}
 	if(eff_water > 0)
 	{
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_water/100)));
-		DrawSpriteFromSheet( 181, IMGObjectSheet, drawx, drawy );
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+		draw_particle_cloud(eff_water, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_water);
+	}
+	if(eff_water2 > 0)
+	{
+		draw_particle_cloud(eff_water2, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_water2);
+	}
+	if(eff_blood > 0)
+	{
+		draw_particle_cloud(eff_blood, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_blood);
+	}
+	//if(eff_magma > 0)
+	//{
+	//	al_set_separate_blender(op, ALLEGRO_ONE, ALLEGRO_ONE, alpha_op, ALLEGRO_ONE, ALLEGRO_ONE, al_map_rgba(255, 255, 255, (255*eff_magma/100)));
+	//	DrawSpriteFromSheet( 185, IMGObjectSheet, drawx, drawy );
+	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	//}
+	if(eff_magma > 0)
+	{
+		draw_particle_cloud(eff_magma, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_magma);
+	}
+	if(eff_dust > 0)
+	{
+		draw_particle_cloud(eff_dust, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_dust);
 	}
 	if(eff_smoke > 0)
 	{
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgba(255, 255, 255, (255*eff_smoke/100)));
-		DrawSpriteFromSheet( 182, IMGObjectSheet, drawx, drawy );
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+		draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	}
+	if(eff_dragonfire > 0)
+	{
+		draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	}
+	if(eff_fire > 0)
+	{
+		draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	}
+	if(eff_boiling > 0)
+	{
+		draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
 	}
 	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 }
@@ -397,4 +441,36 @@ bool wallShouldNotHaveBorders( int in ){
 		break;
 	};
 	return false;
+}
+
+void createEffectSprites()
+{
+	sprite_miasma		= CreateSpriteFromSheet( 180, IMGObjectSheet);
+	sprite_water		= CreateSpriteFromSheet( 181, IMGObjectSheet);
+	sprite_water2		= CreateSpriteFromSheet( 182, IMGObjectSheet);
+	sprite_blood		= CreateSpriteFromSheet( 183, IMGObjectSheet);
+	sprite_dust			= CreateSpriteFromSheet( 184, IMGObjectSheet);
+	sprite_magma		= CreateSpriteFromSheet( 185, IMGObjectSheet);
+	sprite_smoke		= CreateSpriteFromSheet( 186, IMGObjectSheet);
+	sprite_dragonfire	= CreateSpriteFromSheet( 187, IMGObjectSheet);
+	sprite_fire			= CreateSpriteFromSheet( 188, IMGObjectSheet);
+	sprite_webing		= CreateSpriteFromSheet( 189, IMGObjectSheet);
+	sprite_boiling		= CreateSpriteFromSheet( 190, IMGObjectSheet);
+	sprite_oceanwave	= CreateSpriteFromSheet( 191, IMGObjectSheet);
+}
+
+void destroyEffectSprites()
+{
+	al_destroy_bitmap(sprite_miasma);
+	al_destroy_bitmap(sprite_water);
+	al_destroy_bitmap(sprite_water2);
+	al_destroy_bitmap(sprite_blood);
+	al_destroy_bitmap(sprite_dust);
+	al_destroy_bitmap(sprite_magma);
+	al_destroy_bitmap(sprite_smoke);
+	al_destroy_bitmap(sprite_dragonfire);
+	al_destroy_bitmap(sprite_fire);
+	al_destroy_bitmap(sprite_webing);
+	al_destroy_bitmap(sprite_boiling);
+	al_destroy_bitmap(sprite_oceanwave);
 }

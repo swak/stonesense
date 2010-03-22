@@ -76,7 +76,8 @@ public:
 private:
 
 };
-
+void createEffectSprites();
+void destroyEffectSprites();
 
 //find a better place for these
 bool hasWall(Block* b);

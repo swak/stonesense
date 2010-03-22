@@ -14,6 +14,7 @@ using namespace std;
 #include "Creatures.h"
 #include "ContentLoader.h"
 #include "BlockFactory.h"
+#include "block.h"
 
 #define color_segmentoutline al_map_rgb(0,0,0)
 
@@ -408,6 +409,13 @@ void DrawSpriteFromSheet( int spriteNum, ALLEGRO_BITMAP* spriteSheet, int x, int
 	al_draw_bitmap_region(spriteSheet, sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT, SPRITEWIDTH, SPRITEHEIGHT, x, y - (WALLHEIGHT), 0);
 }
 
+ALLEGRO_BITMAP * CreateSpriteFromSheet( int spriteNum, ALLEGRO_BITMAP* spriteSheet)
+{
+	int sheetx = spriteNum % SHEET_OBJECTSWIDE;
+	int sheety = spriteNum / SHEET_OBJECTSWIDE;
+	return al_create_sub_bitmap(spriteSheet, sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT, SPRITEWIDTH, SPRITEHEIGHT);
+}
+
 void DrawSpriteIndexOverlay(int imageIndex){
 	ALLEGRO_BITMAP* currentImage;
 	if (imageIndex == -1)
@@ -581,12 +589,14 @@ void loadGraphicsFromDisk(){
 	IMGCreatureSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
 	index = loadImgFile("ramps.png");
 	IMGRampSheet = al_create_sub_bitmap(IMGFilelist[index], 0, 0, al_get_bitmap_width(IMGFilelist[index]), al_get_bitmap_height(IMGFilelist[index]));
+	createEffectSprites();
 }
 
 //delete and clean out the image files
 void flushImgFiles()
 {
 	LogVerbose("flushing images...\n");
+	destroyEffectSprites();
 	//should be OK because we keep others from directly acccessing this stuff
 	if(IMGObjectSheet)
 	{
@@ -851,4 +861,14 @@ void saveMegashot(){
 	WriteErr("Took %ims\n", timer);
 	//al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY);
 	al_set_new_bitmap_flags(ALLEGRO_VIDEO_BITMAP);
+}
+
+void draw_particle_cloud(int count, float centerX, float centerY, float rangeX, float rangeY, ALLEGRO_BITMAP *sprite)
+{
+	for(int i = 0;i < count;i++)
+	{
+		float drawx = centerX + ((((float)rand() / RAND_MAX) - 0.5) * rangeX);
+		float drawy = centerY + ((((float)rand() / RAND_MAX) - 0.5) * rangeY);
+		al_draw_bitmap(sprite, drawx, drawy, 0);
+	}
 }
