@@ -67,6 +67,15 @@ bool addSingleVegetationConfig( TiXmlElement* elemRoot,  vector<VegetationConfig
     
     //create profession config
     sprite.sheetIndex=atoi(sheetIndexStr);
+
+	//check for randomised tiles
+	const char* spriteVariationsStr = elemTree->Attribute("variations");
+	if (spriteVariationsStr == NULL || spriteVariationsStr[0] == 0)
+	{
+		sprite.numVariations = 0;
+	}
+	else sprite.numVariations=atoi(spriteVariationsStr);
+
     VegetationConfiguration vegetationConfiguration(gameID, sprite, !dead, !sapling);
     //add a copy to known creatures
     vegetationConfigs->push_back( vegetationConfiguration );

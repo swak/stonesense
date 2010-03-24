@@ -71,7 +71,6 @@ void Block::Draw(){
 	if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
 	if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
 	}*/
-	//debug overlays
 	int op, src, dst, alpha_op, alpha_src, alpha_dst;
 	ALLEGRO_COLOR color;
 	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
@@ -79,6 +78,9 @@ void Block::Draw(){
 	int32_t drawy = y;
 	int32_t drawz = z; //- ownerSegment->sizez + 1;
 
+	srand(x*y*z);
+	srand(rand());
+	int rando = rand();
 	correctBlockForSegmetOffset( drawx, drawy, drawz);
 	correctBlockForRotation( drawx, drawy, drawz);
 	int32_t viewx = drawx;
@@ -112,6 +114,8 @@ void Block::Draw(){
 
 		if(sprite.sheetIndex != INVALID_INDEX)
 		{
+			if(sprite.numVariations)
+				sprite.sheetIndex += rando % sprite.numVariations;
 
 			//if floor is muddy, override regular floor
 			if( occ.bits.mud && water.index == 0)
@@ -203,6 +207,8 @@ void Block::Draw(){
 
 		for(uint32_t i=0; i < building.sprites.size(); i++){
 			sprite = building.sprites[i];
+			if(sprite.numVariations)
+				sprite.sheetIndex += rando % sprite.numVariations;
 			if (!(sprite.animFrames & (1 << currentAnimationFrame)))
 				continue;
 			DrawSpriteFromSheet(sprite.sheetIndex , imageSheet(sprite,IMGObjectSheet), 
@@ -239,6 +245,8 @@ void Block::Draw(){
 	if(wallType > 0){
 		//draw wall
 		sprite =  GetBlockSpriteMap(wallType, material);
+		if(sprite.numVariations)
+			sprite.sheetIndex += rando % sprite.numVariations;
 
 		if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 		{

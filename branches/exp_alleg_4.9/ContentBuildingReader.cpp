@@ -183,6 +183,7 @@ inline bool readNode(SpriteNode* node, TiXmlElement* elemNode, TiXmlElement* ele
 		const char* strOffsetX = elemNode->Attribute("offsetx");
 		const char* strOffsetY = elemNode->Attribute("offsety");
 		const char* filename = elemNode->Attribute("file");
+		const char* spriteVariationsStr = elemNode->Attribute("variations");
 		getAnimFrames(elemNode->Attribute("frames"));
 		sprite->sprite.animFrames = getAnimFrames(elemNode->Attribute("frames"));
 		if (sprite->sprite.animFrames == 0)
@@ -192,6 +193,7 @@ inline bool readNode(SpriteNode* node, TiXmlElement* elemNode, TiXmlElement* ele
 		sprite->sprite.x    = (strOffsetX    != 0 ? atoi(strOffsetX)    : 0);
 		sprite->sprite.y   = (strOffsetY    != 0 ? atoi(strOffsetY)    : 0);
 		sprite->sprite.fileIndex = -1;
+		sprite->sprite.numVariations = (spriteVariationsStr !=0 ? atoi(spriteVariationsStr) : 0);
 		if (filename != NULL && filename[0] != 0)
 		{
 		  	sprite->sprite.fileIndex = loadConfigImgFile((char*)filename,elemNode);

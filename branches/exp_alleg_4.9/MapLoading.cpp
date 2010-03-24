@@ -274,7 +274,7 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 				b->ramp.type = 0;
 				b->water.index = 0;
 				b->building.info.type = BUILDINGTYPE_BLACKBOX;
-				t_SpriteWithOffset sprite = {SPRITEOBJECT_BLACK, 0, 0,-1,ALL_FRAMES};
+				t_SpriteWithOffset sprite = {SPRITEOBJECT_BLACK, 0, 0,-1, 0, ALL_FRAMES};
 				sprite.y=4;
 				b->building.sprites.push_back( sprite );
 				sprite.y=0;

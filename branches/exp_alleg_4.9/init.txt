@@ -102,4 +102,4 @@ If this is set to YES, Stonesense will save a copy of the image each time it cha
 
 This set's the preferred size of the internal image cache. If your videocard does not support it, 
 a smaller size is used.
-[IMAGE_CACHE_SIZE:8192]
+[IMAGE_CACHE_SIZE:4096]

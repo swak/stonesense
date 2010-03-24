@@ -57,6 +57,15 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	sprite.x=0;
 	sprite.y=0;
 	sprite.animFrames=ALL_FRAMES; //augh! no animated terrains! please!
+	sprite.numVariations = 0;
+	//check for randomised tiles
+	const char* spriteVariationsStr = elemWallFloorSprite->Attribute("variations");
+	if (spriteVariationsStr == NULL || spriteVariationsStr[0] == 0)
+	{
+		sprite.numVariations = 0;
+	}
+	else sprite.numVariations=atoi(spriteVariationsStr);
+
 	// check for local file definitions
 	const char* filename = elemWallFloorSprite->Attribute("file");
 	if (filename != NULL && filename[0] != 0)
