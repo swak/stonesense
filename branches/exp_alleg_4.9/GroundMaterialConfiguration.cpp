@@ -85,6 +85,13 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 		sprite.shadeBlue = 255;
 	}
 	else sprite.shadeBlue=atoi(spriteBlueStr);
+	//not all tiles work well with an outline
+	const char* spriteOutlineStr = elemWallFloorSprite->Attribute("outline");
+	if (spriteOutlineStr == NULL || spriteOutlineStr[0] == 0)
+	{
+		sprite.needOutline = true;
+	}
+	else sprite.needOutline=(atoi(spriteOutlineStr) == 1);
 	// check for local file definitions
 	const char* filename = elemWallFloorSprite->Attribute("file");
 	if (filename != NULL && filename[0] != 0)

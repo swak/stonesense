@@ -12,6 +12,7 @@ struct t_SpriteWithOffset{
 	char shadeRed;
 	char shadeGreen;
 	char shadeBlue;
+	bool needOutline;
 } ;
 
 

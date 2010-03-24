@@ -3,7 +3,7 @@
 <blocks file="craggywalls.png"> 
 
 <!-- stone -->
-<block sprite= 0 variations = 4>
+<block sprite= 0 variations = 4 outline=0>
 	<!-- wall feat? -->
 	<terrain value= 176 />
 	<terrain value= 177 />
@@ -21,7 +21,7 @@
 	<terrain value= 440 />
 </block>
 
-<block sprite= 0 variations = 4 red = 198 green = 196 blue = 176>
+<block sprite= 0 variations = 4 red = 198 green = 196 blue = 176 outline=0>
 	<!-- wall feat? -->
 	<terrain value= 176 />
 	<terrain value= 177 />
@@ -42,7 +42,7 @@
 	</material>
 </block>
 
-<block sprite= 0 variations = 4 red = 253 green =219 blue = 139>
+<block sprite= 0 variations = 4 red = 253 green =219 blue = 139 outline=1>
 	<!-- wall feat? -->
 	<terrain value= 176 />
 	<terrain value= 177 />

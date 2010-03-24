@@ -151,16 +151,19 @@ void Block::Draw(){
 			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 		}
 
+		if(sprite.needOutline)
+		{
 			drawy += (WALLHEIGHT);
-			////Northern border
-			//if(this->depthBorderNorth)
-			//	DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
+			//Northern border
+			if(this->depthBorderNorth)
+				DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
 
-			////Western border
-			//if(this->depthBorderWest)
-			//	DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
+			//Western border
+			if(this->depthBorderWest)
+				DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
 
 			drawy -= (WALLHEIGHT);
+		}
 	}
 
 	//draw surf
@@ -286,16 +289,19 @@ void Block::Draw(){
 			{
 				DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 
-				////drawy -= (WALLHEIGHT);
-				////Northern border
-				//if(this->depthBorderNorth)
-				//	DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
+				if(sprite.needOutline)
+				{
+					//drawy -= (WALLHEIGHT);
+					//Northern border
+					if(this->depthBorderNorth)
+						DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
 
-				////Western border
-				//if(this->depthBorderWest)
-				//	DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
+					//Western border
+					if(this->depthBorderWest)
+						DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
 
-				////drawy += (WALLHEIGHT);
+					//drawy += (WALLHEIGHT);
+				}
 			}
 		}
 		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
