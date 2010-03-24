@@ -78,6 +78,7 @@ private:
 };
 void createEffectSprites();
 void destroyEffectSprites();
+void initRandomCube();
 
 //find a better place for these
 bool hasWall(Block* b);

@@ -544,11 +544,11 @@
     <!-- Wet Soil floors -->
     <terrain value = 359/>   
     <material value="Stone">
-      <subtype value="CLAY" />
-	    <subtype value="SILTY_CLAY" />
-    	<subtype value="CLAY_LOAM" />
-			<subtype value="PELAGIC_CLAY"/>
-			<subtype value="SANDY_CLAY"/>
+		<subtype value="CLAY" />
+		<subtype value="SILTY_CLAY" />
+		<subtype value="CLAY_LOAM" />
+		<subtype value="PELAGIC_CLAY"/>
+		<subtype value="SANDY_CLAY"/>
     </material>
 </floor>
 <floor sprite = 25>

@@ -97,6 +97,8 @@ using namespace DFHack;
 #define DEFAULT_SHADOW 4
 #define MAX_SHADOW 7
 
+#define RANDOM_CUBE 16
+
 // this shouldn't change with mods, so should
 // be know ahead of time (especially since we
 // use it for fake terrains already)

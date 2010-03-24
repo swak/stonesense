@@ -24,6 +24,16 @@ ALLEGRO_BITMAP *sprite_webing = 0;
 ALLEGRO_BITMAP *sprite_boiling = 0;
 ALLEGRO_BITMAP *sprite_oceanwave = 0;
 
+int randomCube[RANDOM_CUBE][RANDOM_CUBE][RANDOM_CUBE];
+
+void initRandomCube()
+{
+	for(int i = 0; i < RANDOM_CUBE; i++)
+		for(int j = 0; j < RANDOM_CUBE; j++)
+			for(int k = 0; k < RANDOM_CUBE; k++)
+				randomCube[i][j][k] = rand();
+}
+
 Block::Block(WorldSegment* ownerSegment)
 {
 	//clear out own memory
@@ -78,9 +88,7 @@ void Block::Draw(){
 	int32_t drawy = y;
 	int32_t drawz = z; //- ownerSegment->sizez + 1;
 
-	srand(x*y*z);
-	srand(rand());
-	int rando = rand();
+
 	correctBlockForSegmetOffset( drawx, drawy, drawz);
 	correctBlockForRotation( drawx, drawy, drawz);
 	int32_t viewx = drawx;
@@ -90,7 +98,7 @@ void Block::Draw(){
 	drawx -= TILEWIDTH>>1;
 
 	ALLEGRO_COLOR tileBorderColor = al_map_rgb(85,85,85);
-
+	int rando = randomCube[x%RANDOM_CUBE][y%RANDOM_CUBE][z%RANDOM_CUBE];
 	//Draw Floor
 	if(floorType > 0 || wallType > 0 || ramp.type > 0 || stairType > 0){
 
@@ -116,6 +124,7 @@ void Block::Draw(){
 		{
 			if(sprite.numVariations)
 				sprite.sheetIndex += rando % sprite.numVariations;
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
 
 			//if floor is muddy, override regular floor
 			if( occ.bits.mud && water.index == 0)
@@ -139,16 +148,17 @@ void Block::Draw(){
 			sheetOffsetX = TILEWIDTH * (sprite.sheetIndex % SHEET_OBJECTSWIDE);
 			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * (sprite.sheetIndex / SHEET_OBJECTSWIDE);
 			al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 		}
 
 			drawy += (WALLHEIGHT);
-			//Northern border
-			if(this->depthBorderNorth)
-				DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
+			////Northern border
+			//if(this->depthBorderNorth)
+			//	DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
 
-			//Western border
-			if(this->depthBorderWest)
-				DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
+			////Western border
+			//if(this->depthBorderWest)
+			//	DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
 
 			drawy -= (WALLHEIGHT);
 	}
@@ -247,7 +257,7 @@ void Block::Draw(){
 		sprite =  GetBlockSpriteMap(wallType, material);
 		if(sprite.numVariations)
 			sprite.sheetIndex += rando % sprite.numVariations;
-
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
 		if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 		{
 			sprite.sheetIndex = SPRITEOBJECT_WALL_NA;
@@ -257,33 +267,38 @@ void Block::Draw(){
 		{
 			//skip   
 		}    
-		else if( config.truncate_walls && this->z == ownerSegment->z + ownerSegment->sizez -2){
-			int sheetx = sprite.sheetIndex % SHEET_OBJECTSWIDE;
-			int sheety = sprite.sheetIndex / SHEET_OBJECTSWIDE;
-			//draw a tiny bit of wall
-			al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet),
-				sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
-				SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
-			//draw cut-off floor thing
-			al_draw_bitmap_region(IMGObjectSheet, 
-				TILEWIDTH * SPRITEFLOOR_CUTOFF, 0,
-				SPRITEWIDTH, SPRITEWIDTH, 
-				drawx, drawy-(SPRITEHEIGHT-WALL_CUTOFF_HEIGHT)/2, 0);
+		else 
+		{
+			if( config.truncate_walls && this->z == ownerSegment->z + ownerSegment->sizez -2){
+				int sheetx = sprite.sheetIndex % SHEET_OBJECTSWIDE;
+				int sheety = sprite.sheetIndex / SHEET_OBJECTSWIDE;
+				//draw a tiny bit of wall
+				al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet),
+					sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
+					SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
+				//draw cut-off floor thing
+				al_draw_bitmap_region(IMGObjectSheet, 
+					TILEWIDTH * SPRITEFLOOR_CUTOFF, 0,
+					SPRITEWIDTH, SPRITEWIDTH, 
+					drawx, drawy-(SPRITEHEIGHT-WALL_CUTOFF_HEIGHT)/2, 0);
+			}
+			else 
+			{
+				DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+
+				////drawy -= (WALLHEIGHT);
+				////Northern border
+				//if(this->depthBorderNorth)
+				//	DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
+
+				////Western border
+				//if(this->depthBorderWest)
+				//	DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
+
+				////drawy += (WALLHEIGHT);
+			}
 		}
-		else {
-			DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
-
-			//drawy -= (WALLHEIGHT);
-			//Northern border
-			if(this->depthBorderNorth)
-				DrawSpriteFromSheet(281, IMGObjectSheet, drawx, drawy );
-
-			//Western border
-			if(this->depthBorderWest)
-				DrawSpriteFromSheet(280, IMGObjectSheet, drawx, drawy );
-
-			//drawy += (WALLHEIGHT);
-		}
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 	}
 
 	//water

@@ -66,6 +66,25 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	}
 	else sprite.numVariations=atoi(spriteVariationsStr);
 
+	//  do custom colors
+	const char* spriteRedStr = elemWallFloorSprite->Attribute("red");
+	if (spriteRedStr == NULL || spriteRedStr[0] == 0)
+	{
+		sprite.shadeRed = 255;
+	}
+	else sprite.shadeRed=atoi(spriteRedStr);
+	const char* spriteGreenStr = elemWallFloorSprite->Attribute("green");
+	if (spriteGreenStr == NULL || spriteGreenStr[0] == 0)
+	{
+		sprite.shadeGreen = 255;
+	}
+	else sprite.shadeGreen=atoi(spriteGreenStr);
+	const char* spriteBlueStr = elemWallFloorSprite->Attribute("blue");
+	if (spriteBlueStr == NULL || spriteBlueStr[0] == 0)
+	{
+		sprite.shadeBlue = 255;
+	}
+	else sprite.shadeBlue=atoi(spriteBlueStr);
 	// check for local file definitions
 	const char* filename = elemWallFloorSprite->Attribute("file");
 	if (filename != NULL && filename[0] != 0)

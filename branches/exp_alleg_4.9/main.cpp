@@ -198,7 +198,7 @@ int main(void)
 	config.imageCacheSize = 4096;
 	config.fontsize = 10;
 	config.font = al_create_path("DejaVuSans.ttf");
-
+	initRandomCube();
 	loadConfigFile();
 	loadfont();
 	//set debug cursor

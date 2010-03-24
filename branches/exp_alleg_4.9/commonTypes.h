@@ -9,6 +9,9 @@ struct t_SpriteWithOffset{
 	int32_t fileIndex;
 	uint8_t numVariations;
 	char animFrames;
+	char shadeRed;
+	char shadeGreen;
+	char shadeBlue;
 } ;
 
 
