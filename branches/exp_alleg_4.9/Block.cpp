@@ -74,6 +74,18 @@ inline ALLEGRO_BITMAP* imageSheet(t_SpriteWithOffset sprite, ALLEGRO_BITMAP* def
 	}
 }
 
+inline ALLEGRO_BITMAP* imageSheet(t_subSprite sprite, ALLEGRO_BITMAP* defaultBmp)
+{
+	if (sprite.fileIndex == -1)
+	{
+		return defaultBmp;
+	}
+	else
+	{
+		return getImgFile(sprite.fileIndex);
+	}
+}
+
 void Block::Draw(){
 	int sheetOffsetX, sheetOffsetY;
 	t_SpriteWithOffset sprite;
@@ -122,8 +134,10 @@ void Block::Draw(){
 
 		if(sprite.sheetIndex != INVALID_INDEX)
 		{
+			int spriteOffset = 0;;
 			if(sprite.numVariations)
-				sprite.sheetIndex += rando % sprite.numVariations;
+				spriteOffset = rando % sprite.numVariations;
+
 			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
 
 			//if floor is muddy, override regular floor
@@ -131,24 +145,38 @@ void Block::Draw(){
 			{
 				sprite.sheetIndex = SPRITEFLOOR_WATERFLOOR;
 				sprite.fileIndex = INVALID_INDEX;
+				spriteOffset = 0;
 			}
 			//if floor is snowed down, override  regular floor
 			if( occ.bits.snow )
 			{
 				sprite.sheetIndex = SPRITEFLOOR_SNOW;
 				sprite.fileIndex = INVALID_INDEX;
+				spriteOffset = 0;
 			}
 
 			if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 			{
 				sprite.sheetIndex = SPRITEOBJECT_FLOOR_NA;
 				sprite.fileIndex = INVALID_INDEX;
+				spriteOffset = 0;
 			}
 
-			sheetOffsetX = TILEWIDTH * (sprite.sheetIndex % SHEET_OBJECTSWIDE);
-			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * (sprite.sheetIndex / SHEET_OBJECTSWIDE);
+			sheetOffsetX = TILEWIDTH * ((sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
+			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
 			al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
 			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+			if(!(sprite.subSprites.empty()))
+			{
+				for(int i = 0; i < sprite.subSprites.size(); i++)
+				{
+					sheetOffsetX = TILEWIDTH * ((sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
+					sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+					al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				}
+			}
 		}
 
 		if(sprite.needOutline)
@@ -258,13 +286,14 @@ void Block::Draw(){
 	if(wallType > 0){
 		//draw wall
 		sprite =  GetBlockSpriteMap(wallType, material);
+		int spriteOffset = 0;
 		if(sprite.numVariations)
-			sprite.sheetIndex += rando % sprite.numVariations;
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
+			spriteOffset = rando % sprite.numVariations;
 		if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 		{
 			sprite.sheetIndex = SPRITEOBJECT_WALL_NA;
-			sprite.fileIndex = INVALID_INDEX;  
+			sprite.fileIndex = INVALID_INDEX;
+			spriteOffset = 0;
 		}
 		if (sprite.sheetIndex == INVALID_INDEX)
 		{
@@ -273,12 +302,27 @@ void Block::Draw(){
 		else 
 		{
 			if( config.truncate_walls && this->z == ownerSegment->z + ownerSegment->sizez -2){
-				int sheetx = sprite.sheetIndex % SHEET_OBJECTSWIDE;
-				int sheety = sprite.sheetIndex / SHEET_OBJECTSWIDE;
+				int sheetx = (sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
+				int sheety = (sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
 				//draw a tiny bit of wall
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
 				al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet),
 					sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
 					SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				if(sprite.subSprites.size() > 0)
+				{
+					for(int i = 0; i < sprite.subSprites.size(); i++)
+					{
+						sheetx = (sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
+						sheety = (sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+						al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet),
+							sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
+							SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+					}
+				}
 				//draw cut-off floor thing
 				al_draw_bitmap_region(IMGObjectSheet, 
 					TILEWIDTH * SPRITEFLOOR_CUTOFF, 0,
@@ -287,7 +331,18 @@ void Block::Draw(){
 			}
 			else 
 			{
-				DrawSpriteFromSheet(sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
+				DrawSpriteFromSheet(sprite.sheetIndex+spriteOffset, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				if(sprite.subSprites.size() > 0)
+				{
+					for(int i = 0; i < sprite.subSprites.size(); i++)
+					{
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+						DrawSpriteFromSheet(sprite.subSprites[i].sheetIndex+spriteOffset, imageSheet(sprite.subSprites[i],IMGObjectSheet), drawx, drawy );
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+					}
+				}
 
 				if(sprite.needOutline)
 				{
@@ -304,7 +359,6 @@ void Block::Draw(){
 				}
 			}
 		}
-		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 	}
 
 	//water

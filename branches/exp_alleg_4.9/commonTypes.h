@@ -1,6 +1,13 @@
 #pragma once
 
-
+struct t_subSprite
+{
+	int32_t sheetIndex;
+	int32_t fileIndex;
+	uint8_t shadeRed;
+	uint8_t shadeGreen;
+	uint8_t shadeBlue;
+} ;
 
 struct t_SpriteWithOffset{
 	int32_t sheetIndex;
@@ -9,12 +16,12 @@ struct t_SpriteWithOffset{
 	int32_t fileIndex;
 	uint8_t numVariations;
 	char animFrames;
-	char shadeRed;
-	char shadeGreen;
-	char shadeBlue;
+	uint8_t shadeRed;
+	uint8_t shadeGreen;
+	uint8_t shadeBlue;
 	bool needOutline;
+	vector<t_subSprite> subSprites;
 } ;
-
 
 typedef struct Crd2D {
 	int32_t x,y;

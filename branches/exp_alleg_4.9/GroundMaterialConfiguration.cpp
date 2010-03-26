@@ -11,7 +11,7 @@ TerrainMaterialConfiguration::TerrainMaterialConfiguration()
 	defaultSprite.fileIndex=INVALID_INDEX;
 	defaultSprite.sheetIndex=UNCONFIGURED_INDEX;
 	//dont really care about the rest of the sprite right now.
-	
+
 }
 
 TerrainConfiguration::TerrainConfiguration()
@@ -34,12 +34,12 @@ TerrainConfiguration::~TerrainConfiguration()
 }
 
 void DumpGroundMaterialNamesToDisk(){
-  FILE* fp = fopen("dump.txt", "w");
-  if(!fp) return;
-  for(uint32_t j=0; j < contentLoader.stoneNameStrings.size(); j++){
-    fprintf(fp, "%i:%s\n",j, contentLoader.stoneNameStrings[j].id);
-  }
-  fclose(fp);
+	FILE* fp = fopen("dump.txt", "w");
+	if(!fp) return;
+	for(uint32_t j=0; j < contentLoader.stoneNameStrings.size(); j++){
+		fprintf(fp, "%i:%s\n",j, contentLoader.stoneNameStrings[j].id);
+	}
+	fclose(fp);
 }
 
 void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<TerrainConfiguration*>& configTable ,int basefile)
@@ -98,14 +98,60 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	{
 		sprite.fileIndex = loadConfigImgFile((char*)filename,elemWallFloorSprite);
 	}
+
 	
+	//add subsprites, if any.
+	TiXmlElement* elemSubType = elemWallFloorSprite->FirstChildElement("subsprite");
+	for(TiXmlElement* elemSubType = elemWallFloorSprite->FirstChildElement("subsprite");
+		elemSubType;
+		elemSubType = elemSubType->NextSiblingElement("subsprite"))
+	{
+		const char* subSpriteIndexStr = elemSubType->Attribute("sprite");
+		if (subSpriteIndexStr == NULL || subSpriteIndexStr[0] == 0)
+		{
+			contentError("Invalid Subsprite definition",elemSubType);
+			return; //nothing to work with
+		}
+		// make a base sprite
+		t_subSprite subSprite;
+		subSprite.sheetIndex=atoi(subSpriteIndexStr);
+		subSprite.fileIndex=basefile;
+
+		//do custom colors
+		const char* subSpriteRedStr = elemSubType->Attribute("red");
+		if (subSpriteRedStr == NULL || subSpriteRedStr[0] == 0)
+		{
+			subSprite.shadeRed = 255;
+		}
+		else subSprite.shadeRed=atoi(subSpriteRedStr);
+		const char* subSpriteGreenStr = elemSubType->Attribute("green");
+		if (subSpriteGreenStr == NULL || subSpriteGreenStr[0] == 0)
+		{
+			subSprite.shadeGreen = 255;
+		}
+		else subSprite.shadeGreen=atoi(subSpriteGreenStr);
+		const char* subSpriteBlueStr = elemSubType->Attribute("blue");
+		if (subSpriteBlueStr == NULL || subSpriteBlueStr[0] == 0)
+		{
+			subSprite.shadeBlue = 255;
+		}
+		else subSprite.shadeBlue=atoi(subSpriteBlueStr);
+		// check for local file definitions
+		const char* subfilename = elemSubType->Attribute("file");
+		if (subfilename != NULL && subfilename[0] != 0)
+		{
+			subSprite.fileIndex = loadConfigImgFile((char*)subfilename,elemWallFloorSprite);
+		}
+		sprite.subSprites.push_back(subSprite);
+	}
+
 	vector<int> lookupKeys;
-	
+
 	// look through terrain elements
 	TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
 	for(TiXmlElement* elemTerrain = elemWallFloorSprite->FirstChildElement("terrain");
-		 elemTerrain;
-		 elemTerrain = elemTerrain->NextSiblingElement("terrain"))
+		elemTerrain;
+		elemTerrain = elemTerrain->NextSiblingElement("terrain"))
 	{
 		//get a terrain type 
 		int targetElem=INVALID_INDEX;
@@ -129,12 +175,12 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 			configTable[targetElem] = new TerrainConfiguration();
 		}
 	}
-	
+
 	// check we have some terrain types set
 	int elems = (int)lookupKeys.size();
 	if (elems == 0)
 		return; //nothing to link to
-	
+
 	// parse material elements
 	TiXmlElement* elemMaterial = elemWallFloorSprite->FirstChildElement("material");
 	if (elemMaterial == NULL)
@@ -160,7 +206,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 			contentError("Invalid or missing value attribute",elemMaterial);
 			continue;				
 		}
-		
+
 		// parse subtype elements
 		TiXmlElement* elemSubtype = elemMaterial->FirstChildElement("subtype");
 		if (elemSubtype == NULL)
@@ -171,7 +217,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 				TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 				// if that was null we have *really* screwed up earlier
 				// create a new TerrainMaterialConfiguration if required
-					// make sure we have room for it first
+				// make sure we have room for it first
 				if (tConfig->terrainMaterials.size() <= (uint32_t)elemIndex)
 				{
 					// dont make a full size vector in advance- most of the time
@@ -198,14 +244,14 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 				contentError("Invalid or missing value attribute",elemSubtype);
 				continue;				
 			}
-			
+
 			// set subtype sprite for each terrain type
 			for (int i=0 ; i < elems; i++ )
 			{
 				TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 				//if that was null we have *really* screwed up earlier
 				//create a new TerrainMaterialConfiguration if required
-					//make sure we have room for it first
+				//make sure we have room for it first
 				if (tConfig->terrainMaterials.size() <= (uint32_t)elemIndex)
 				{
 					//dont make a full size vector in advance- we wont need it except
@@ -229,30 +275,30 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 
 bool addSingleTerrainConfig( TiXmlElement* elemRoot){
 	int basefile = INVALID_INDEX;
-  const char* filename = elemRoot->Attribute("file");
+	const char* filename = elemRoot->Attribute("file");
 	if (filename != NULL && filename[0] != 0)
 	{
-	  	basefile = loadConfigImgFile((char*)filename,elemRoot);
+		basefile = loadConfigImgFile((char*)filename,elemRoot);
 	}
-	
-  string elementType = elemRoot->Value();
-  if(elementType.compare( "floors" ) == 0){
-    //parse floors
-    TiXmlElement* elemFloor = elemRoot->FirstChildElement("floor");
-    while( elemFloor ){
-      parseWallFloorSpriteElement( elemFloor, contentLoader.terrainFloorConfigs, basefile );
-      elemFloor = elemFloor->NextSiblingElement("floor");
-    }
-  }
-  if(elementType.compare( "blocks" ) == 0){
-    //parse walls
-    TiXmlElement* elemWall = elemRoot->FirstChildElement("block");
-    while( elemWall ){
-      parseWallFloorSpriteElement( elemWall, contentLoader.terrainBlockConfigs, basefile );
-      elemWall = elemWall->NextSiblingElement("block");
-    }
-  }
-  return true;
+
+	string elementType = elemRoot->Value();
+	if(elementType.compare( "floors" ) == 0){
+		//parse floors
+		TiXmlElement* elemFloor = elemRoot->FirstChildElement("floor");
+		while( elemFloor ){
+			parseWallFloorSpriteElement( elemFloor, contentLoader.terrainFloorConfigs, basefile );
+			elemFloor = elemFloor->NextSiblingElement("floor");
+		}
+	}
+	if(elementType.compare( "blocks" ) == 0){
+		//parse walls
+		TiXmlElement* elemWall = elemRoot->FirstChildElement("block");
+		while( elemWall ){
+			parseWallFloorSpriteElement( elemWall, contentLoader.terrainBlockConfigs, basefile );
+			elemWall = elemWall->NextSiblingElement("block");
+		}
+	}
+	return true;
 }
 
 void flushTerrainConfig(vector<TerrainConfiguration*>& config)
@@ -265,7 +311,7 @@ void flushTerrainConfig(vector<TerrainConfiguration*>& config)
 			delete(config[i]);
 		}
 	}
-	
+
 	config.clear();
 	if (currentsize < MAX_BASE_TERRAIN + FAKE_TERRAIN_COUNT)
 		currentsize = MAX_BASE_TERRAIN + FAKE_TERRAIN_COUNT;

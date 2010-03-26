@@ -276,6 +276,22 @@ void drawDebugCursorAndInfo(){
 			"%s:%i Material:%s%s%s", tform, ttype, 
 			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
 	} 
+	if (tform != NULL)
+	{
+		const char* matName = lookupMaterialTypeName(b->layerMaterial.type);
+		const char* subMatName = lookupMaterialName(b->layerMaterial.type,b->layerMaterial.index);
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,
+			"Layer Material:%s%s%s", 
+			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
+	} 
+	if ((tform != NULL) && b->hasVein == 1)
+	{
+		const char* matName = lookupMaterialTypeName(b->veinMaterial.type);
+		const char* subMatName = lookupMaterialName(b->veinMaterial.type,b->veinMaterial.index);
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,
+			"Vein Material:%s%s%s", 
+			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
+	} 
 	draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,
 		"Building Occ: %i Index: %i", b->occ.bits.building, b->building.index);
 
@@ -296,8 +312,8 @@ void drawDebugCursorAndInfo(){
 	if(b->creature != null){
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Creature:%s(%i) Job:%s", 
-      contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
-      dfMemoryInfo->getProfession( b->creature->profession ).c_str());
+			contentLoader.creatureNameStrings.at(b->creature->type).id, b->creature->type, 
+			dfMemoryInfo->getProfession( b->creature->profession ).c_str());
 
 		char strCreature[150] = {0};
 		generateCreatureDebugString( b->creature, strCreature );
@@ -358,6 +374,7 @@ void drawDebugCursorAndInfo(){
 	if(b->eff_oceanwave > 0)
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 		"Ocean Wave: %d", b->eff_oceanwave);
+
 	//basecon
 	//textprintf(target, font, 2, config.screenHeight-20-(i--*10), 0xFFFFFF, 
 	//   "base: %d %d %d ", b->basetile, b->basecon.type, b->basecon.index );

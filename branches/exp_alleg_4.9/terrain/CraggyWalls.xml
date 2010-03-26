@@ -62,6 +62,35 @@
 		<subtype value="ALUNITE" />
 	</material>
 </block>
+
+<block sprite= 0 variations = 4 red = 161 green =156 blue = 143 outline=0>
+	<!-- wall feat? -->
+	<terrain value= 176 />
+	<terrain value= 177 />
+	<terrain value= 178 />
+	<terrain value= 219 />
+	<!-- wall feat? -->
+	<terrain value= 332 />
+	<terrain value= 333 />
+	<terrain value= 334 />
+	<terrain value= 335 />	
+	<!-- vein wall -->
+	<terrain value= 437 />
+	<terrain value= 438 />
+	<terrain value= 439 />
+	<terrain value= 440 />
+	<material value="Stone">
+		<subtype value="GRANITE" />
+	</material>
+</block>
+
+<block sprite= 0 variations = 4 red = 198 green = 196 blue = 176 outline=0>
+	<terrain value= 440 />
+	<material value="Stone">
+		<subtype value="REALGAR" />
+	</material>
+	<subsprite sprite = 4 red = 255 green = 0 blue = 0 />
+</block>
 </blocks>
 
 

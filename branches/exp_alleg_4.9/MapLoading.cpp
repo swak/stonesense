@@ -287,6 +287,8 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 
 				//determine rock/soil type
 				int rockIndex = (*allLayers) [regionoffsets[designations[lx][ly].bits.biome]] [designations[lx][ly].bits.geolayer_index];
+				b->layerMaterial.type = Mat_Stone;
+				b->layerMaterial.index = (*allLayers) [regionoffsets[designations[lx][ly].bits.biome]] [designations[lx][ly].bits.geolayer_index];
 				//check veins
 				for(uint32_t i=0; i<numVeins; i++){
 					//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
@@ -301,10 +303,19 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 					bool set = (row & (1 << lx)) != 0;
 					if(set){
 						rockIndex = veins[i].type;
+						b->veinMaterial.type = Mat_Stone;
+						b->veinMaterial.index = veins[i].type;
+						b->hasVein = 1;
+					}
+					else
+					{
+						b->veinMaterial.type = Mat_Stone;
+						b->veinMaterial.index = rockIndex;
 					}
 				}
 				b->material.type = Mat_Stone;
 				b->material.index = rockIndex;
+
 				//string name = v_stonetypes[j].id;
 				if (createdBlock)
 				{
