@@ -198,10 +198,10 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 	t_designation designations[16][16];
 	t_occupancy occupancies[16][16];
 	uint8_t regionoffsets[16];
-	DF.ReadTileTypes(CellX, CellY, CellZ, (uint16_t *) tiletypes);
-	DF.ReadDesignations(CellX, CellY, CellZ, (uint32_t *) designations);
-	DF.ReadOccupancy(CellX, CellY, CellZ, (uint32_t *) occupancies);
-	DF.ReadRegionOffsets(CellX,CellY,CellZ, regionoffsets);
+	DF.ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
+	DF.ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
+	DF.ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
+	DF.ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
 
 	//read local vein data
 	vector <t_vein> veins;
