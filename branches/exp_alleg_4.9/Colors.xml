@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+
+<colors> 
+	<color red = 43 green =11 blue = 11>
+		<material value="Stone">
+			<subtype value="ONYX" />
+		</material>
+	</color>
+
+	<color red = 43 green =40 blue = 35>
+		<material value="Stone">
+			<subtype value="MORION" />
+		</material>
+	</color>
+
+	<color red = 140 green =154 blue = 165>
+		<material value="Stone">
+			<subtype value="SCHORL" />
+		</material>
+	</color>
+
+	<color red = 147 green =181 blue = 223>
+		<material value="Stone">
+			<subtype value="LACE AGATE" />
+		</material>
+	</color>
+
+	<color red = 161 green =156 blue = 143>
+		<material value="Stone">
+			<subtype value="GRANITE" />
+		</material>
+	</color>
+	
+	<color red = 198 green = 196 blue = 176>
+		<material value="Stone">
+			<subtype value="FELSITE" />
+		</material>
+	</color>
+	
+	<color red = 248 green =487 blue = 133>
+		<material value="Stone">
+			<subtype value="ORTHOCLASE" />
+		</material>
+	</color>
+	
+	<color red = 90 green =191 blue = 218>
+		<material value="Stone">
+			<subtype value="MICROCLINE" />
+		</material>
+	</color>
+	
+	<color red = 253 green =219 blue = 139>
+		<material value="Stone">
+			<subtype value="ALUNITE" />
+		</material>
+	</color>
+	
+	<color red = 90 green =255 blue = 255>
+		<material value="Stone">
+			<subtype value="RAW_ADAMANTINE" />
+		</material>
+	</color>
+	
+	<color red = 255 green = 177 blue = 80 >
+		<material value="Metal">
+			<subtype value="COPPER" />
+		</material>
+	</color>
+	
+	<color red = 250 green = 242 blue = 148 >
+		<material value="Metal">
+			<subtype value="GOLD" />
+		</material>
+	</color>
+	
+	<color red = 198 green = 199 blue = 197 >
+		<material value="Metal">
+			<subtype value="PEWTER_LAY" />
+		</material>
+	</color>
+	
+	<color red = 206 green = 140 blue = 62 >
+		<material value="Wood">
+			<subtype value="CHESTNUT" />
+		</material>
+	</color>
+	
+	<color red = 79 green = 205 blue = 88 >
+		<material value="GreenGlass"/>
+	</color>
+</colors>
+
+

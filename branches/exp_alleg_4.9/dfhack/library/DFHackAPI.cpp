@@ -97,6 +97,10 @@ public:
     uint32_t creature_likes_offset;
 	uint32_t creature_artifact_name_offset;
 	uint32_t creature_mood_offset;
+	uint32_t creature_pregnancy_offset;
+	uint32_t creature_blood_max_offset;
+	uint32_t creature_blood_current_offset;
+	uint32_t creature_bleed_offset;
 
     uint32_t item_material_offset;
 
@@ -255,7 +259,7 @@ bool API::InitMap()
         off->y_count_offset = y_count_offset;
         off->z_count_offset = z_count_offset;
         full_barrier
-        const uint32_t cmd = Maps::MAP_INIT + d->maps_module << 16;
+        const uint32_t cmd = Maps::MAP_INIT + (d->maps_module << 16);
         g_pProcess->SetAndWait(cmd);
         //cerr << "Map acceleration enabled!" << endl;
     }
@@ -264,7 +268,9 @@ bool API::InitMap()
     uint32_t x_array_loc = g_pProcess->readDWord (map_offset);
     if (!x_array_loc)
     {
-        throw Error::NoMapLoaded();
+        return false;
+        // FIXME: only throw this due to programmer error, in the other map functions
+        //throw Error::NoMapLoaded();
     }
     
     // get the size
@@ -348,11 +354,11 @@ bool API::ReadBlock40d(uint32_t x, uint32_t y, uint32_t z, mapblock40d * buffer)
         {
             g_pProcess->read (addr + d->tile_type_offset, sizeof (buffer->tiletypes), (uint8_t *) buffer->tiletypes);
             g_pProcess->read (addr + d->occupancy_offset, sizeof (buffer->occupancy), (uint8_t *) buffer->occupancy);
-            g_pProcess->read (addr + d->designation_offset, sizeof (buffer->designaton), (uint8_t *) buffer->designaton);
+            g_pProcess->read (addr + d->designation_offset, sizeof (buffer->designation), (uint8_t *) buffer->designation);
             g_pProcess->read (addr + d->biome_stuffs, sizeof (buffer->biome_indices), (uint8_t *) buffer->biome_indices);
             buffer->origin = addr;
             uint32_t addr_of_struct = g_pProcess->readDWord(addr);
-            buffer->dirty_dword = g_pProcess->readDWord(addr_of_struct);
+            buffer->blockflags.whole = g_pProcess->readDWord(addr_of_struct);
             return true;
         }
         return false;
@@ -361,7 +367,7 @@ bool API::ReadBlock40d(uint32_t x, uint32_t y, uint32_t z, mapblock40d * buffer)
 
 
 // 256 * sizeof(uint16_t)
-bool API::ReadTileTypes (uint32_t x, uint32_t y, uint32_t z, uint16_t *buffer)
+bool API::ReadTileTypes (uint32_t x, uint32_t y, uint32_t z, tiletypes40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -399,9 +405,31 @@ bool API::WriteDirtyBit(uint32_t x, uint32_t y, uint32_t z, bool dirtybit)
     return false;
 }
 
+/// read/write the block flags
+bool API::ReadBlockFlags(uint32_t x, uint32_t y, uint32_t z, t_blockflags &blockflags)
+{
+    uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
+    if(addr)
+    {
+        uint32_t addr_of_struct = g_pProcess->readDWord(addr);
+        blockflags.whole = g_pProcess->readDWord(addr_of_struct);
+        return true;
+    }
+    return false;
+}
+bool API::WriteBlockFlags(uint32_t x, uint32_t y, uint32_t z, t_blockflags blockflags)
+{
+    uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
+    if (addr)
+    {
+        uint32_t addr_of_struct = g_pProcess->readDWord(addr);
+        g_pProcess->writeDWord (addr_of_struct, blockflags.whole);
+        return true;
+    }
+    return false;
+}
 
-// 256 * sizeof(uint32_t)
-bool API::ReadDesignations (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
+bool API::ReadDesignations (uint32_t x, uint32_t y, uint32_t z, designations40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -414,7 +442,7 @@ bool API::ReadDesignations (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer
 
 
 // 256 * sizeof(uint32_t)
-bool API::ReadOccupancy (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
+bool API::ReadOccupancy (uint32_t x, uint32_t y, uint32_t z, occupancies40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -427,7 +455,7 @@ bool API::ReadOccupancy (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
 
 
 // 256 * sizeof(uint16_t)
-bool API::WriteTileTypes (uint32_t x, uint32_t y, uint32_t z, uint16_t *buffer)
+bool API::WriteTileTypes (uint32_t x, uint32_t y, uint32_t z, tiletypes40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -445,7 +473,7 @@ bool API::getCurrentCursorCreature(uint32_t & creature_index)
     return true;
 }
 // 256 * sizeof(uint32_t)
-bool API::WriteDesignations (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
+bool API::WriteDesignations (uint32_t x, uint32_t y, uint32_t z, designations40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -457,7 +485,7 @@ bool API::WriteDesignations (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffe
 }
 
 // 256 * sizeof(uint32_t)
-bool API::WriteOccupancy (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
+bool API::WriteOccupancy (uint32_t x, uint32_t y, uint32_t z, occupancies40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
@@ -471,12 +499,12 @@ bool API::WriteOccupancy (uint32_t x, uint32_t y, uint32_t z, uint32_t *buffer)
 // FIXME: this is bad. determine the real size!
 //16 of them? IDK... there's probably just 7. Reading more doesn't cause errors as it's an array nested inside a block
 // 16 * sizeof(uint8_t)
-bool API::ReadRegionOffsets (uint32_t x, uint32_t y, uint32_t z, uint8_t *buffer)
+bool API::ReadRegionOffsets (uint32_t x, uint32_t y, uint32_t z, biome_indices40d *buffer)
 {
     uint32_t addr = d->block[x*d->y_block_count*d->z_block_count + y*d->z_block_count + z];
     if (addr)
     {
-        g_pProcess->read (addr + d->biome_stuffs, 16 * sizeof (uint8_t), buffer);
+        g_pProcess->read (addr + d->biome_stuffs, 16 * sizeof (uint8_t), (uint8_t *) buffer);
         return true;
     }
     return false;
@@ -892,7 +920,7 @@ bool API::InitReadEffects ( uint32_t & numeffects )
     return true;
 }
 
-bool API::ReadEffect(const int32_t index, t_effect_df40d & effect)
+bool API::ReadEffect(const uint32_t index, t_effect_df40d & effect)
 {
     if(!d->effectsInited)
         return false;
@@ -907,7 +935,7 @@ bool API::ReadEffect(const int32_t index, t_effect_df40d & effect)
 }
 
 // use with care!
-bool API::WriteEffect(const int32_t index, const t_effect_df40d & effect)
+bool API::WriteEffect(const uint32_t index, const t_effect_df40d & effect)
 {
     if(!d->effectsInited)
         return false;
@@ -1060,7 +1088,12 @@ bool API::InitReadCreatures( uint32_t &numcreatures )
         d->creature_likes_offset = minfo->getOffset("creature_likes");
         d->creature_artifact_name_offset = minfo->getOffset("creature_artifact_name");
         d->creature_mood_offset = minfo->getOffset("creature_mood");
-
+        
+        d->creature_pregnancy_offset = minfo->getOffset("creature_pregnancy");
+        d->creature_blood_max_offset = minfo->getOffset("creature_blood_max");
+        d->creature_blood_current_offset = minfo->getOffset("creature_blood_current");
+        d->creature_bleed_offset = minfo->getOffset("creature_bleed");
+        
         d->p_cre = new DfVector (d->p->readVector (creatures, 4));
         d->creaturesInited = true;
         numcreatures =  d->p_cre->getSize();
@@ -1338,6 +1371,13 @@ bool API::ReadCreature (const int32_t index, t_creature & furball)
     g_pProcess->readDWord (temp + d->creature_money_offset, furball.money);
     furball.squad_leader_id = (int32_t) g_pProcess->readDWord (temp + d->creature_squad_leader_id_offset);
     g_pProcess->readByte (temp + d->creature_sex_offset, furball.sex);
+
+	g_pProcess->readDWord(temp+d->creature_pregnancy_offset, furball.pregnancy_timer);
+	furball.blood_max = (int32_t) g_pProcess->readDWord(temp+d->creature_blood_max_offset);
+	furball.blood_current = (int32_t) g_pProcess->readDWord(temp+d->creature_blood_current_offset);
+	g_pProcess->readDWord(temp+d->creature_bleed_offset, furball.bleed_rate);
+
+
     return true;
 }
 
