@@ -1,12 +1,21 @@
 #pragma once
 
+#include "common.h"
+
+enum ShadeBy
+{
+	ShadeNone,
+	ShadeXml,
+	ShadeMat,
+	ShadeLayer,
+	ShadeVein,
+} ;
 struct t_subSprite
 {
 	int32_t sheetIndex;
 	int32_t fileIndex;
-	uint8_t shadeRed;
-	uint8_t shadeGreen;
-	uint8_t shadeBlue;
+	ALLEGRO_COLOR shadeColor;
+	ShadeBy shadeBy;
 } ;
 
 struct t_SpriteWithOffset{
@@ -16,11 +25,10 @@ struct t_SpriteWithOffset{
 	int32_t fileIndex;
 	uint8_t numVariations;
 	char animFrames;
-	uint8_t shadeRed;
-	uint8_t shadeGreen;
-	uint8_t shadeBlue;
+	ALLEGRO_COLOR shadeColor;
 	bool needOutline;
 	vector<t_subSprite> subSprites;
+	ShadeBy shadeBy;
 } ;
 
 typedef struct Crd2D {

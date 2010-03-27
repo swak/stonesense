@@ -58,6 +58,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	sprite.y=0;
 	sprite.animFrames=ALL_FRAMES; //augh! no animated terrains! please!
 	sprite.numVariations = 0;
+	uint8_t red, green, blue;
 	//check for randomised tiles
 	const char* spriteVariationsStr = elemWallFloorSprite->Attribute("variations");
 	if (spriteVariationsStr == NULL || spriteVariationsStr[0] == 0)
@@ -70,21 +71,46 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	const char* spriteRedStr = elemWallFloorSprite->Attribute("red");
 	if (spriteRedStr == NULL || spriteRedStr[0] == 0)
 	{
-		sprite.shadeRed = 255;
+		red = 255;
 	}
-	else sprite.shadeRed=atoi(spriteRedStr);
+	else red=atoi(spriteRedStr);
 	const char* spriteGreenStr = elemWallFloorSprite->Attribute("green");
 	if (spriteGreenStr == NULL || spriteGreenStr[0] == 0)
 	{
-		sprite.shadeGreen = 255;
+		green = 255;
 	}
-	else sprite.shadeGreen=atoi(spriteGreenStr);
+	else green=atoi(spriteGreenStr);
 	const char* spriteBlueStr = elemWallFloorSprite->Attribute("blue");
 	if (spriteBlueStr == NULL || spriteBlueStr[0] == 0)
 	{
-		sprite.shadeBlue = 255;
+		blue = 255;
 	}
-	else sprite.shadeBlue=atoi(spriteBlueStr);
+	else blue=atoi(spriteBlueStr);
+
+	sprite.shadeColor = al_map_rgb(red, green, blue);
+
+	//decide what the sprite should be shaded by.
+	const char* spriteColorStr = elemWallFloorSprite->Attribute("color");
+	if (spriteColorStr == NULL || spriteColorStr[0] == 0)
+	{
+		sprite.shadeBy = ShadeNone;
+	}
+	else
+	{
+		sprite.shadeBy = ShadeNone;
+		if( strcmp(spriteColorStr, "none") == 0)
+			sprite.shadeBy = ShadeNone;
+		if( strcmp(spriteColorStr, "xml") == 0)
+			sprite.shadeBy = ShadeXml;
+		if( strcmp(spriteColorStr, "material") == 0)
+			sprite.shadeBy = ShadeMat;
+		if( strcmp(spriteColorStr, "layer") == 0)
+			sprite.shadeBy = ShadeLayer;
+		if( strcmp(spriteColorStr, "vein") == 0)
+			sprite.shadeBy = ShadeVein;
+	}
+
+
 	//not all tiles work well with an outline
 	const char* spriteOutlineStr = elemWallFloorSprite->Attribute("outline");
 	if (spriteOutlineStr == NULL || spriteOutlineStr[0] == 0)
@@ -99,7 +125,7 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 		sprite.fileIndex = loadConfigImgFile((char*)filename,elemWallFloorSprite);
 	}
 
-	
+
 	//add subsprites, if any.
 	TiXmlElement* elemSubType = elemWallFloorSprite->FirstChildElement("subsprite");
 	for(TiXmlElement* elemSubType = elemWallFloorSprite->FirstChildElement("subsprite");
@@ -115,27 +141,50 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 		// make a base sprite
 		t_subSprite subSprite;
 		subSprite.sheetIndex=atoi(subSpriteIndexStr);
-		subSprite.fileIndex=basefile;
+		subSprite.fileIndex=sprite.fileIndex; //should be the same file as the main sprite by default.
 
 		//do custom colors
 		const char* subSpriteRedStr = elemSubType->Attribute("red");
 		if (subSpriteRedStr == NULL || subSpriteRedStr[0] == 0)
 		{
-			subSprite.shadeRed = 255;
+			red = 255;
 		}
-		else subSprite.shadeRed=atoi(subSpriteRedStr);
+		else red=atoi(subSpriteRedStr);
 		const char* subSpriteGreenStr = elemSubType->Attribute("green");
 		if (subSpriteGreenStr == NULL || subSpriteGreenStr[0] == 0)
 		{
-			subSprite.shadeGreen = 255;
+			green = 255;
 		}
-		else subSprite.shadeGreen=atoi(subSpriteGreenStr);
+		else green=atoi(subSpriteGreenStr);
 		const char* subSpriteBlueStr = elemSubType->Attribute("blue");
 		if (subSpriteBlueStr == NULL || subSpriteBlueStr[0] == 0)
 		{
-			subSprite.shadeBlue = 255;
+			blue = 255;
 		}
-		else subSprite.shadeBlue=atoi(subSpriteBlueStr);
+		else blue=atoi(subSpriteBlueStr);
+		subSprite.shadeColor = al_map_rgb(red, green, blue);
+
+		//decide what the sprite should be shaded by.
+		const char* subSpriteColorStr = elemSubType->Attribute("color");
+		if (subSpriteColorStr == NULL || subSpriteColorStr[0] == 0)
+		{
+			sprite.shadeBy = ShadeNone;
+		}
+		else
+		{
+			subSprite.shadeBy = ShadeNone;
+			if( strcmp(subSpriteColorStr, "none") == 0)
+				subSprite.shadeBy = ShadeNone;
+			if( strcmp(subSpriteColorStr, "xml") == 0)
+				subSprite.shadeBy = ShadeXml;
+			if( strcmp(subSpriteColorStr, "material") == 0)
+				subSprite.shadeBy = ShadeMat;
+			if( strcmp(subSpriteColorStr, "layer") == 0)
+				subSprite.shadeBy = ShadeLayer;
+			if( strcmp(subSpriteColorStr, "vein") == 0)
+				subSprite.shadeBy = ShadeVein;
+		}
+
 		// check for local file definitions
 		const char* subfilename = elemSubType->Attribute("file");
 		if (subfilename != NULL && subfilename[0] != 0)

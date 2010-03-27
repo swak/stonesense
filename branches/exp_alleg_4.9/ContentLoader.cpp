@@ -3,6 +3,7 @@
 #include "ContentLoader.h"
 #include "ContentBuildingReader.h"
 #include "MapLoading.h"
+#include "ColorConfiguration.h"
 
 #include "dfhack/library/tinyxml/tinyxml.h"
 #include "GUI.h"
@@ -19,6 +20,7 @@ ContentLoader::~ContentLoader(void)
   flushTerrainConfig(terrainFloorConfigs);
   flushTerrainConfig(terrainBlockConfigs);	
   flushCreatureConfig();
+  flushColorConfig(colorConfigs);
 }
 
 
@@ -204,6 +206,8 @@ bool ContentLoader::parseContentXMLFile( char* filepath ){
         runningResult &= parseShrubContent( elemRoot );
 	else if( elementType.compare( "trees" ) == 0 )
         runningResult &= parseTreeContent( elemRoot );
+	else if( elementType.compare( "colors" ) == 0 )
+        runningResult &= parseColorContent( elemRoot );
     else
     	contentError("Unrecognised root element",elemRoot);
 
@@ -232,6 +236,10 @@ bool ContentLoader::parseTreeContent(TiXmlElement* elemRoot ){
 
 bool ContentLoader::parseTerrainContent(TiXmlElement* elemRoot ){
   return addSingleTerrainConfig( elemRoot );
+}
+
+bool ContentLoader::parseColorContent(TiXmlElement* elemRoot ){
+  return addSingleColorConfig( elemRoot );
 }
 
 const char* getDocument(TiXmlNode* element)
@@ -435,4 +443,24 @@ void ContentLoader::flushCreatureConfig()
 	{
 		creatureConfigs.resize(creatureNameStrings.size()+1,NULL);
 	}
+}
+ALLEGRO_COLOR lookupMaterialColor(int matType,int matIndex)
+{
+	if (matType >= contentLoader.colorConfigs.size())
+	{
+		return al_map_rgb(255, 255, 255);
+	}
+	if (matIndex < 0)
+	{
+		return contentLoader.colorConfigs.at(matType).color;
+	}
+	if (matIndex >= contentLoader.colorConfigs.at(matType).colorMaterials.size())
+	{
+		return al_map_rgb(255, 255, 255);
+	}
+	if (contentLoader.colorConfigs.at(matType).colorMaterials.at(matIndex).colorSet)
+	{
+		return contentLoader.colorConfigs.at(matType).colorMaterials.at(matIndex).color;
+	}
+	else return al_map_rgb(255, 255, 255);
 }

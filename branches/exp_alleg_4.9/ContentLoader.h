@@ -4,6 +4,7 @@
 #include "CreatureConfiguration.h"
 #include "VegetationConfiguration.h"
 #include "GroundMaterialConfiguration.h"
+#include "ColorConfiguration.h"
 
 class ContentLoader{
 private:
@@ -14,6 +15,7 @@ private:
   bool parseTerrainContent ( TiXmlElement* elemRoot );
   bool parseTreeContent( TiXmlElement* elemRoot );
   bool parseShrubContent( TiXmlElement* elemRoot );
+  bool parseColorContent( TiXmlElement* elemRoot );
   void flushCreatureConfig();
 
   bool translationComplete;
@@ -29,6 +31,7 @@ public:
   vector<VegetationConfiguration> shrubConfigs;
   vector<TerrainConfiguration*> terrainFloorConfigs;
   vector<TerrainConfiguration*> terrainBlockConfigs;
+  vector<ColorConfiguration> colorConfigs;
 
   vector<t_matgloss> creatureNameStrings;
   vector<t_matgloss> stoneNameStrings;
@@ -52,3 +55,4 @@ int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector);
 const char *lookupMaterialTypeName(int matType);
 const char *lookupMaterialName(int matType,int matIndex);
 
+ALLEGRO_COLOR lookupMaterialColor(int matType,int matIndex);

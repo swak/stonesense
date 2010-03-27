@@ -480,6 +480,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\ColorConfiguration.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ConditionalSprite.cpp"
 					>
 				</File>
@@ -603,6 +607,10 @@
 				>
 				<File
 					RelativePath=".\BuildingConfiguration.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ColorConfiguration.h"
 					>
 				</File>
 				<File

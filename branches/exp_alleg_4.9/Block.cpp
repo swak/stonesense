@@ -6,6 +6,7 @@
 #include "Creatures.h"
 #include "WorldSegment.h"
 #include "BlockFactory.h"
+#include "ContentLoader.h"
 
 #include "dfhack/library/DFTypes.h"
 
@@ -138,7 +139,6 @@ void Block::Draw(){
 			if(sprite.numVariations)
 				spriteOffset = rando % sprite.numVariations;
 
-			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
 
 			//if floor is muddy, override regular floor
 			if( occ.bits.mud && water.index == 0)
@@ -161,6 +161,26 @@ void Block::Draw(){
 				sprite.fileIndex = INVALID_INDEX;
 				spriteOffset = 0;
 			}
+			switch(sprite.shadeBy)
+			{
+			case ShadeNone:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				break;
+			case ShadeXml:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
+				break;
+			case ShadeMat:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+				break;
+			case ShadeLayer:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+				break;
+			case ShadeVein:
+				if(this->hasVein)
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+				else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+				break;
+			}
 
 			sheetOffsetX = TILEWIDTH * ((sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
 			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
@@ -172,7 +192,26 @@ void Block::Draw(){
 				{
 					sheetOffsetX = TILEWIDTH * ((sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
 					sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+					switch(sprite.subSprites[i].shadeBy)
+					{
+					case ShadeNone:
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+						break;
+					case ShadeXml:
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
+						break;
+					case ShadeMat:
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+						break;
+					case ShadeLayer:
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+						break;
+					case ShadeVein:
+						if(this->hasVein)
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+						else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+						break;
+					}
 					al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
 					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 				}
@@ -252,8 +291,28 @@ void Block::Draw(){
 				sprite.sheetIndex += rando % sprite.numVariations;
 			if (!(sprite.animFrames & (1 << currentAnimationFrame)))
 				continue;
-			DrawSpriteFromSheet(sprite.sheetIndex , imageSheet(sprite,IMGObjectSheet), 
+			switch(sprite.shadeBy)
+			{
+			case ShadeNone:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				break;
+			case ShadeXml:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
+				break;
+			case ShadeMat:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(building.info.material.type,building.info.material.index));
+				break;
+			case ShadeLayer:
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+				break;
+			case ShadeVein:
+				if(this->hasVein)
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+				else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+				break;
+			}
 
+			DrawSpriteFromSheet(sprite.sheetIndex , imageSheet(sprite,IMGObjectSheet), 
 				drawx + building.sprites[i].x,
 				drawy + building.sprites[i].y);
 		}
@@ -305,7 +364,26 @@ void Block::Draw(){
 				int sheetx = (sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
 				int sheety = (sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
 				//draw a tiny bit of wall
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
+				switch(sprite.shadeBy)
+				{
+				case ShadeNone:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+					break;
+				case ShadeXml:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
+					break;
+				case ShadeMat:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+					break;
+				case ShadeLayer:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+					break;
+				case ShadeVein:
+					if(this->hasVein)
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+					else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+					break;
+				}
 				al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet),
 					sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
 					SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
@@ -316,7 +394,26 @@ void Block::Draw(){
 					{
 						sheetx = (sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
 						sheety = (sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+						switch(sprite.subSprites[i].shadeBy)
+						{
+						case ShadeNone:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+							break;
+						case ShadeXml:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
+							break;
+						case ShadeMat:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+							break;
+						case ShadeLayer:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+							break;
+						case ShadeVein:
+							if(this->hasVein)
+								al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+							else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+							break;
+						}
 						al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet),
 							sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
 							SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
@@ -331,14 +428,53 @@ void Block::Draw(){
 			}
 			else 
 			{
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
+				//al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
+				switch(sprite.shadeBy)
+				{
+				case ShadeNone:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+					break;
+				case ShadeXml:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
+					break;
+				case ShadeMat:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+					break;
+				case ShadeLayer:
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+					break;
+				case ShadeVein:
+					if(this->hasVein)
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+					else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+					break;
+				}
 				DrawSpriteFromSheet(sprite.sheetIndex+spriteOffset, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 				if(sprite.subSprites.size() > 0)
 				{
 					for(int i = 0; i < sprite.subSprites.size(); i++)
 					{
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.subSprites[i].shadeRed, sprite.subSprites[i].shadeGreen, sprite.subSprites[i].shadeBlue));
+						switch(sprite.subSprites[i].shadeBy)
+						{
+						case ShadeNone:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+							break;
+						case ShadeXml:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
+							break;
+						case ShadeMat:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+							break;
+						case ShadeLayer:
+							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
+							break;
+						case ShadeVein:
+							if(this->hasVein)
+								al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
+							else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
+							break;
+						}
 						DrawSpriteFromSheet(sprite.subSprites[i].sheetIndex+spriteOffset, imageSheet(sprite.subSprites[i],IMGObjectSheet), drawx, drawy );
 						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 					}

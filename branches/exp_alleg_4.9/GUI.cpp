@@ -308,6 +308,7 @@ void drawDebugCursorAndInfo(){
 			b->building.info.type, b->building.info.vtable,
 			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
 	}
+
 	//creatures
 	if(b->creature != null){
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
