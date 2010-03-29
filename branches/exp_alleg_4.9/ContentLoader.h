@@ -54,5 +54,8 @@ int lookupMaterialIndex(int matType, const char* strValue);
 int lookupIndexedType(const char* indexName, vector<t_matgloss>& typeVector);
 const char *lookupMaterialTypeName(int matType);
 const char *lookupMaterialName(int matType,int matIndex);
+uint8_t lookupMaterialFore(int matType,int matIndex);
+uint8_t lookupMaterialBack(int matType,int matIndex);
+uint8_t lookupMaterialBright(int matType,int matIndex);
 
 ALLEGRO_COLOR lookupMaterialColor(int matType,int matIndex);

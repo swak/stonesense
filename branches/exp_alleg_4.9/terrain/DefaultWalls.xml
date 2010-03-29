@@ -6,7 +6,7 @@
 
 <!-- fortifications -->
 
-<block sprite=201>
+<block sprite=201 color = material_fore >
 	<terrain value="65"/>
 	
 	<terrain value="326"/>
@@ -20,7 +20,7 @@
 
 <!-- ramps -->
 
-<block sprite=0>
+<block sprite=0 color = material_fore >
 	<terrain value="233"/>
 	<terrain value="234"/>
 	<terrain value="235"/>
@@ -38,7 +38,7 @@
 
 <!-- stairs -->
 
-<block sprite=202>
+<block sprite=202 color = material_fore >
 		<!-- ice -->
 	<terrain value="25"/>
 	<terrain value="27"/>
@@ -68,7 +68,8 @@
 </block>
 
 <!-- walls -->
-<block sprite=200 >
+<block sprite=200 color = material_back >
+	<subsprite sprite = 204 color = material_fore />
 		<!-- pillars -->
 	<terrain value="79"/>
 	<terrain value="80"/>

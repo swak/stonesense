@@ -27,6 +27,451 @@ ALLEGRO_BITMAP *sprite_oceanwave = 0;
 
 int randomCube[RANDOM_CUBE][RANDOM_CUBE][RANDOM_CUBE];
 
+ALLEGRO_COLOR getSpriteColor(t_SpriteWithOffset &sprite, t_matglossPair material, t_matglossPair layerMaterial, t_matglossPair veinMaterial)
+{
+	int matFore = lookupMaterialFore(material.type, material.index);
+	int matBright = lookupMaterialBright(material.type, material.index);
+	int matBack = lookupMaterialBack(material.type, material.index);
+	int layerFore = lookupMaterialFore(material.type, layerMaterial.index);
+	int layerBright = lookupMaterialBright(material.type, layerMaterial.index);
+	int layerBack = lookupMaterialBack(material.type, layerMaterial.index);
+	int veinFore = lookupMaterialFore(material.type, veinMaterial.index);
+	int veinBright = lookupMaterialBright(material.type, veinMaterial.index);
+	int veinBack = lookupMaterialBack(material.type, veinMaterial.index);
+	switch(sprite.shadeBy)
+	{
+	case ShadeNone:
+		return al_map_rgb(255, 255, 255);
+	case ShadeXml:
+		return sprite.shadeColor;
+	case ShadeMat:
+		return lookupMaterialColor(material.type, material.index);
+	case ShadeLayer:
+		return lookupMaterialColor(layerMaterial.type, layerMaterial.index);
+	case ShadeVein:
+		return lookupMaterialColor(veinMaterial.type, veinMaterial.index);
+	case ShadeMatFore:
+		if(matBright)
+		{
+			switch (matFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (matFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeMatBack:
+		switch (matBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	case ShadeLayerFore:
+		if(layerBright)
+		{
+			switch (layerFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (layerFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeLayerBack:
+		switch (layerBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	case ShadeVeinFore:
+		if(veinBright)
+		{
+			switch (veinFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (veinFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeVeinBack:
+		switch (veinBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	default:
+		return al_map_rgb(255, 255, 255);
+	} ;
+}
+
+ALLEGRO_COLOR getSpriteColor(t_subSprite &sprite, t_matglossPair material, t_matglossPair layerMaterial, t_matglossPair veinMaterial)
+{
+	int matFore = lookupMaterialFore(material.type, material.index);
+	int matBright = lookupMaterialBright(material.type, material.index);
+	int matBack = lookupMaterialFore(material.type, material.index);
+	int layerFore = lookupMaterialFore(layerMaterial.type, layerMaterial.index);
+	int layerBright = lookupMaterialBright(layerMaterial.type, layerMaterial.index);
+	int layerBack = lookupMaterialFore(layerMaterial.type, layerMaterial.index);
+	int veinFore = lookupMaterialFore(veinMaterial.type, veinMaterial.index);
+	int veinBright = lookupMaterialBright(veinMaterial.type, veinMaterial.index);
+	int veinBack = lookupMaterialFore(veinMaterial.type, veinMaterial.index);
+	switch(sprite.shadeBy)
+	{
+	case ShadeNone:
+		return al_map_rgb(255, 255, 255);
+	case ShadeXml:
+		return sprite.shadeColor;
+	case ShadeMat:
+		return lookupMaterialColor(material.type, material.index);
+	case ShadeLayer:
+		return lookupMaterialColor(layerMaterial.type, layerMaterial.index);
+	case ShadeVein:
+		return lookupMaterialColor(veinMaterial.type, veinMaterial.index);
+	case ShadeMatFore:
+		if(matBright)
+		{
+			switch (matFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (matFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeMatBack:
+		switch (matBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	case ShadeLayerFore:
+		if(layerBright)
+		{
+			switch (layerFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (layerFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeLayerBack:
+		switch (layerBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	case ShadeVeinFore:
+		if(veinBright)
+		{
+			switch (veinFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.dgray_r, config.colors.dgray_g, config.colors.dgray_b);
+			case 1:
+				return al_map_rgb(config.colors.lblue_r, config.colors.lblue_g, config.colors.lblue_b);
+			case 2:
+				return al_map_rgb(config.colors.lgreen_r, config.colors.lgreen_g, config.colors.lgreen_b);
+			case 3:
+				return al_map_rgb(config.colors.lcyan_r, config.colors.lcyan_g, config.colors.lcyan_b);
+			case 4:
+				return al_map_rgb(config.colors.lred_r, config.colors.lred_g, config.colors.lred_b);
+			case 5:
+				return al_map_rgb(config.colors.lmagenta_r, config.colors.lmagenta_g, config.colors.lmagenta_b);
+			case 6:
+				return al_map_rgb(config.colors.yellow_r, config.colors.yellow_g, config.colors.yellow_b);
+			case 7:
+				return al_map_rgb(config.colors.white_r, config.colors.white_g, config.colors.white_b);
+			} ;
+		}
+		else
+		{
+			switch (veinFore)
+			{
+			case 0:
+				return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+			case 1:
+				return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+			case 2:
+				return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+			case 3:
+				return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+			case 4:
+				return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+			case 5:
+				return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+			case 6:
+				return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+			case 7:
+				return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+			} ;
+		}
+	case ShadeVeinBack:
+		switch (veinBack)
+		{
+		case 0:
+			return al_map_rgb(config.colors.black_r, config.colors.black_g, config.colors.black_b);
+		case 1:
+			return al_map_rgb(config.colors.blue_r, config.colors.blue_g, config.colors.blue_b);
+		case 2:
+			return al_map_rgb(config.colors.green_r, config.colors.green_g, config.colors.green_b);
+		case 3:
+			return al_map_rgb(config.colors.cyan_r, config.colors.cyan_g, config.colors.cyan_b);
+		case 4:
+			return al_map_rgb(config.colors.red_r, config.colors.red_g, config.colors.red_b);
+		case 5:
+			return al_map_rgb(config.colors.magenta_r, config.colors.magenta_g, config.colors.magenta_b);
+		case 6:
+			return al_map_rgb(config.colors.brown_r, config.colors.brown_g, config.colors.brown_b);
+		case 7:
+			return al_map_rgb(config.colors.lgray_r, config.colors.lgray_g, config.colors.lgray_b);
+		} ;
+	default:
+		return al_map_rgb(255, 255, 255);
+	} ;
+}
 void initRandomCube()
 {
 	for(int i = 0; i < RANDOM_CUBE; i++)
@@ -161,59 +606,24 @@ void Block::Draw(){
 				sprite.fileIndex = INVALID_INDEX;
 				spriteOffset = 0;
 			}
-			switch(sprite.shadeBy)
-			{
-			case ShadeNone:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-				break;
-			case ShadeXml:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
-				break;
-			case ShadeMat:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-				break;
-			case ShadeLayer:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-				break;
-			case ShadeVein:
-				if(this->hasVein)
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-				else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-				break;
-			}
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 
 			sheetOffsetX = TILEWIDTH * ((sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
 			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
 			al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
 			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-			if(!(sprite.subSprites.empty()))
+			if(sprite.sheetIndex != SPRITEFLOOR_WATERFLOOR && sprite.sheetIndex != SPRITEFLOOR_SNOW)
 			{
-				for(int i = 0; i < sprite.subSprites.size(); i++)
+				if(!(sprite.subSprites.empty()))
 				{
-					sheetOffsetX = TILEWIDTH * ((sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
-					sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
-					switch(sprite.subSprites[i].shadeBy)
+					for(int i = 0; i < sprite.subSprites.size(); i++)
 					{
-					case ShadeNone:
+						sheetOffsetX = TILEWIDTH * ((sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE);
+						sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT) * ((sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE);
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite.subSprites[i], this->material, this->layerMaterial, this->veinMaterial));
+						al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
 						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-						break;
-					case ShadeXml:
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
-						break;
-					case ShadeMat:
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-						break;
-					case ShadeLayer:
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-						break;
-					case ShadeVein:
-						if(this->hasVein)
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-						else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-						break;
 					}
-					al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet), sheetOffsetX, sheetOffsetY,  TILEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 				}
 			}
 		}
@@ -258,8 +668,20 @@ void Block::Draw(){
 		{
 			sheetOffsetX = SPRITEWIDTH * ramp.index;
 			sheetOffsetY = ((TILEHEIGHT + FLOORHEIGHT + SPRITEHEIGHT) * sprite.sheetIndex)+(TILEHEIGHT + FLOORHEIGHT);
-
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 			al_draw_bitmap_region(imageSheet(sprite,IMGRampSheet), sheetOffsetX, sheetOffsetY, SPRITEWIDTH, SPRITEHEIGHT, drawx, drawy - (WALLHEIGHT), 0);
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+			if(!(sprite.subSprites.empty()))
+			{
+				for(int i = 0; i < sprite.subSprites.size(); i++)
+				{
+					sheetOffsetX = SPRITEWIDTH * ramp.index;
+					sheetOffsetY = ((TILEHEIGHT + FLOORHEIGHT + SPRITEHEIGHT) * sprite.subSprites[i].sheetIndex)+(TILEHEIGHT + FLOORHEIGHT);
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite.subSprites[i], this->material, this->layerMaterial, this->veinMaterial));
+					al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet), sheetOffsetX, sheetOffsetY, SPRITEWIDTH, SPRITEHEIGHT, drawx, drawy - (WALLHEIGHT), 0);
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				}
+			}
 		}
 	}
 
@@ -291,30 +713,12 @@ void Block::Draw(){
 				sprite.sheetIndex += rando % sprite.numVariations;
 			if (!(sprite.animFrames & (1 << currentAnimationFrame)))
 				continue;
-			switch(sprite.shadeBy)
-			{
-			case ShadeNone:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-				break;
-			case ShadeXml:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
-				break;
-			case ShadeMat:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(building.info.material.type,building.info.material.index));
-				break;
-			case ShadeLayer:
-				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-				break;
-			case ShadeVein:
-				if(this->hasVein)
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-				else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-				break;
-			}
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, building.info.material, this->layerMaterial, this->veinMaterial));
 
 			DrawSpriteFromSheet(sprite.sheetIndex , imageSheet(sprite,IMGObjectSheet), 
 				drawx + building.sprites[i].x,
 				drawy + building.sprites[i].y);
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 		}
 	}
 
@@ -329,6 +733,7 @@ void Block::Draw(){
 		//DrawSpriteFromSheet( spriteNum, target, IMGObjectSheet, drawx, drawy );
 
 		//up part
+
 		bool mirrored = false;
 		if(findWallCloseTo(ownerSegment, this) == eSimpleW)
 			mirrored = true;
@@ -337,7 +742,18 @@ void Block::Draw(){
 		{
 			if (mirrored)
 				sprite.sheetIndex += 1;
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 			DrawSpriteFromSheet( sprite.sheetIndex, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+			if(!(sprite.subSprites.empty()))
+			{
+				for(int i = 0; i < sprite.subSprites.size(); i++)
+				{
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite.subSprites[i], this->material, this->layerMaterial, this->veinMaterial));
+					DrawSpriteFromSheet( sprite.subSprites[i].sheetIndex, imageSheet(sprite.subSprites[i],IMGObjectSheet), drawx, drawy );
+					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+				}
+			}
 		}
 	}
 
@@ -364,26 +780,7 @@ void Block::Draw(){
 				int sheetx = (sprite.sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
 				int sheety = (sprite.sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
 				//draw a tiny bit of wall
-				switch(sprite.shadeBy)
-				{
-				case ShadeNone:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-					break;
-				case ShadeXml:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
-					break;
-				case ShadeMat:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-					break;
-				case ShadeLayer:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-					break;
-				case ShadeVein:
-					if(this->hasVein)
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-					else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-					break;
-				}
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 				al_draw_bitmap_region(imageSheet(sprite,IMGObjectSheet),
 					sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
 					SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
@@ -394,26 +791,7 @@ void Block::Draw(){
 					{
 						sheetx = (sprite.subSprites[i].sheetIndex+spriteOffset) % SHEET_OBJECTSWIDE;
 						sheety = (sprite.subSprites[i].sheetIndex+spriteOffset) / SHEET_OBJECTSWIDE;
-						switch(sprite.subSprites[i].shadeBy)
-						{
-						case ShadeNone:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-							break;
-						case ShadeXml:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
-							break;
-						case ShadeMat:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-							break;
-						case ShadeLayer:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-							break;
-						case ShadeVein:
-							if(this->hasVein)
-								al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-							else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-							break;
-						}
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite.subSprites[i], this->material, this->layerMaterial, this->veinMaterial));
 						al_draw_bitmap_region(imageSheet(sprite.subSprites[i],IMGObjectSheet),
 							sheetx * SPRITEWIDTH, sheety * SPRITEHEIGHT+WALL_CUTOFF_HEIGHT,
 							SPRITEWIDTH, SPRITEHEIGHT-WALL_CUTOFF_HEIGHT, drawx, drawy - (WALLHEIGHT)+WALL_CUTOFF_HEIGHT, 0);
@@ -429,52 +807,14 @@ void Block::Draw(){
 			else 
 			{
 				//al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, al_map_rgb(sprite.shadeRed, sprite.shadeGreen, sprite.shadeBlue));
-				switch(sprite.shadeBy)
-				{
-				case ShadeNone:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-					break;
-				case ShadeXml:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.shadeColor);
-					break;
-				case ShadeMat:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-					break;
-				case ShadeLayer:
-					al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-					break;
-				case ShadeVein:
-					if(this->hasVein)
-						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-					else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-					break;
-				}
+				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 				DrawSpriteFromSheet(sprite.sheetIndex+spriteOffset, imageSheet(sprite,IMGObjectSheet), drawx, drawy );
 				al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 				if(sprite.subSprites.size() > 0)
 				{
 					for(int i = 0; i < sprite.subSprites.size(); i++)
 					{
-						switch(sprite.subSprites[i].shadeBy)
-						{
-						case ShadeNone:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-							break;
-						case ShadeXml:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, sprite.subSprites[i].shadeColor);
-							break;
-						case ShadeMat:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-							break;
-						case ShadeLayer:
-							al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->layerMaterial.type,this->layerMaterial.index));
-							break;
-						case ShadeVein:
-							if(this->hasVein)
-								al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->veinMaterial.type,this->veinMaterial.index));
-							else al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, lookupMaterialColor(this->material.type,this->material.index));
-							break;
-						}
+						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite.subSprites[i], this->material, this->layerMaterial, this->veinMaterial));
 						DrawSpriteFromSheet(sprite.subSprites[i].sheetIndex+spriteOffset, imageSheet(sprite.subSprites[i],IMGObjectSheet), drawx, drawy );
 						al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 					}
@@ -506,7 +846,7 @@ void Block::Draw(){
 
 		if(water.type == 0)
 			spriteNum = SPRITEOBJECT_WATERLEVEL1 + waterlevel - 1;
-		if(water.type == 1)
+		else
 			spriteNum = SPRITEOBJECT_WATERLEVEL1_LAVA + waterlevel - 1;
 		DrawSpriteFromSheet( spriteNum, IMGObjectSheet, drawx, drawy );
 	}
@@ -596,7 +936,9 @@ void Block::Drawcreaturetext(){
 void Block::DrawRamptops(){
 	if (ramp.type > 0)
 	{
-
+		int op, src, dst, alpha_op, alpha_src, alpha_dst;
+		ALLEGRO_COLOR color;
+		al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
 		int sheetOffsetX, sheetOffsetY;
 		/*if(config.hide_outer_blocks){
 		if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
@@ -621,8 +963,9 @@ void Block::DrawRamptops(){
 		{
 			sheetOffsetX = SPRITEWIDTH * ramp.index;
 			sheetOffsetY = (TILEHEIGHT + FLOORHEIGHT + SPRITEHEIGHT) * sprite.sheetIndex;
-
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, getSpriteColor(sprite, this->material, this->layerMaterial, this->veinMaterial));
 			al_draw_bitmap_region(imageSheet(sprite,IMGRampSheet), sheetOffsetX, sheetOffsetY, SPRITEWIDTH, TILEHEIGHT + FLOORHEIGHT, drawx, drawy, 0);
+			al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
 		}
 	}
 

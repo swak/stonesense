@@ -35,8 +35,9 @@
 </floor>
 
 <!-- driftwood -->
-<floor sprite= 30 >	
+<floor sprite= 3 color = material_fore >	
 	<terrain value= 19 />
+	<subsprite sprite = 30 />
 </floor>
 	
 <!-- vegetation -->
@@ -166,7 +167,7 @@
 </floor>
 
 <!-- sm stone -->
-<floor sprite = 20 >
+<floor sprite = 20 color = material_fore >
 	<terrain value= 43 />
 	<terrain value= 45 />
 	<terrain value= 46 />
@@ -300,7 +301,7 @@
 </floor>
 
 <!-- stone -->
-<floor sprite= 3 >
+<floor sprite= 3 color = material_fore >
 	<!-- below stair -->
 	<terrain value= 57 />
 	<terrain value= 60 />
@@ -347,7 +348,7 @@
 </floor>
 
 <!-- boulder -->
-<floor sprite= 6 >
+<floor sprite= 6 color = material_fore >
 	<terrain value= 402 />
 	<terrain value= 403 />
 	<terrain value= 404 />
@@ -355,7 +356,7 @@
 </floor>
 
 <!-- pebbles -->
-<floor sprite= 5 >
+<floor sprite= 5 color = material_fore >
 	<terrain value= 405 />
 	<terrain value= 406 />
 	<terrain value= 407 />
@@ -378,7 +379,7 @@
 </floor>
 
 <!-- construct -->
-<floor sprite= 1 >
+<floor sprite= 1 color = material_fore >
 	<!-- floor -->
 	<terrain value= 493 />
 	<!-- fort -->

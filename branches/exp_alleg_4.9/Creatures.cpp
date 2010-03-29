@@ -4,7 +4,7 @@
 #include "CreatureConfiguration.h"
 #include "ContentLoader.h"
 #include "GUI.h"
-
+#include "Block.h"
 
 
 //vector<t_matgloss> v_creatureNames;
@@ -36,8 +36,23 @@ void DrawCreature(int drawx, int drawy, t_creature* creature ){
     else
     {
     	creatureSheet = getImgFile(sprite.fileIndex);
-	}    	
+	}
   DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
+  if(!(sprite.subSprites.empty()))
+  {
+	  for(int i = 0; i < sprite.subSprites.size(); i++)
+	  {
+		  if (sprite.subSprites[i].fileIndex == -1)
+		  {
+			  creatureSheet = IMGCreatureSheet;
+		  }
+		  else
+		  {
+			  creatureSheet = getImgFile(sprite.subSprites[i].fileIndex);
+		  }
+		  DrawSpriteFromSheet( sprite.sheetIndex, creatureSheet, drawx, drawy );
+	  }
+  }
 }
 
 void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
@@ -75,8 +90,16 @@ void ReadCreaturesToSegment(API& DF, WorldSegment* segment)
   int z1 = segment->z;
   int z2 = segment->z + segment->sizez;
   uint32_t numcreatures;
-  if (!DF.InitReadCreatures(numcreatures)) return;
-	
+  try
+  {
+	DF.InitReadCreatures(numcreatures);
+  }
+  catch(exception &err)
+  {
+	  WriteErr("Exeption: %s \n", err.what());
+	  return;
+  }
+  if(!numcreatures) return;
   if(x1<0) x1=0;
   if(y1<0) y1=0;
   if(z1<0) z1=0;

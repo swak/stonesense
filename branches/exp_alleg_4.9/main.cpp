@@ -209,6 +209,12 @@ int main(void)
 	int gfxMode = config.Fullscreen ? ALLEGRO_FULLSCREEN : ALLEGRO_WINDOWED;
 	al_set_new_display_flags(gfxMode|ALLEGRO_RESIZABLE|ALLEGRO_OPENGL);
 	display = al_create_display(config.screenWidth, config.screenHeight);
+	if(!display)
+	{
+		WriteErr("Could not init display\n");
+		exit(1);
+		return 1;
+	}
 	if (!al_install_keyboard()) {
 		al_show_native_message_box("Error", "Error", "al_install_keyboard failed.", NULL, ALLEGRO_MESSAGEBOX_ERROR);
 		exit(1);

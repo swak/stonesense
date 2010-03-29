@@ -12,10 +12,10 @@
 	</if>
 	<else>
 		<rotate>
-			<sprite index = 40 />
-			<sprite index = 41 />
-			<sprite index = 42 />
-			<sprite index = 43 />
+			<sprite index = 40 color = material />
+			<sprite index = 41 color = material />
+			<sprite index = 42 color = material />
+			<sprite index = 43 color = material />
 		</rotate>
 	</else>
 </include>

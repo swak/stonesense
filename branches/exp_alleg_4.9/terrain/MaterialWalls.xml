@@ -18,7 +18,7 @@
 <!-- ramps -->
 
 <!-- stone -->
-<block sprite=1 file="ramps.png">
+<block sprite=1 file="ramps.png" color = material >
 	<!-- stone -->
 	<terrain value="237"/>
 	<!-- obs -->
@@ -30,7 +30,7 @@
 </block>
 
 <!-- brick -->
-<block sprite=2 file="ramps.png">
+<block sprite=2 file="ramps.png" color = material >
 	<!-- cons -->
 	<terrain value="518"/>
 </block>

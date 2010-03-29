@@ -9,6 +9,12 @@ enum ShadeBy
 	ShadeMat,
 	ShadeLayer,
 	ShadeVein,
+	ShadeMatFore,
+	ShadeMatBack,
+	ShadeLayerFore,
+	ShadeLayerBack,
+	ShadeVeinFore,
+	ShadeVeinBack
 } ;
 struct t_subSprite
 {
@@ -30,6 +36,58 @@ struct t_SpriteWithOffset{
 	vector<t_subSprite> subSprites;
 	ShadeBy shadeBy;
 } ;
+
+typedef struct dfColors
+{
+	uint8_t black_r;
+	uint8_t black_g;
+	uint8_t black_b;
+	uint8_t blue_r;
+	uint8_t blue_g;
+	uint8_t blue_b;
+	uint8_t green_r;
+	uint8_t green_g;
+	uint8_t green_b;
+	uint8_t cyan_r;
+	uint8_t cyan_g;
+	uint8_t cyan_b;
+	uint8_t red_r;
+	uint8_t red_g;
+	uint8_t red_b;
+	uint8_t magenta_r;
+	uint8_t magenta_g;
+	uint8_t magenta_b;
+	uint8_t brown_r;
+	uint8_t brown_g;
+	uint8_t brown_b;
+	uint8_t lgray_r;
+	uint8_t lgray_g;
+	uint8_t lgray_b;
+	uint8_t dgray_r;
+	uint8_t dgray_g;
+	uint8_t dgray_b;
+	uint8_t lblue_r;
+	uint8_t lblue_g;
+	uint8_t lblue_b;
+	uint8_t lgreen_r;
+	uint8_t lgreen_g;
+	uint8_t lgreen_b;
+	uint8_t lcyan_r;
+	uint8_t lcyan_g;
+	uint8_t lcyan_b;
+	uint8_t lred_r;
+	uint8_t lred_g;
+	uint8_t lred_b;
+	uint8_t lmagenta_r;
+	uint8_t lmagenta_g;
+	uint8_t lmagenta_b;
+	uint8_t yellow_r;
+	uint8_t yellow_g;
+	uint8_t yellow_b;
+	uint8_t white_r;
+	uint8_t white_g;
+	uint8_t white_b;
+} dfColors;
 
 typedef struct Crd2D {
 	int32_t x,y;
@@ -90,6 +148,7 @@ typedef struct {
 
 	bool saveImageCache;
 	int imageCacheSize;
+	dfColors colors;
 } GameConfiguration;
 
 

@@ -546,11 +546,47 @@
 				Name="dfHack"
 				>
 				<File
+					RelativePath=".\dfhack\library\DFCommonInternal.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFError.h"
+					>
+				</File>
+				<File
 					RelativePath=".\dfhack\library\DFHackAPI.h"
 					>
 				</File>
 				<File
+					RelativePath=".\dfhack\library\DFMemInfo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFMemInfoManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFProcess.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFProcessEnumerator.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFTileTypes.h"
+					>
+				</File>
+				<File
 					RelativePath=".\dfhack\library\dftypes.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFVector.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\library\DFWindow.h"
 					>
 				</File>
 			</Filter>

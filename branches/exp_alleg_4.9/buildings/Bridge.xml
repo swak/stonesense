@@ -82,53 +82,53 @@
 				<NeighbourIdentical dir="West" />
 				<NeighbourIdentical dir="East" />		
 			</or>
-			<sprite index=330 />
+			<sprite index=330 color = material />
 			<if>
 				<not><NeighbourIdentical dir="West" /></not>
-				<sprite index=331 />
+				<sprite index=331 color = material />
 			</if>
 			<if>
 				<not><NeighbourIdentical dir="East" /></not>
-				<sprite index=332 />
+				<sprite index=332 color = material />
 			</if>
 		</if>
 		<else>
-			<sprite index=333 />
+			<sprite index=333 color = material />
 			<if>
 				<not><NeighbourIdentical dir="North" /></not>
-				<sprite index=335 />
+				<sprite index=335 color = material />
 			</if>
 			<if>
 				<not><NeighbourIdentical dir="South" /></not>
-				<sprite index=334 />
+				<sprite index=334 color = material />
 			</if>				
 		</else>
 	</else>
 	<else>
 		<!-- flat -->
-		<sprite index=324 />
+		<sprite index=324 color = material />
 		<if>
 			<not><or>
 				<NeighbourSameBuilding dir="North" />
 				<NeighbourSameBuilding dir="West" />
 			</or></not>
-			<sprite index = 329 />
+			<sprite index = 329 color = material />
 		</if>
 		<else>
 			<not><NeighbourSameBuilding dir="North" /></not>
-			<sprite index = 326 />
+			<sprite index = 326 color = material />
 		</else>
 		<else>
 			<not><NeighbourSameBuilding dir="West" /></not>
-			<sprite index = 325 />
+			<sprite index = 325 color = material />
 		</else>
 		<if>
 			<not><NeighbourSameBuilding dir="South" /></not>
-			<sprite index = 327 />
+			<sprite index = 327 color = material />
 		</if>
 		<if>
 			<not><NeighbourSameBuilding dir="East" /></not>
-			<sprite index = 328 />
+			<sprite index = 328 color = material />
 		</if>		
 	</else>	
 
@@ -140,11 +140,11 @@
 		</or></not>
 		<if>
 			<not><NeighbourSameBuilding dir="North" /></not>
-			<sprite index = 282 offsety=8/>
+			<sprite index = 282 offsety=12 color = material />
 		</if>
 		<if>
 			<not><NeighbourSameBuilding dir="West" /></not>
-			<sprite index = 280 offsety=8/>
+			<sprite index = 280 offsety=12 color = material />
 		</if>		
 	</if>
 

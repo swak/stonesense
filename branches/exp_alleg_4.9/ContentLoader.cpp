@@ -417,6 +417,90 @@ const char *lookupMaterialName(int matType,int matIndex)
 	return (*typeVector)[matIndex].id;
 }
 
+uint8_t lookupMaterialFore(int matType,int matIndex)
+{
+	if (matIndex < 0)
+		return NULL;
+	vector<t_matgloss>* typeVector;
+	// for appropriate elements, look up subtype
+	if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.woodNameStrings);
+	}
+	else if (matType == Mat_Stone)
+	{
+		typeVector=&(contentLoader.stoneNameStrings);
+	}
+	else if (matType == Mat_Metal)
+	{
+		typeVector=&(contentLoader.metalNameStrings);
+	}
+	else
+	{
+		//maybe allow some more in later
+		return NULL;
+	}
+	if (matIndex >= typeVector->size())
+		return NULL;
+	return (*typeVector)[matIndex].fore;
+}
+
+uint8_t lookupMaterialBack(int matType,int matIndex)
+{
+	if (matIndex < 0)
+		return NULL;
+	vector<t_matgloss>* typeVector;
+	// for appropriate elements, look up subtype
+	if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.woodNameStrings);
+	}
+	else if (matType == Mat_Stone)
+	{
+		typeVector=&(contentLoader.stoneNameStrings);
+	}
+	else if (matType == Mat_Metal)
+	{
+		typeVector=&(contentLoader.metalNameStrings);
+	}
+	else
+	{
+		//maybe allow some more in later
+		return NULL;
+	}
+	if (matIndex >= typeVector->size())
+		return NULL;
+	return (*typeVector)[matIndex].back;
+}
+
+uint8_t lookupMaterialBright(int matType,int matIndex)
+{
+	if (matIndex < 0)
+		return NULL;
+	vector<t_matgloss>* typeVector;
+	// for appropriate elements, look up subtype
+	if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.woodNameStrings);
+	}
+	else if (matType == Mat_Stone)
+	{
+		typeVector=&(contentLoader.stoneNameStrings);
+	}
+	else if (matType == Mat_Metal)
+	{
+		typeVector=&(contentLoader.metalNameStrings);
+	}
+	else
+	{
+		//maybe allow some more in later
+		return NULL;
+	}
+	if (matIndex >= typeVector->size())
+		return NULL;
+	return (*typeVector)[matIndex].bright;
+}
+
 int loadConfigImgFile(const char* filename, TiXmlElement* referrer)
 {
 	const char* documentRef = getDocument(referrer);

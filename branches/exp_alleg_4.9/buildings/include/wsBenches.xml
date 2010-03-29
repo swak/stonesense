@@ -22,7 +22,7 @@
 			<sprite index = 23 />
 		</else>
 		<else>
-			<sprite index = 20 />
+			<sprite index = 20 color = material />
 		</else>
 		<!-- borders -->
 		<if>

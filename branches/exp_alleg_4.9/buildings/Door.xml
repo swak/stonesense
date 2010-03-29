@@ -11,7 +11,7 @@
 			<sprite index=3 file = "doorsAndWindows.png"/>
 		</if>
 		<else>
-			<sprite index=1 file = "doorsAndWindows.png"/>
+			<sprite index=1 file = "doorsAndWindows.png" color = material />
 		</else>
 	</if>
 	
@@ -20,6 +20,6 @@
 		<sprite index = 2 file = "doorsAndWindows.png"/>
 	</else>
 	<else>
-		<sprite index = 0 file = "doorsAndWindows.png" />
+		<sprite index = 0 file = "doorsAndWindows.png" color = material />
 	</else>
 </building> 

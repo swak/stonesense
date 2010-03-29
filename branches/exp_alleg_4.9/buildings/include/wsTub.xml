@@ -21,6 +21,6 @@
 		<sprite index = 143 />
 	</else>
 	<else>
-		<sprite index = 140 />
+		<sprite index = 140 color = material />
 	</else>
 </include>

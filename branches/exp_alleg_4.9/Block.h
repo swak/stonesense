@@ -89,3 +89,6 @@ bool hasBuildingOfID(Block* b, int ID);
 bool hasBuildingIdentity(Block* b, uint32_t index, int buildingOcc);
 bool hasBuildingOfIndex(Block* b, uint32_t index);
 bool wallShouldNotHaveBorders( int in );
+
+ALLEGRO_COLOR getSpriteColor(t_subSprite &sprite, t_matglossPair material, t_matglossPair layerMaterial, t_matglossPair veinMaterial);
+ALLEGRO_COLOR getSpriteColor(t_SpriteWithOffset &sprite, t_matglossPair material, t_matglossPair layerMaterial, t_matglossPair veinMaterial);

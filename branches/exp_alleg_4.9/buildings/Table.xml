@@ -9,9 +9,9 @@
 	</if>
 	<else>
 		<MaterialType value="Metal" />
-		<sprite index = 63 />
+		<sprite index = 63 color = material />
 	</else>
 	<else>
-		<sprite index = 83 />
+		<sprite index = 83 color = material />
 	</else>
 </building> 

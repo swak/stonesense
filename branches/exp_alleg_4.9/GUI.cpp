@@ -275,7 +275,15 @@ void drawDebugCursorAndInfo(){
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,
 			"%s:%i Material:%s%s%s", tform, ttype, 
 			matName?matName:"Unknown",subMatName?"/":"",subMatName?subMatName:"");
-	} 
+	}
+	if (tform != NULL)
+	{
+		const char fore = lookupMaterialFore(b->material.type, b->material.index);
+		const char back = lookupMaterialBack(b->material.type, b->material.index);
+		const char bright = lookupMaterialBright(b->material.type, b->material.index);
+		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0,
+			"Fore: %d, Back: %d, Bright: %d", fore, back, bright);
+	}
 	if (tform != NULL)
 	{
 		const char* matName = lookupMaterialTypeName(b->layerMaterial.type);
@@ -297,7 +305,7 @@ void drawDebugCursorAndInfo(){
 
 	if(b->water.index > 0 || b->tree.index != 0)
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
-		"tree:%i water:%i", b->tree.index, b->water.index);
+		"tree:%i water:%i,%i", b->tree.index, b->water.type, b->water.index);
 	//building
 	if(b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX){
 		const char* matName = lookupMaterialTypeName(b->building.info.material.type);

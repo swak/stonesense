@@ -8,6 +8,6 @@
 		<sprite index = "84" />
 	</if>
 	<else>
-		<sprite index = "85" />
+		<sprite index = "85" color = material />
 	</else>
 </building> 

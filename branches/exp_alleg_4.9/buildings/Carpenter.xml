@@ -79,10 +79,10 @@
 			</else>
 			<else>
 				<rotate>
-					<sprite index = 80 offsetx=2 offsety=-1/>
-					<sprite index = 81 />
-					<sprite index = 80 />
-					<sprite index = 81 offsetx=-2 offsety=-1/>
+					<sprite index = 80 offsetx=2 offsety=-1 color = material />
+					<sprite index = 81 color = material />
+					<sprite index = 80 color = material />
+					<sprite index = 81 offsetx=-2 offsety=-1 color = material />
 				</rotate>
 			</else>
 			
@@ -142,10 +142,10 @@
 			</else>
 			<else>
 				<rotate>
-					<sprite index = 80 />
-					<sprite index = 81 offsetx=-2 offsety=-1/>
-					<sprite index = 80 offsetx=2 offsety=-1/>
-					<sprite index = 81 />
+					<sprite index = 80 color = material />
+					<sprite index = 81 offsetx=-2 offsety=-1 color = material />
+					<sprite index = 80 offsetx=2 offsety=-1 color = material />
+					<sprite index = 81 color = material />
 				</rotate>
 			</else>
 			<rotate>

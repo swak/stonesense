@@ -6,7 +6,7 @@
 	
 	<if>
 		<not><BuildingOccupancy value="1" /></not>
-		<sprite file="" index = 140 />
+		<sprite file="" index = 140 color = material />
 	</if>
 	
 	<include file="wsUpperBorder.xml"/>

@@ -4,7 +4,7 @@
 
 <!-- fortifications -->
 
-<block sprite=141>
+<block sprite=141 color = material >
 	<!-- stone -->
 	<terrain value="65"/>
 	<!-- obs -->
@@ -36,7 +36,7 @@
 </block>
 
 <!-- stone -->
-<block sprite=1 file="ramps.png">
+<block sprite=1 file="ramps.png" color = material >
 	<!-- stone -->
 	<terrain value="237"/>
 	<!-- obs -->
@@ -68,7 +68,7 @@
 
 <!-- stairs -->
 
-<block sprite=160>
+<block sprite=160 color = material >
 		<!-- ice -->
 	<terrain value="25"/>
 	<terrain value="27"/>
@@ -183,7 +183,7 @@
 </block>
 
 <!-- sm stone -->
-<block sprite = 20 >
+<block sprite = 20 color = material >
 	<!-- pillar -->
 	<terrain value= 79 />
 	<terrain value= 81 />
@@ -251,7 +251,7 @@
 </block>
 
 <!-- stone -->
-<block sprite= 21 >
+<block sprite= 21 color = material >
 	<!-- wall feat? -->
 	<terrain value= 176 />
 	<terrain value= 177 />
@@ -270,7 +270,7 @@
 </block>
 
 <!-- construct -->
-<block sprite= 22 >
+<block sprite= 22 color = material >
 	<!-- pillar -->
 	<terrain value= 495 />
 	<!-- wall -->

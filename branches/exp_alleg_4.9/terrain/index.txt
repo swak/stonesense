@@ -1,5 +1,3 @@
-CraggyWalls.xml
-CraggyFloors.xml
 MaterialWalls.xml
 MaterialFloors.xml
 Walls.xml
