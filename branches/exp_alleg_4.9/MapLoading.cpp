@@ -265,8 +265,7 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 			bool isHidden = designations[lx][ly].bits.hidden;
 			//option for including hidden blocks
 			isHidden &= !config.show_hidden_blocks;
-			//bool shouldBeIncluded = (!isOpenTerrain(t) || b->water.index) && !isHidden;
-			bool shouldBeIncluded = 1;
+			bool shouldBeIncluded = (!isOpenTerrain(t) || b->water.index) && !isHidden;
 			//include hidden blocks as shaded black 
 			if(config.shade_hidden_blocks && isHidden && isBlockOnVisibleEdgeOfSegment(&segment, b))
 			{
