@@ -49,9 +49,12 @@
 		</material>
 	</color>
 	
-	<color red = 90 green =255 blue = 255>
+	<color red = 101 green =235 blue = 236>
 		<material value="Stone">
 			<subtype value="RAW_ADAMANTINE" />
+		</material>
+		<material value="Metal">
+			<subtype value="ADAMANTINE" />
 		</material>
 	</color>
 	
