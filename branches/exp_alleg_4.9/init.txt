@@ -38,6 +38,9 @@ ready when Stonesense loads.
 Amount to change the auto reload time with each press of Numpad+/-
 [AUTO_RELOAD_STEP:50]
 
+set's weather or not stonesense tries to cache all the loaded images into a single file
+[CACHE_IMAGES:YES]
+
 Sets Stonesense in debug mode. Adds additional information to displays.
 [DEBUGMODE:YES]
 

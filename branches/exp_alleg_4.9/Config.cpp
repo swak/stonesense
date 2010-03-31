@@ -139,6 +139,10 @@ void parseConfigLine( string line ){
 		string result = parseStrFromLine( "SHOW_OSD", line );
 		config.show_osd = (result == "YES");
 	}
+	if( line.find("[CACHE_IMAGES") != -1){
+		string result = parseStrFromLine( "CACHE_IMAGES", line );
+		config.cache_images = (result == "YES");
+	}
 	if( line.find("[SHOW_STOCKPILES") != -1){
 		string result = parseStrFromLine( "SHOW_STOCKPILES", line );
 		config.show_stockpiles = (result == "YES");

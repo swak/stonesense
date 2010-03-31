@@ -147,6 +147,7 @@ typedef struct {
 	unsigned int cellDimZ;
 
 	bool saveImageCache;
+	bool cache_images;
 	int imageCacheSize;
 	dfColors colors;
 } GameConfiguration;

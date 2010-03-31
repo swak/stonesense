@@ -668,115 +668,117 @@ inline int returnGreater(int a, int b)
 	else return b;
 }
 
-//int loadImgFile(char* filename)
-//{
-//	uint32_t numFiles = (uint32_t)IMGFilelist.size();
-//	for(uint32_t i = 0; i < numFiles; i++)
-//	{
-//		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
-//			return i;
-//	}
-//	IMGFilelist.push_back(load_bitmap_withWarning(filename));
-//	IMGFilenames.push_back(new string(filename));
-//	LogVerbose("New image: %s\n",filename);
-//  return (int)IMGFilelist.size() - 1;
-//}
-
 int loadImgFile(char* filename)
 {
-	static bool foundSize = false;
-	if(!foundSize)
+	if(config.cache_images)
 	{
-		ALLEGRO_BITMAP* test = 0;
-		while(true)
+		static bool foundSize = false;
+		if(!foundSize)
 		{
-			test = al_create_bitmap(config.imageCacheSize,config.imageCacheSize);
-			if(test)
+			ALLEGRO_BITMAP* test = 0;
+			while(true)
 			{
-				WriteErr("%i works.\n", config.imageCacheSize);
-				break;
+				test = al_create_bitmap(config.imageCacheSize,config.imageCacheSize);
+				if(test)
+				{
+					WriteErr("%i works.\n", config.imageCacheSize);
+					break;
+				}
+				WriteErr("%i is too large. chopping it.\n", config.imageCacheSize);
+				config.imageCacheSize = config.imageCacheSize / 2;
 			}
-			WriteErr("%i is too large. chopping it.\n", config.imageCacheSize);
-			config.imageCacheSize = config.imageCacheSize / 2;
+			foundSize = true;
+			al_destroy_bitmap(test);
 		}
-		foundSize = true;
-		al_destroy_bitmap(test);
-	}
-	int op, src, dst, alpha_op, alpha_src, alpha_dst;
-	ALLEGRO_COLOR color;
-	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
-	ALLEGRO_BITMAP* currentTarget = al_get_target_bitmap();
-	uint32_t numFiles = (uint32_t)IMGFilelist.size();
-	for(uint32_t i = 0; i < numFiles; i++)
-	{
-		if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
-			return i;
-	}
-	al_clear_to_color(al_map_rgb(0,0,0));
-	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filename);
-	al_flip_display();
-	static int xOffset = 0;
-	static int yOffset = 0;
-	int currentCache = IMGCache.size() -1;
-	static int columnWidth = 0;
-	ALLEGRO_BITMAP* tempfile = load_bitmap_withWarning(filename);
-	LogVerbose("New image: %s\n",filename);
-	if(currentCache < 0)
-	{
-		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
-		if(!IMGCache[0])
+		int op, src, dst, alpha_op, alpha_src, alpha_dst;
+		ALLEGRO_COLOR color;
+		al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst, &color);
+		ALLEGRO_BITMAP* currentTarget = al_get_target_bitmap();
+		uint32_t numFiles = (uint32_t)IMGFilelist.size();
+		for(uint32_t i = 0; i < numFiles; i++)
 		{
-			DisplayErr("Cannot create bitmap sized %ix%i, please chose a smaller size",config.imageCacheSize,config.imageCacheSize);
+			if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
+				return i;
 		}
-		currentCache = IMGCache.size() -1;
-		LogVerbose("Creating image cache #%d\n",currentCache);
-	}
-	if((yOffset + al_get_bitmap_height(tempfile)) <= config.imageCacheSize)
-	{
-		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
-		al_set_target_bitmap(IMGCache[currentCache]);
-		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
-		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
-		yOffset += al_get_bitmap_height(tempfile);
-		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
-	}
-	else if ((xOffset + al_get_bitmap_width(tempfile) + columnWidth) <= config.imageCacheSize)
-	{
-		yOffset = 0;
-		xOffset += columnWidth;
-		columnWidth = 0;
-		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
-		al_set_target_bitmap(IMGCache[currentCache]);
-		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
-		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
-		yOffset += al_get_bitmap_height(tempfile);
-		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+		al_clear_to_color(al_map_rgb(0,0,0));
+		draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Loading %s...", filename);
+		al_flip_display();
+		static int xOffset = 0;
+		static int yOffset = 0;
+		int currentCache = IMGCache.size() -1;
+		static int columnWidth = 0;
+		ALLEGRO_BITMAP* tempfile = load_bitmap_withWarning(filename);
+		LogVerbose("New image: %s\n",filename);
+		if(currentCache < 0)
+		{
+			IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
+			if(!IMGCache[0])
+			{
+				DisplayErr("Cannot create bitmap sized %ix%i, please chose a smaller size",config.imageCacheSize,config.imageCacheSize);
+			}
+			currentCache = IMGCache.size() -1;
+			LogVerbose("Creating image cache #%d\n",currentCache);
+		}
+		if((yOffset + al_get_bitmap_height(tempfile)) <= config.imageCacheSize)
+		{
+			al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+			al_set_target_bitmap(IMGCache[currentCache]);
+			al_draw_bitmap(tempfile, xOffset, yOffset, 0);
+			IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+			yOffset += al_get_bitmap_height(tempfile);
+			columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+		}
+		else if ((xOffset + al_get_bitmap_width(tempfile) + columnWidth) <= config.imageCacheSize)
+		{
+			yOffset = 0;
+			xOffset += columnWidth;
+			columnWidth = 0;
+			al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+			al_set_target_bitmap(IMGCache[currentCache]);
+			al_draw_bitmap(tempfile, xOffset, yOffset, 0);
+			IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+			yOffset += al_get_bitmap_height(tempfile);
+			columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+		}
+		else
+		{
+			yOffset = 0;
+			xOffset = 0;
+			IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
+			currentCache = IMGCache.size() -1;
+			LogVerbose("Creating image cache #%d\n",currentCache);
+			al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
+			al_set_target_bitmap(IMGCache[currentCache]);
+			al_draw_bitmap(tempfile, xOffset, yOffset, 0);
+			IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
+			yOffset += al_get_bitmap_height(tempfile);
+			columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+		}
+		if(config.saveImageCache)
+			saveImage(tempfile);
+		al_destroy_bitmap(tempfile);
+		al_set_target_bitmap(al_get_backbuffer());
+		IMGFilenames.push_back(new string(filename));
+		al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+		if(config.saveImageCache)
+			saveImage(IMGCache[currentCache]);
+		al_clear_to_color(al_map_rgb(0,0,0));
+		al_flip_display();
+		return (int)IMGFilelist.size() - 1;
 	}
 	else
 	{
-		yOffset = 0;
-		xOffset = 0;
-		IMGCache.push_back(al_create_bitmap(config.imageCacheSize, config.imageCacheSize));
-		currentCache = IMGCache.size() -1;
-		LogVerbose("Creating image cache #%d\n",currentCache);
-		al_set_blender(ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ZERO, al_map_rgba(255, 255, 255, 255));
-		al_set_target_bitmap(IMGCache[currentCache]);
-		al_draw_bitmap(tempfile, xOffset, yOffset, 0);
-		IMGFilelist.push_back(al_create_sub_bitmap(IMGCache[currentCache], xOffset, yOffset, al_get_bitmap_width(tempfile), al_get_bitmap_height(tempfile)));
-		yOffset += al_get_bitmap_height(tempfile);
-		columnWidth = returnGreater(columnWidth, al_get_bitmap_width(tempfile));
+		uint32_t numFiles = (uint32_t)IMGFilelist.size();
+		for(uint32_t i = 0; i < numFiles; i++)
+		{
+			if (strcmp(filename, IMGFilenames[i]->c_str()) == 0)
+				return i;
+		}
+		IMGFilelist.push_back(load_bitmap_withWarning(filename));
+		IMGFilenames.push_back(new string(filename));
+		LogVerbose("New image: %s\n",filename);
+		return (int)IMGFilelist.size() - 1;
 	}
-	if(config.saveImageCache)
-		saveImage(tempfile);
-	al_destroy_bitmap(tempfile);
-	al_set_target_bitmap(al_get_backbuffer());
-	IMGFilenames.push_back(new string(filename));
-	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-	if(config.saveImageCache)
-		saveImage(IMGCache[currentCache]);
-	al_clear_to_color(al_map_rgb(0,0,0));
-	al_flip_display();
-	return (int)IMGFilelist.size() - 1;
 }
 int loadImgFile(ALLEGRO_PATH* filepath)
 {
