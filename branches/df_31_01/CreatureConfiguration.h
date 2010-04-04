@@ -1,5 +1,5 @@
 #pragma once
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 
 
 #define CREATURESTRLENGTH 50

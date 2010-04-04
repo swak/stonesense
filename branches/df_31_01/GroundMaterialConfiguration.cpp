@@ -2,7 +2,7 @@
 #include "SpriteMaps.h"
 #include "GroundMaterialConfiguration.h"
 #include <set>
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 #include "GUI.h"
 #include "ContentLoader.h"
 
@@ -33,11 +33,11 @@ TerrainConfiguration::~TerrainConfiguration()
 	}
 }
 
-void DumpGroundMaterialNamesToDisk(){
+void DumpInorganicMaterialNamesToDisk(){
 	FILE* fp = fopen("dump.txt", "w");
 	if(!fp) return;
-	for(uint32_t j=0; j < contentLoader.stoneNameStrings.size(); j++){
-		fprintf(fp, "%i:%s\n",j, contentLoader.stoneNameStrings[j].id);
+	for(uint32_t j=0; j < contentLoader.organicMaterials.size(); j++){
+		fprintf(fp, "%i:%s\n",j, contentLoader.organicMaterials[j].id);
 	}
 	fclose(fp);
 }

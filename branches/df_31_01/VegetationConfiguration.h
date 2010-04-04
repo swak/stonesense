@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 
 class VegetationConfiguration
 {

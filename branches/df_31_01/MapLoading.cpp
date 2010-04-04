@@ -200,10 +200,10 @@ void ReadCellToSegment(API& DF, WorldSegment& segment, int CellX, int CellY, int
 	t_designation designations[16][16];
 	t_occupancy occupancies[16][16];
 	uint8_t regionoffsets[16];
-	DF.ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
-	DF.ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
-	DF.ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
-	DF.ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
+	//DF.ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
+	//DF.ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
+	//DF.ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
+	//DF.ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
 
 	//read local vein data
 	vector <t_vein> veins;
@@ -350,12 +350,28 @@ bool checkFloorBorderRequirement(WorldSegment* segment, int x, int y, int z, dir
 }
 
 
-WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey, int sizez){
+WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey, int sizez)
+{
 	uint32_t index;
 	TMR2_START;
+
+	if(!(DF.isAttached()))
+	{
+		WriteErr("DF has disconnected.\n");
+		return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
+	}
+	if(!(DF.isSuspended()))
+	{
+		DF.Suspend();
+	}
+	// init the map
 	try
 	{
-		DF.InitMap();
+		if(!(DF.InitMap()))
+		{
+			WriteErr("Can't init map.\n");
+			return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
+		}
 	}
 	catch(exception &err)
 	{
@@ -364,227 +380,9 @@ WorldSegment* ReadMapSegment(API &DF, int x, int y, int z, int sizex, int sizey,
 		//return new blank segment
 		return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
 	}
-	if( IsConnectedToDF() == false){
-		DisconnectFromDF();
-		//return new blank segment
-		return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
-	}
-
-	//read memory info
-	if( memInfoHasBeenRead == false){
-		dfMemoryInfo = DF.getMemoryInfo();
-		memInfoHasBeenRead = true;
-	}
-
-	if (timeToReloadConfig)
-	{
-		contentLoader.Load(DF);
-		timeToReloadConfig = false;
-	}
-
-	//Read Number of cells
-	int celldimX, celldimY, celldimZ;
-	DF.getSize((unsigned int &)celldimX, (unsigned int &)celldimY, (unsigned int &)celldimZ);
-	//Store these
-	config.cellDimX = celldimX * 16;
-	config.cellDimY = celldimY * 16;
-	config.cellDimZ = celldimZ;
-	//bound view to world
-	if(x > celldimX * CELLEDGESIZE -sizex/2) DisplayedSegmentX = x = celldimX * CELLEDGESIZE -sizex/2;
-	if(y > celldimY * CELLEDGESIZE -sizey/2) DisplayedSegmentY = y = celldimY * CELLEDGESIZE -sizey/2;
-	if(x < -sizex/2) DisplayedSegmentX = x = -sizex/2;
-	if(y < -sizey/2) DisplayedSegmentY = y = -sizey/2;
-
-	//setup new world segment
-	WorldSegment* segment = new WorldSegment(x,y,z,sizex,sizey,sizez);
-	segment->regionSize.x = celldimX * CELLEDGESIZE;
-	segment->regionSize.y = celldimY * CELLEDGESIZE;
-	segment->regionSize.z = celldimZ;
-
-	//read world wide buildings
-	vector<t_building> allBuildings;
-	ReadBuildings(DF, &allBuildings);
-
-	/*if(GroundMaterialNamesTranslatedFromGame == false)
-	TranslateGroundMaterialNames();*/
-
-	//read layers
-	vector< vector <uint16_t> > layers;
-	DF.ReadGeology( layers );
-
-	//read cursor
-	pDFApiHandle->getCursorCoords(config.dfCursorX, config.dfCursorY, config.dfCursorZ);
-
-	// read constructions
-	vector<t_construction> allConstructions;
-	uint32_t numconstructions = 0;
-
-	if (DF.InitReadConstructions(numconstructions))
-	{
-		t_construction tempcon;
-		index = 0;
-		while(index < numconstructions)
-		{
-			DF.ReadConstruction(index, tempcon);
-			if(segment->CoordinateInsideSegment(tempcon.x, tempcon.y, tempcon.z))
-				allConstructions.push_back(tempcon);
-			index++;
-		}
-		DF.FinishReadConstructions();
-	}
-
-	//merge buildings with segment
-	MergeBuildingsToSegment(&allBuildings, segment);
-
-	//figure out what cells to read
-	int32_t firstTileToReadX = x;
-	if( firstTileToReadX < 0 ) firstTileToReadX = 0;
-
-	while(firstTileToReadX < x + sizex){
-		int cellx = firstTileToReadX / CELLEDGESIZE;
-		int32_t lastTileInCellX = (cellx+1) * CELLEDGESIZE - 1;
-		int32_t lastTileToReadX = min<int32_t>(lastTileInCellX, x+sizex-1);
-
-		int32_t firstTileToReadY = y;
-		if( firstTileToReadY < 0 ) firstTileToReadY = 0;
-
-		while(firstTileToReadY < y + sizey){
-			int celly = firstTileToReadY / CELLEDGESIZE;
-			int32_t lastTileInCellY = (celly+1) * CELLEDGESIZE - 1;
-			int32_t lastTileToReadY = min<uint32_t>(lastTileInCellY, y+sizey-1);
-
-			for(int lz=z-sizez; lz <= z; lz++){
-				//load the blcoks from this cell to the map segment
-				ReadCellToSegment(DF, *segment, cellx, celly, lz, 
-					firstTileToReadX, firstTileToReadY, lastTileToReadX, lastTileToReadY,
-					0, &allBuildings, &allConstructions, &layers );
-
-			}
-			firstTileToReadY = lastTileToReadY + 1;
-		}
-		firstTileToReadX = lastTileToReadX + 1;
-	}
-
-	//translate constructions
-	changeConstructionMaterials(segment, &allConstructions);
-
-
-	//Read Vegetation
-	uint32_t numtrees;
-	try
-	{
-		if (DF.InitReadVegetation(numtrees))
-		{
-			t_tree_desc temptree;
-			index = 0;
-			while(index < numtrees )
-			{
-				DF.ReadVegetation(index, temptree);
-				//want hashtable :(
-				Block* b;
-				if( b = segment->getBlock( temptree.x, temptree.y, temptree.z) )
-					b->tree = temptree.material;
-				index ++;
-			}
-			DF.FinishReadVegetation();
-		}
-	}
-	catch(exception &err)
-	{
-		WriteErr("Exeption: %s \n", err.what());
-	}
-
-	//Read Effects
-	uint32_t numeffects;
-	if (DF.InitReadEffects(numeffects))
-	{
-		t_effect_df40d tempeffect;
-		index = 0;
-		while(index < numeffects )
-		{
-			DF.ReadEffect(index, tempeffect);
-			//want hashtable :(
-			Block* b;
-			if( b = segment->getBlock( tempeffect.x, tempeffect.y, tempeffect.z) )
-				if(!(tempeffect.isHidden))
-				{
-					b->blockeffects.type = tempeffect.type;
-					b->blockeffects.canCreateNew = tempeffect.canCreateNew;
-					b->blockeffects.lifetime = tempeffect.lifetime;
-					b->blockeffects.material = tempeffect.material;
-					b->blockeffects.x_direction = tempeffect.x_direction;
-					b->blockeffects.y_direction = tempeffect.y_direction;
-					b->blockeffects.count +=1;
-					if(tempeffect.type == 0)
-						b->eff_miasma = tempeffect.lifetime;
-					if(tempeffect.type == 1)
-						b->eff_water = tempeffect.lifetime;
-					if(tempeffect.type == 2)
-						b->eff_water2 = tempeffect.lifetime;
-					if(tempeffect.type == 3)
-						b->eff_blood = tempeffect.lifetime;
-					if(tempeffect.type == 4)
-						b->eff_dust = tempeffect.lifetime;
-					if(tempeffect.type == 5)
-						b->eff_magma = tempeffect.lifetime;
-					if(tempeffect.type == 6)
-						b->eff_smoke = tempeffect.lifetime;
-					if(tempeffect.type == 7)
-						b->eff_dragonfire = tempeffect.lifetime;
-					if(tempeffect.type == 8)
-						b->eff_fire = tempeffect.lifetime;
-					if(tempeffect.type == 9)
-						b->eff_webing = tempeffect.lifetime;
-					if(tempeffect.type == 10)
-						b->eff_boiling = tempeffect.lifetime;
-					if(tempeffect.type == 11)
-						b->eff_oceanwave = tempeffect.lifetime;
-				}
-				index ++;
-		}
-		DF.FinishReadEffects();
-	}
-	//Read Creatures
-	ReadCreaturesToSegment( DF, segment );
-
-	//do misc beautification
-	uint32_t numblocks = segment->getNumBlocks();
-	for(uint32_t i=0; i < numblocks; i++){
-		Block* b = segment->getBlock(i);
-		//setup building sprites
-		if( b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX )
-			loadBuildingSprites( b );
-
-		//setup deep water
-		if( b->water.index == 7 && b->water.type == 0)
-		{
-			int topdepth = blockWaterDepth(b->x, b->y, b->z, segment, eAbove);
-			if(topdepth)
-				b->water.index = 8;
-		}
-
-
-		//setup ramps
-		if(b->ramp.type > 0) 
-			b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);
-		//add edges to blocks and floors  
-		if( b->floorType > 0 ){
-			b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);
-			b->depthBorderNorth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eUp);
-		}else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false ){
-			Block* leftBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
-			Block* upBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eUp);
-			if(!leftBlock || (!leftBlock->wallType && !leftBlock->ramp.type)) 
-				b->depthBorderWest = true;
-			if(!upBlock || (!upBlock->wallType && !upBlock->ramp.type))
-				b->depthBorderNorth = true;
-		}
-	}
-
-	DF.DestroyMap();
+	WorldSegment* seg = new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);
 	TMR2_STOP;
-
-	return segment;
+	return seg;
 }
 
 
@@ -623,113 +421,115 @@ bool IsConnectedToDF(){
 	return pDFApiHandle->isAttached();
 }
 
-void FollowCurrentDFWindow( ){
-	int32_t newviewx;
-	int32_t newviewy;
-	int32_t viewsizex;
-	int32_t viewsizey;
-	int32_t newviewz;
-	int32_t mapx, mapy, mapz;
-	try
-	{
-		if (pDFApiHandle->InitViewAndCursor())
-		{
-			if(pDFApiHandle->InitViewSize())
-			{
-				// we take the rectangle you'd get if you scrolled the DF view closely around
-				// map edges with a pen pierced through the center,
-				// compute the scaling factor between this rectangle and the map bounds and then scale
-				// the coords with this scaling factor
-				/**
+void FollowCurrentDFWindow( )
+{
+	//int32_t newviewx;
+	//int32_t newviewy;
+	//int32_t viewsizex;
+	//int32_t viewsizey;
+	//int32_t newviewz;
+	//int32_t mapx, mapy, mapz;
+	//try
+	//{
+	//	if (pDFApiHandle->InitViewAndCursor())
+	//	{
+	//		if(pDFApiHandle->InitViewSize())
+	//		{
+	//			// we take the rectangle you'd get if you scrolled the DF view closely around
+	//			// map edges with a pen pierced through the center,
+	//			// compute the scaling factor between this rectangle and the map bounds and then scale
+	//			// the coords with this scaling factor
+	//			/**
 
-				+---+
-				|W+-++----------+
-				+-+-+---------+ |
-				| |         | |
-				| | inner   | |
-				| |   rect. | |
-				| |         | |
-				| |         | |--- map boundary
-				| +---------+ |
-				+-------------+  W - corrected view
+	//			+---+
+	//			|W+-++----------+
+	//			+-+-+---------+ |
+	//			| |         | |
+	//			| | inner   | |
+	//			| |   rect. | |
+	//			| |         | |
+	//			| |         | |--- map boundary
+	//			| +---------+ |
+	//			+-------------+  W - corrected view
 
-				*/
-				pDFApiHandle->getSize((uint32_t &)mapx, (uint32_t &)mapy, (uint32_t &)mapz);
-				mapx *= 16;
-				mapy *= 16;
+	//			*/
+	//			pDFApiHandle->getSize((uint32_t &)mapx, (uint32_t &)mapy, (uint32_t &)mapz);
+	//			mapx *= 16;
+	//			mapy *= 16;
 
-				pDFApiHandle->getWindowSize(viewsizex,viewsizey);
-				float scalex = float (mapx) / float (mapx - viewsizex);
-				float scaley = float (mapy) / float (mapy - viewsizey);
+	//			pDFApiHandle->getWindowSize(viewsizex,viewsizey);
+	//			float scalex = float (mapx) / float (mapx - viewsizex);
+	//			float scaley = float (mapy) / float (mapy - viewsizey);
 
-				pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
-				newviewx = newviewx + (viewsizex / 2) - mapx / 2;
-				newviewy = newviewy + (viewsizey / 2) - mapy / 2;
+	//			pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
+	//			newviewx = newviewx + (viewsizex / 2) - mapx / 2;
+	//			newviewy = newviewy + (viewsizey / 2) - mapy / 2;
 
-				DisplayedSegmentX = float (newviewx) * scalex - (config.segmentSize.x / 2) + config.viewXoffset + mapx / 2;
-				DisplayedSegmentY = float (newviewy) * scaley - (config.segmentSize.y / 2) + config.viewYoffset + mapy / 2;
-				DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
+	//			DisplayedSegmentX = float (newviewx) * scalex - (config.segmentSize.x / 2) + config.viewXoffset + mapx / 2;
+	//			DisplayedSegmentY = float (newviewy) * scaley - (config.segmentSize.y / 2) + config.viewYoffset + mapy / 2;
+	//			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
 
-			}
-			else
-			{
-				pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
-				DisplayedSegmentX = newviewx + config.viewXoffset;
-				DisplayedSegmentY = newviewy + config.viewYoffset;
-				DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
-			}
-		}
-		else
-		{
-			//fail
-			config.follow_DFscreen = false;
-		}
-	}
-	catch(exception &err)
-	{
-		WriteErr("Exeption: %s \n", err.what());
-		config.follow_DFscreen = false;
-	}
+	//		}
+	//		else
+	//		{
+	//			pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
+	//			DisplayedSegmentX = newviewx + config.viewXoffset;
+	//			DisplayedSegmentY = newviewy + config.viewYoffset;
+	//			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		//fail
+	//		config.follow_DFscreen = false;
+	//	}
+	//}
+	//catch(exception &err)
+	//{
+	//	WriteErr("Exeption: %s \n", err.what());
+	//	config.follow_DFscreen = false;
+	//}
 }
 
-void FollowCurrentDFCenter( ){
-	int32_t newviewx;
-	int32_t newviewy;
-	int32_t viewsizex;
-	int32_t viewsizey;
-	int32_t newviewz;
-	try
-	{
-		if (pDFApiHandle->InitViewAndCursor())
-		{
-			if(pDFApiHandle->InitViewSize())
-			{
-				pDFApiHandle->getWindowSize(viewsizex,viewsizey); 
-				pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
+void FollowCurrentDFCenter( )
+{
+	//int32_t newviewx;
+	//int32_t newviewy;
+	//int32_t viewsizex;
+	//int32_t viewsizey;
+	//int32_t newviewz;
+	//try
+	//{
+	//	if (pDFApiHandle->InitViewAndCursor())
+	//	{
+	//		if(pDFApiHandle->InitViewSize())
+	//		{
+	//			pDFApiHandle->getWindowSize(viewsizex,viewsizey); 
+	//			pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
 
-				DisplayedSegmentX = newviewx + (viewsizex/2) - (config.segmentSize.x / 2) + config.viewXoffset;
-				DisplayedSegmentY = newviewy + (viewsizey/2) - (config.segmentSize.y / 2) + config.viewYoffset;
-				DisplayedSegmentZ = newviewz + config.viewZoffset + 1;       
-			}
-			else
-			{
-				pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
-				DisplayedSegmentX = newviewx + config.viewXoffset;
-				DisplayedSegmentY = newviewy + config.viewYoffset;
-				DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
-			}
-		}
-		else
-		{
-			//fail
-			config.follow_DFscreen = false;
-		}
-	}
-	catch(exception &err)
-	{
-		WriteErr("Exeption: %s \n", err.what());
-		config.follow_DFscreen = false;
-	}
+	//			DisplayedSegmentX = newviewx + (viewsizex/2) - (config.segmentSize.x / 2) + config.viewXoffset;
+	//			DisplayedSegmentY = newviewy + (viewsizey/2) - (config.segmentSize.y / 2) + config.viewYoffset;
+	//			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;       
+	//		}
+	//		else
+	//		{
+	//			pDFApiHandle->getViewCoords(newviewx,newviewy,newviewz);
+	//			DisplayedSegmentX = newviewx + config.viewXoffset;
+	//			DisplayedSegmentY = newviewy + config.viewYoffset;
+	//			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		//fail
+	//		config.follow_DFscreen = false;
+	//	}
+	//}
+	//catch(exception &err)
+	//{
+	//	WriteErr("Exeption: %s \n", err.what());
+	//	config.follow_DFscreen = false;
+	//}
 }
 
 void reloadDisplayedSegment(){
@@ -741,16 +541,22 @@ void reloadDisplayedSegment(){
 		al_flip_display();
 		memInfoHasBeenRead = false;
 		pDFApiHandle = new API("Memory.xml");
-		if( ConnectDFAPI( pDFApiHandle ) == false )
+		try
 		{
+			pDFApiHandle->Attach();
+			pDFApiHandle->Detach();
+		}
+		catch (exception& e)
+		{
+			WriteErr("No Dwarf Fortress executable found\n");
+			WriteErr("Exeption:%s\n", e.what());
 			delete( pDFApiHandle );
 			pDFApiHandle = 0;
-			WriteErr("No Dwarf Fortress executable found\n");
-			return;
+			return ;
 		}
 	}
 	API& DF = *pDFApiHandle;
-
+	DF.Attach();
 	TMR1_START;
 
 	//dispose old segment
@@ -763,33 +569,35 @@ void reloadDisplayedSegment(){
 	firstLoad=false;
 #endif
 
-	DF.Suspend();
-
-	if (firstLoad || config.follow_DFscreen)
+	try
 	{
-		if (config.track_center)
-		{
-			FollowCurrentDFCenter();
-		}
-		else
-		{
-			FollowCurrentDFWindow();
-		}
+		DF.Suspend();
+	}
+	catch (exception& e)
+	{
+		WriteErr("Exeption:%s\n", e.what());
+		return ;
 	}
 
 	int segmentHeight = config.single_layer_view ? 2 : config.segmentSize.z;
-	//load segment
 
-	viewedSegment = ReadMapSegment(DF, DisplayedSegmentX, DisplayedSegmentY, DisplayedSegmentZ,
-		config.segmentSize.x, config.segmentSize.y, segmentHeight);
-
-	if(!viewedSegment || viewedSegment->regionSize.x == 0 || viewedSegment->regionSize.y == 0)
+	WriteErr("Before init");
+	try
 	{
-		abortAutoReload();
-		timeToReloadConfig = true;
+		DF.InitMap();
 	}
-	if( pDFApiHandle ){
-		DF.Resume();
+	catch (exception& e)
+	{
+		WriteErr("Exeption:%s\n", e.what());
+		return ;
 	}
+	
+
+	
+	//viewedSegment = ReadMapSegment(DF, DisplayedSegmentX, DisplayedSegmentY, DisplayedSegmentZ,
+	//	config.segmentSize.x, config.segmentSize.y, segmentHeight);
+	WriteErr("Before resume");
+	DF.Resume();
+	WriteErr("After resume");
 	TMR1_STOP;
 }

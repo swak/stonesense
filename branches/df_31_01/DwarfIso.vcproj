@@ -393,37 +393,25 @@
 				>
 			</File>
 			<Filter
-				Name="dfhack"
+				Name="depends"
 				>
 				<Filter
 					Name="tinyxml"
 					>
 					<File
-						RelativePath=".\dfhack\library\tinyxml\tinystr.cpp"
+						RelativePath=".\dfhack\depends\tinyxml\tinystr.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\dfhack\library\tinyxml\tinyxml.cpp"
+						RelativePath=".\dfhack\depends\tinyxml\tinyxml.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\dfhack\library\tinyxml\tinyxmlerror.cpp"
+						RelativePath=".\dfhack\depends\tinyxml\tinyxmlerror.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\dfhack\library\tinyxml\tinyxmlparser.cpp"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="md5"
-					>
-					<File
-						RelativePath=".\dfhack\library\md5\md5.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\dfhack\library\md5\md5wrapper.cpp"
+						RelativePath=".\dfhack\depends\tinyxml\tinyxmlparser.cpp"
 						>
 					</File>
 				</Filter>
@@ -499,10 +487,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\dfhack\library\config.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Constructions.h"
 				>
 			</File>
@@ -527,10 +511,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\dfhack\library\integers.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MapLoading.h"
 				>
 			</File>
@@ -546,49 +526,113 @@
 				Name="dfHack"
 				>
 				<File
-					RelativePath=".\dfhack\library\DFCommonInternal.h"
+					RelativePath=".\dfhack\include\config.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFError.h"
+					RelativePath=".\dfhack\include\DFCommonInternal.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFHackAPI.h"
+					RelativePath=".\dfhack\include\DFError.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFMemInfo.h"
+					RelativePath=".\dfhack\include\DFHackAPI.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFMemInfoManager.h"
+					RelativePath=".\dfhack\include\DFMemInfo.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFProcess.h"
+					RelativePath=".\dfhack\include\DFMemInfoManager.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFProcessEnumerator.h"
+					RelativePath=".\dfhack\include\DFProcess.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFTileTypes.h"
+					RelativePath=".\dfhack\include\DFProcessEnumerator.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\dftypes.h"
+					RelativePath=".\dfhack\include\DFTileTypes.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFVector.h"
+					RelativePath=".\dfhack\include\DFTypes.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dfhack\library\DFWindow.h"
+					RelativePath=".\dfhack\include\DFVector.h"
 					>
 				</File>
+				<File
+					RelativePath=".\dfhack\include\DFWindow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\include\Export.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\include\integers.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\include\stdint_win.h"
+					>
+				</File>
+				<File
+					RelativePath=".\dfhack\include\Tranquility.h"
+					>
+				</File>
+				<Filter
+					Name="Modules"
+					>
+					<File
+						RelativePath=".\dfhack\modules\Creatures-data.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Creatures-proc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Gui-data.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Gui-proc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Maps-data.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Maps-proc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Materials-data.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Materials-proc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Position-data.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dfhack\modules\Position-proc.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Configuration"
@@ -619,6 +663,10 @@
 				</File>
 				<File
 					RelativePath=".\GroundMaterialConfiguration.h"
+					>
+				</File>
+				<File
+					RelativePath=".\VegetationConfiguration.h"
 					>
 				</File>
 			</Filter>

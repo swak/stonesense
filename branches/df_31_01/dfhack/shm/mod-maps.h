@@ -33,7 +33,7 @@ namespace DFHack
     namespace Maps
     {
 
-#define MAPS_VERSION 2
+#define MAPS_VERSION 3
 typedef struct
 {
     uint32_t map_offset;// = d->offset_descriptor->getAddress ("map_data");
@@ -47,6 +47,7 @@ typedef struct
     uint32_t veinvector;// = d->offset_descriptor->getOffset ("v_vein");
     uint32_t vein_mineral_vptr;
     uint32_t vein_ice_vptr;
+    uint32_t vein_spatter_vptr;
     /*
     GEOLOGY
     uint32_t region_x_offset;// = minfo->getAddress ("region_x");
@@ -96,6 +97,8 @@ enum MAPS_COMMAND
     MAP_REVEAL, // reveal the whole map
     NUM_MAPS_CMDS,
 };
+DFPP_module Init(void);
+
     }
 }
 

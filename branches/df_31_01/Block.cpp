@@ -8,7 +8,7 @@
 #include "BlockFactory.h"
 #include "ContentLoader.h"
 
-#include "dfhack/library/DFTypes.h"
+#include "dfhack/include/DFTypes.h"
 
 
 

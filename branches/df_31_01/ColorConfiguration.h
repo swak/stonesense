@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 #include <map>
 
 class ColorMaterialConfiguration

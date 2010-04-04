@@ -4,9 +4,9 @@
 #include "MapLoading.h"
 #include "GUI.h"
 #include "ContentLoader.h"
-#include "dfhack/library/DFError.h"
+#include "dfhack/include/DFError.h"
 
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 
 
 CreatureConfiguration::CreatureConfiguration(int professionID, const char* professionStr, enumCreatureSex sex, enumCreatureSpecialCases special, t_SpriteWithOffset &sprite, int shadow)
@@ -81,9 +81,9 @@ void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures,
 	{
 		//resize using hint from creature name list
 		unsigned int newsize = gameID +1;
-		if (newsize <= contentLoader.creatureNameStrings.size())
+		if (newsize <= contentLoader.creatureMaterials.size())
 		{
-			newsize = contentLoader.creatureNameStrings.size() + 1;
+			newsize = contentLoader.creatureMaterials.size() + 1;
 		}
 		knownCreatures.resize(newsize);
 	}
@@ -97,7 +97,7 @@ void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures,
 }
 
 bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<vector<CreatureConfiguration>*>& knownCreatures, int basefile ){
-  int gameID = lookupIndexedType(elemCreature->Attribute("gameID"),contentLoader.creatureNameStrings);
+  int gameID = lookupIndexedType(elemCreature->Attribute("gameID"),contentLoader.creatureMaterials);
   if (gameID == INVALID_INDEX)
   	return false;
   const char* sheetIndexStr;

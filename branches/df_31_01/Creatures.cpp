@@ -75,7 +75,7 @@ void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
     else if (config.names_use_species)
     {
     	draw_textf_border(font, drawx, drawy-20, 0, 
-			"[%s]", contentLoader.creatureNameStrings.at(creature->type).id);
+			"[%s]", contentLoader.creatureMaterials.at(creature->type).id);
 	}
 }
 
@@ -83,77 +83,77 @@ void DrawCreatureText(int drawx, int drawy, t_creature* creature ){
 
 void ReadCreaturesToSegment(API& DF, WorldSegment* segment)
 {
-  int x1 = segment->x;
-  int x2 = segment->x + segment->sizex;
-  int y1 = segment->y;
-  int y2 = segment->y + segment->sizey;
-  int z1 = segment->z;
-  int z2 = segment->z + segment->sizez;
-  uint32_t numcreatures;
-  try
-  {
-	DF.InitReadCreatures(numcreatures);
-  }
-  catch(exception &err)
-  {
-	  WriteErr("Exeption: %s \n", err.what());
-	  return;
-  }
-  if(!numcreatures) return;
-  if(x1<0) x1=0;
-  if(y1<0) y1=0;
-  if(z1<0) z1=0;
-  if(x2<0) x2=0;
-  if(y2<0) y2=0;
-  if(z2<0) z2=0;
+ // int x1 = segment->x;
+ // int x2 = segment->x + segment->sizex;
+ // int y1 = segment->y;
+ // int y2 = segment->y + segment->sizey;
+ // int z1 = segment->z;
+ // int z2 = segment->z + segment->sizez;
+ // uint32_t numcreatures;
+ // try
+ // {
+	//DF.InitReadCreatures(numcreatures);
+ // }
+ // catch(exception &err)
+ // {
+	//  WriteErr("Exeption: %s \n", err.what());
+	//  return;
+ // }
+ // if(!numcreatures) return;
+ // if(x1<0) x1=0;
+ // if(y1<0) y1=0;
+ // if(z1<0) z1=0;
+ // if(x2<0) x2=0;
+ // if(y2<0) y2=0;
+ // if(z2<0) z2=0;
 
-	t_creature *tempcreature = new t_creature();
-	/*for (uint32_t index = 0; index < numcreatures ; index++)
-	{
-		DF.ReadCreature( index, *tempcreature );*/
-  uint32_t index = 0;
-	while((index = DF.ReadCreatureInBox( index, *tempcreature, x1,y1,z1,x2,y2,z2)) != -1 )
-  {
-    index++;
-		if( IsCreatureVisible( tempcreature ) )
-		{
-			Block* b = segment->getBlock (tempcreature->x, tempcreature->y, tempcreature->z );
-			if(!b)
-			{
-				//inside segment, but no block to represent it
-				b = new Block(segment);
-				b->x = tempcreature->x;
-				b->y = tempcreature->y;
-				b->z = tempcreature->z;
-				// fake block occupancy where needed. This is starting to get hacky...
-				b->occ.bits.unit=1;
-				segment->addBlock( b );
-			}
-			if (!b->creature)
-			{
-				b->creature = tempcreature;
-				// add shadow to nearest floor block
-				for (int bz = tempcreature->z;bz>=z1;bz--)
-				{
-					b = segment->getBlock (tempcreature->x, tempcreature->y, bz );
-					if (!b) continue;
-					if (b->floorType > 0 || b->wallType > 0 || b->ramp.type > 0)
-					{
-						// todo figure out appropriate shadow size
-						int tempShadow = GetCreatureShadowMap( tempcreature );
-						if (b->shadow < tempShadow)
-							b->shadow=tempShadow;
-						break;	
-					}
-				}
-				// need a new tempcreature now
-				// old tempcreature should be deleted when b is
-				tempcreature = new t_creature();
-			}
-		}
-	}
-	delete(tempcreature); // there will be one left over
-	DF.FinishReadCreatures();
+	//t_creature *tempcreature = new t_creature();
+	///*for (uint32_t index = 0; index < numcreatures ; index++)
+	//{
+	//	DF.ReadCreature( index, *tempcreature );*/
+ // uint32_t index = 0;
+	//while((index = DF.ReadCreatureInBox( index, *tempcreature, x1,y1,z1,x2,y2,z2)) != -1 )
+ // {
+ //   index++;
+	//	if( IsCreatureVisible( tempcreature ) )
+	//	{
+	//		Block* b = segment->getBlock (tempcreature->x, tempcreature->y, tempcreature->z );
+	//		if(!b)
+	//		{
+	//			//inside segment, but no block to represent it
+	//			b = new Block(segment);
+	//			b->x = tempcreature->x;
+	//			b->y = tempcreature->y;
+	//			b->z = tempcreature->z;
+	//			// fake block occupancy where needed. This is starting to get hacky...
+	//			b->occ.bits.unit=1;
+	//			segment->addBlock( b );
+	//		}
+	//		if (!b->creature)
+	//		{
+	//			b->creature = tempcreature;
+	//			// add shadow to nearest floor block
+	//			for (int bz = tempcreature->z;bz>=z1;bz--)
+	//			{
+	//				b = segment->getBlock (tempcreature->x, tempcreature->y, bz );
+	//				if (!b) continue;
+	//				if (b->floorType > 0 || b->wallType > 0 || b->ramp.type > 0)
+	//				{
+	//					// todo figure out appropriate shadow size
+	//					int tempShadow = GetCreatureShadowMap( tempcreature );
+	//					if (b->shadow < tempShadow)
+	//						b->shadow=tempShadow;
+	//					break;	
+	//				}
+	//			}
+	//			// need a new tempcreature now
+	//			// old tempcreature should be deleted when b is
+	//			tempcreature = new t_creature();
+	//		}
+	//	}
+	//}
+	//delete(tempcreature); // there will be one left over
+	//DF.FinishReadCreatures();
 }
 
 

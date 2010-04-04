@@ -5,7 +5,7 @@
 #include "common.h"
 #include "BuildingConfiguration.h"
 #include "BlockCondition.h"
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 #include "GUI.h"
 #include "ContentLoader.h"
 

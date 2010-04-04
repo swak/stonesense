@@ -18,10 +18,10 @@
 
 using namespace std;
 
-#include "dfhack/library/DFTypes.h"
-#include "dfhack/library/DFTileTypes.h"
-#include "dfhack/library/DFHackAPI.h"
-#include "dfhack/library/DFMemInfo.h"
+#include "dfhack/include/DFTypes.h"
+#include "dfhack/include/DFTileTypes.h"
+#include "dfhack/include/DFHackAPI.h"
+#include "dfhack/include/DFMemInfo.h"
 using namespace DFHack;
 
 #include "commonTypes.h"

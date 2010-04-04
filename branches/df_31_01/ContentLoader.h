@@ -1,5 +1,5 @@
 #pragma once
-#include "dfhack/library/tinyxml/tinyxml.h"
+#include "dfhack/depends/tinyxml/tinyxml.h"
 #include "BuildingConfiguration.h"
 #include "CreatureConfiguration.h"
 #include "VegetationConfiguration.h"
@@ -8,38 +8,39 @@
 
 class ContentLoader{
 private:
-  bool parseContentIndexFile( char* filepath );
-  bool parseContentXMLFile( char* filepath );
-  bool parseBuildingContent( TiXmlElement* elemRoot );
-  bool parseCreatureContent( TiXmlElement* elemRoot );
-  bool parseTerrainContent ( TiXmlElement* elemRoot );
-  bool parseTreeContent( TiXmlElement* elemRoot );
-  bool parseShrubContent( TiXmlElement* elemRoot );
-  bool parseColorContent( TiXmlElement* elemRoot );
-  void flushCreatureConfig();
+	bool parseContentIndexFile( char* filepath );
+	bool parseContentXMLFile( char* filepath );
+	bool parseBuildingContent( TiXmlElement* elemRoot );
+	bool parseCreatureContent( TiXmlElement* elemRoot );
+	bool parseTerrainContent ( TiXmlElement* elemRoot );
+	bool parseTreeContent( TiXmlElement* elemRoot );
+	bool parseShrubContent( TiXmlElement* elemRoot );
+	bool parseColorContent( TiXmlElement* elemRoot );
+	void flushCreatureConfig();
 
-  bool translationComplete;
+	bool translationComplete;
 public:
-  ContentLoader(void);
-  ~ContentLoader(void);
+	ContentLoader(void);
+	~ContentLoader(void);
 
-  bool Load(API& DF);
-  
-  vector<BuildingConfiguration> buildingConfigs;
-  vector<vector<CreatureConfiguration>*> creatureConfigs;
-  vector<VegetationConfiguration> treeConfigs;
-  vector<VegetationConfiguration> shrubConfigs;
-  vector<TerrainConfiguration*> terrainFloorConfigs;
-  vector<TerrainConfiguration*> terrainBlockConfigs;
-  vector<ColorConfiguration> colorConfigs;
+	bool Load(API& DF);
 
-  vector<t_matgloss> creatureNameStrings;
-  vector<t_matgloss> stoneNameStrings;
-  vector<t_matgloss> woodNameStrings;
-  vector<t_matgloss> metalNameStrings;
-  vector<t_matgloss> plantNameStrings;
-  vector<string> classIdStrings;
-  memory_info *memoryInfo;
+	vector<BuildingConfiguration> buildingConfigs;
+	vector<vector<CreatureConfiguration>*> creatureConfigs;
+	vector<VegetationConfiguration> treeConfigs;
+	vector<VegetationConfiguration> shrubConfigs;
+	vector<TerrainConfiguration*> terrainFloorConfigs;
+	vector<TerrainConfiguration*> terrainBlockConfigs;
+	vector<ColorConfiguration> colorConfigs;
+
+	vector<t_matgloss> inorganicMaterials;
+	vector<t_matgloss> organicMaterials;
+	vector<t_matgloss> woodMaterials;
+	vector<t_matgloss> plantMaterials;
+	vector<t_matgloss> creatureMaterials;
+
+	vector<string> classIdStrings;
+	memory_info *memoryInfo;
 };
 
 //singleton instance
