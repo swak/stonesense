@@ -19,32 +19,24 @@ ENDIF(NOT DEFINED CMAKE_BUILD_TYPE)
 SET( EXECUTABLE_OUTPUT_PATH ${stonesense_SOURCE_DIR} CACHE PATH "Output directory for stonesense, default is root" )
 
 include_directories (
-    ${CMAKE_SOURCE_DIR}/dfhack/library/
-    ${CMAKE_SOURCE_DIR}/dfhack/library/md5/
-    ${CMAKE_SOURCE_DIR}/dfhack/library/tinyxml
+    ${CMAKE_SOURCE_DIR}/dfhack/include/
+    ${CMAKE_SOURCE_DIR}/dfhack/depends/md5/
+    ${CMAKE_SOURCE_DIR}/dfhack/depends/tinyxml/
     ${CMAKE_SOURCE_DIR}/allegro/lib/
-	${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}
 )
 
 SET(PROJECT_SRCS
-    dfhack/library/tinyxml/tinystr.cpp
-    dfhack/library/tinyxml/tinyxml.cpp
-    dfhack/library/tinyxml/tinyxmlerror.cpp
-    dfhack/library/tinyxml/tinyxmlparser.cpp
-
-    dfhack/library/DFHackAPI.cpp
-    dfhack/library/DFMemInfo.cpp
-    dfhack/library/DFMemInfoManager.cpp
-    dfhack/library/DFTileTypes.cpp
-    dfhack/library/DFVector.cpp  
+    dfhack/depends/tinyxml/tinystr.cpp
+    dfhack/depends/tinyxml/tinyxml.cpp
+    dfhack/depends/tinyxml/tinyxmlerror.cpp
+    dfhack/depends/tinyxml/tinyxmlparser.cpp
     
-    dfhack/library/md5/md5.cpp
-    dfhack/library/md5/md5wrapper.cpp
-
     Block.cpp
     BlockCondition.cpp
-	BlockFactory.cpp
+    BlockFactory.cpp
     BuildingConfiguration.cpp
+    ColorConfiguration.cpp
     ConditionalSprite.cpp
     Config.cpp
     Constructions.cpp
@@ -92,13 +84,7 @@ endif(WIN32)
 IF(UNIX)
     
     add_definitions(-DLINUX_BUILD)
-    add_definitions(-DBUILD_DFHACK_LIB)
     SET (PLATFORM_SRC
-    dfhack/library/DFProcess-linux.cpp
-    dfhack/library/DFProcess-linux-SHM.cpp
-    dfhack/library/DFProcess-linux-wine.cpp
-    dfhack/library/DFWindow-linux.cpp
-    dfhack/library/DFProcessEnumerator-linux.cpp
     )
     
 #    FIND_PACKAGE(Allegro5 REQUIRED)
@@ -107,7 +93,7 @@ IF(UNIX)
 #    INCLUDE_DIRECTORIES(${ALLEGRO_INCLUDE_DIR})
  
 #    SET(PROJECT_LIBS ${ALLEGRO5_LIBRARIES} ${PROJECT_LIBS})
-    SET(PROJECT_LIBS allegro allegro_primitives allegro_color allegro_dialog allegro_flac allegro_font allegro_image allegro_main allegro_memfile allegro_ttf allegro_vorbis ${PROJECT_LIBS})
+    SET(PROJECT_LIBS allegro allegro_primitives allegro_color allegro_dialog allegro_flac allegro_font allegro_image allegro_main allegro_memfile allegro_ttf allegro_vorbis dfhack-debug ${PROJECT_LIBS})
     
     ADD_EXECUTABLE(stonesense ${PROJECT_SRCS} ${PLATFORM_SRC})
     TARGET_LINK_LIBRARIES(stonesense ${PROJECT_LIBS})
@@ -116,17 +102,13 @@ IF(UNIX)
 ELSE(UNIX)
     add_definitions(-DBUILD_DFHACK_LIB)
     SET (PLATFORM_SRC
-	dfhack/library/DFProcess-windows.cpp
-	dfhack/library/DFProcessEnumerator-windows.cpp
-	dfhack/library/DFWindow-windows.cpp
-	dfhack/library/DFProcess-windows-SHM.cpp
 	)
     # use local allegro
     # MinGW is broken. doesn't link properly for some reason.
     
     IF(MINGW)
         add_definitions()
-        SET(PROJECT_LIBS liballegro.a liballegro_primitives.a liballegro_image.a liballegro_font.a liballegro_dialog.a liballegro_ttf.dll.a libpng.dll.a libglu32.a libglaux.a psapi mingw32)
+        SET(PROJECT_LIBS liballegro.a liballegro_primitives.a liballegro_image.a liballegro_font.a liballegro_dialog.a liballegro_ttf.dll.a libpng.dll.a libglu32.a libglaux.a dfhack.a psapi mingw32)
         include_directories (
 		    ${include_directories}
 		    ${CMAKE_SOURCE_DIR}/allegro

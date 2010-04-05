@@ -14,7 +14,7 @@ using namespace std;
 #include "Creatures.h"
 #include "ContentLoader.h"
 #include "BlockFactory.h"
-#include "block.h"
+#include "Block.h"
 
 #define color_segmentoutline al_map_rgb(0,0,0)
 
