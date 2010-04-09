@@ -36,3 +36,4 @@ bool addSingleTerrainConfig( TiXmlElement* elemRoot);
 //extern vector<GroundMaterialConfiguration*> groundTypes;
 
 void flushTerrainConfig(vector<TerrainConfiguration*>& config);
+void DumpInorganicMaterialNamesToDisk();

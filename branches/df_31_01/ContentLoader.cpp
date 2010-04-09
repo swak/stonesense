@@ -51,12 +51,13 @@ bool ContentLoader::Load(API& DF){
 	// make a copy for our use
 	classIdStrings = *tempClasses;
 
-	DF.ReadInorganicMaterials (inorganicMaterials);
-	//DF.ReadOrganicMaterials (organicMaterials);
-	DF.ReadWoodMaterials (woodMaterials);
-	DF.ReadPlantMaterials (plantMaterials);
-	DF.ReadCreatureTypes (creatureMaterials);
-
+	DFHack::Materials * Mats = DF.getMaterials();
+	Mats->ReadInorganicMaterials (inorganicMaterials);
+	Mats->ReadOrganicMaterials (organicMaterials);
+	Mats->ReadWoodMaterials (woodMaterials);
+	Mats->ReadPlantMaterials (plantMaterials);
+	Mats->ReadCreatureTypes (creatureMaterials);
+	//DumpInorganicMaterialNamesToDisk();
 
 	//DF.Resume();
 
@@ -398,23 +399,23 @@ const char *lookupMaterialName(int matType,int matIndex)
 		return NULL;
 	vector<t_matgloss>* typeVector;
 	// for appropriate elements, look up subtype
-	//if (matType == Mat_Wood)
-	//{
-	//	typeVector=&(contentLoader.woodNameStrings);
-	//}
-	//else if (matType == Mat_Stone)
-	//{
-	//	typeVector=&(contentLoader.stoneNameStrings);
-	//}
-	//else if (matType == Mat_Metal)
-	//{
-	//	typeVector=&(contentLoader.metalNameStrings);
-	//}
-	//else
-	//{
+	if (matType == Mat_Wood)
+	{
+		typeVector=&(contentLoader.plantMaterials);
+	}
+	else if (matType == Mat_Stone)
+	{
+		typeVector=&(contentLoader.inorganicMaterials);
+	}
+	else if (matType == Mat_Metal)
+	{
+		typeVector=&(contentLoader.inorganicMaterials);
+	}
+	else
+	{
 		//maybe allow some more in later
 		return NULL;
-	//}
+	}
 	if (matIndex >= typeVector->size())
 		return NULL;
 	return (*typeVector)[matIndex].id;

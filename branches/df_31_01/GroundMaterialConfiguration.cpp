@@ -36,8 +36,8 @@ TerrainConfiguration::~TerrainConfiguration()
 void DumpInorganicMaterialNamesToDisk(){
 	FILE* fp = fopen("dump.txt", "w");
 	if(!fp) return;
-	for(uint32_t j=0; j < contentLoader.organicMaterials.size(); j++){
-		fprintf(fp, "%i:%s\n",j, contentLoader.organicMaterials[j].id);
+	for(uint32_t j=0; j < contentLoader.inorganicMaterials.size(); j++){
+		fprintf(fp, "%i:%s\n",j, contentLoader.inorganicMaterials[j].id);
 	}
 	fclose(fp);
 }

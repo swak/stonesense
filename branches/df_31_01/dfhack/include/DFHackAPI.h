@@ -37,9 +37,20 @@ distribution.
 
 namespace DFHack
 {
+
     class APIPrivate;
     class memory_info;
     class Process;
+    
+    // modules
+    class Maps;
+    class Creatures;
+    class Position;
+    class Gui;
+    class Materials;
+    class Translation;
+    class Vegetation;
+    
     class DFHACK_EXPORT API
     {
         APIPrivate * const d;
@@ -76,11 +87,13 @@ namespace DFHack
         void ReadRaw (const uint32_t offset, const uint32_t size, uint8_t *target);
         void WriteRaw (const uint32_t offset, const uint32_t size, uint8_t *source);
         
-        #include "../modules/Position-proc.h"
-        #include "../modules/Gui-proc.h"
-        #include "../modules/Maps-proc.h"
-        #include "../modules/Materials-proc.h"
-        #include "../modules/Creatures-proc.h"
+        Creatures * getCreatures();
+        Maps * getMaps();
+        Gui * getGui();
+        Position * getPosition();
+        Materials * getMaterials();
+        Translation * getTranslation();
+        Vegetation * getVegetation();
         
         /*
          * Constructions (costructed walls, floors, ramps, etc...)
@@ -145,14 +158,6 @@ namespace DFHack
         /*
         bool InitReadHotkeys( );
         bool ReadHotkeys(t_hotkey hotkeys[]);
-        */
-        /*
-         * DF translation tables and name translation
-         */
-        /*
-        bool InitReadNameTables (std::vector< std::vector<std::string> > & translations , std::vector< std::vector<std::string> > & foreign_languages);
-        void FinishReadNameTables();
-        std::string TranslateName(const t_name & name,const std::vector< std::vector<std::string> > & translations ,const std::vector< std::vector<std::string> > & foreign_languages, bool inEnglish=true);
         */
         
         /*

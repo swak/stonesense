@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\allegro;.\dfhack\library;.\dfhack\library\md5;.\dfhack\library\tinyxml"
+				AdditionalIncludeDirectories=".\allegro;D:\stonesense\branches\df_31_01\dfhack\include;D:\stonesense\branches\df_31_01\dfhack\depends\md5;D:\stonesense\branches\df_31_01\dfhack\depends\argstream;D:\stonesense\branches\df_31_01\dfhack\depends\tinyxml"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

@@ -1358,15 +1358,15 @@
             <Profession can_assign_labors="true" is_military="false" name="SIEGE_OPERATOR">55</Profession>
             <Profession can_assign_labors="true" is_military="false" name="PUMP_OPERATOR">56</Profession>
             <Profession can_assign_labors="true" is_military="false" name="CLERK">57</Profession>
+            <Profession can_assign_labors="true" is_military="false" name="ADMINISTRATOR">58</Profession>
+            <Profession can_assign_labors="true" is_military="false" name="TRADER">59</Profession>
             <Profession can_assign_labors="true" is_military="false" name="ARCHITECT">60</Profession>
+            <Profession can_assign_labors="true" is_military="false" name="ALCHEMIST">61</Profession>
             <Profession can_assign_labors="true" is_military="false" name="DOCTOR">62</Profession>
             <Profession can_assign_labors="true" is_military="false" name="DIAGNOSER">63</Profession>
             <Profession can_assign_labors="true" is_military="false" name="BONE_SETTER">64</Profession>
             <Profession can_assign_labors="true" is_military="false" name="SUTURER">65</Profession>
             <Profession can_assign_labors="true" is_military="false" name="SURGEON">66</Profession>
-            <Profession can_assign_labors="true" is_military="false" name="ADMINISTRATOR">58</Profession>
-            <Profession can_assign_labors="true" is_military="false" name="TRADER">59</Profession>
-            <Profession can_assign_labors="true" is_military="false" name="ALCHEMIST">61</Profession>
             <Profession can_assign_labors="true" is_military="false" name="MERCHANT">67</Profession>
             <Profession can_assign_labors="true" is_military="true" name="HAMMERMAN">68</Profession>
             <Profession can_assign_labors="true" is_military="true" name="MASTER_HAMMERMAN">69</Profession>
@@ -2800,6 +2800,7 @@
             <Labor name="Wood Burning">64</Labor>
             <Labor name="Pump Operating">65</Labor>
             
+            <!--
             * Labor groups *
             <Labor name="Woodworking">4294967294</Labor>
             <Labor name="Stoneworking">4294967293</Labor>
@@ -2813,6 +2814,7 @@
             <Labor name="Engineering">4294967285</Labor>
             <Labor name="Hauling">4294967284</Labor>
             <Labor name="Other Jobs">4294967283</Labor>
+            -->
             ====================================================================
                                     V -- T A B L E S
                                     (for stonesense)
@@ -2857,7 +2859,7 @@
         <HexValue name="sizeof_vector">0x18</HexValue>
         <Offset name="vector_triplet">0xC</Offset>
         Vector layout in MSVC 9:
-        DWORD Allocator
+        DWORD Allocator?
         DWORD ?
         DWORD ?
         DWORD Start
@@ -2865,6 +2867,9 @@
         DWORD AllocationEnd
         
         <HexValue name="sizeof_string">0x1C</HexValue>
+        <!-- most probably a static object, because its parts are often
+             referenced as offset to this address *and* as addresses    -->
+        <Address name="WORLD">0x0165B188</Address>
 
         Position and window dimensions
         ==============================
@@ -2899,11 +2904,23 @@
         <Offset name="v_vein">0x08</Offset>
         <Offset name="type">0x009A</Offset>
         <Offset name="designation">0x029C</Offset>
+        <!--<Offset name="occupancy">0x069c</Offset> seems unused, no watch hits--> 
+        <Offset name="biome_stuffs">0x1D9C</Offset>
         <!--
-        No idea if those are still relevant. I'll assume NO
-        <Offset name="occupancy">0x0684</Offset>
-        <Offset name="biome_stuffs">0x1D84</Offset>
-        -->
+map_data_map_x_offset         0x0058
+map_data_map_y_offset         0x005A
+map_data_type_offset          0x009a
+map_data_designation_offset   0x029c
+map_data_occupancy_offset     0x069c
+map_data_0a60_offset          0x0A9c
+map_data_pathfinding_offset   0x0D9c
+map_data_1160_offset          0x119c
+map_data_1360_offset          0x139c
+map_data_temperature1_offset  0x159c
+map_data_temperature2_offset  0x179c
+map_data_1960_offset          0x199c
+map_data_1b60_offset          0x1B9c
+-->
         
         * map size in blocks *
         <Address name="x_count_block">0x016ad738</Address>
@@ -2919,17 +2936,42 @@
         <Address name="region_x">0x016ad750</Address>
         <Address name="region_y">0x016ad754</Address>
         <Address name="region_z">0x016ad758</Address>
-
+        
+        * World size * (WORDs)
+        <Address name="world_size_x">0x016AEDD4</Address>
+        <Address name="world_size_y">0x016AEDD6</Address>
+        
+        <Address name="geoblock_vector">0x16AF52C</Address>
+        <Address name="ptr2_region_array">0x16AF574</Address>
+        
+        <!--
+        <Offset name="world_size_x">0x84</Offset>
+        <Offset name="world_size_y">0x86</Offset>
+        <Offset name="w_geoblocks">0x75C</Offset> vector
+        <Offset name="w_regions_arr">0x79C</Offset>
+        -->
+        <!-- values for the region structure -->
+        <HexValue name="region_size">0x64</HexValue>
+        <Offset name="region_geo_index_off">0x60</Offset>
+        <!-- geoblock offset(s?) -->
+        <Offset name="geolayer_geoblock_offset">0x4</Offset> vector
+        <Offset name="type_inside_geolayer">0x4</Offset> vector
+        
         Name struct
         ===========
         <Offset name="name_firstname">0x0</Offset>
         <Offset name="name_nickname">0x1C</Offset>
         <Offset name="name_words">0x38</Offset>
 
+
+
         Creatures
         =========
         <Address name="creature_vector">0x0166ecc4</Address>
+        <Address name="dwarf_race_index">0x01470fbc</Address>
+        
         <Offset name="creature_name">0x0</Offset>
+        <Offset name="creature_custom_profession">0x6c</Offset>
         <Offset name="creature_profession">0x88</Offset>
         <Offset name="creature_race">0x8C</Offset>
         <Offset name="creature_position">0x90</Offset>
@@ -2937,20 +2979,62 @@
         <Offset name="creature_flags2">0xFC</Offset>
         <Offset name="creature_sex">0x110</Offset>
         <Offset name="creature_id">0x114</Offset>
+        <Offset name="creature_side">0X120</Offset> <!-- what? -->
+        <Offset name="creature_soulskill_vector">0X1F4</Offset>
+        <Offset name="creature_mood">0x238</Offset>
+        
+        <Offset name="creature_physical">0x464</Offset>
+        <!--
+        <Offset name="creature_strength">0x464</Offset>
+        <Offset name="creature_agility">0x480</Offset>
+        <Offset name="creature_toughness">0x49C</Offset>
+        <Offset name="creature_endurance">0x4B8</Offset>
+        <Offset name="creature_recuperation">0x4D4</Offset>
+        <Offset name="creature_disease_resistance">0x4F0</Offset>
+        -->
+        <Offset name="creature_current_job">0x390</Offset> <!-- from chmod -->
         <Offset name="creature_artifact_name">0x6D0</Offset>
         <Offset name="creature_labors">0x770</Offset>
+        <Offset name="creature_soul_vector">0x073C</Offset>
+        <Offset name="creature_default_soul">0x0754</Offset>
         <Offset name="creature_happiness">0x830</Offset>
-      
+
+        Souls
+        =====
+        <Offset name="soul_name">0x0</Offset>
+        <Offset name="soul_skills_vector">0x1F4</Offset>
+        <Offset name="soul_mental">0x88</Offset>
+        <!--
+        mid = AddStrucMember(id,"analytical_ability",   0X88,   0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"focus",    0XA4,   0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"willpower",    0XC0,   0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"creativity",   0XDC,   0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"intuition",    0XF8,   0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"patience", 0X114,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"memory",   0X130,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"linguistic_ability",   0X14C,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"spatial_sense",    0X168,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"musicality",   0X184,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"kinesthetic_sense",    0X1A0,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"empathy",  0X1BC,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        mid = AddStrucMember(id,"social_awareness", 0X1D8,  0x60000400, GetStrucIdByName("s_attrib"),   28);
+        -->
+        
         Materials
         =========
         <!-- Number vectors are vector <uint32_t> -->
         <!-- Others are vector<object *> -->
         <!-- first member of 'object' is a STL string with the name of said object -->
-        <Address name="mat_system_start">0x16afcec</Address>
+        
+        this is an array of 4B pointers to material templates and length 0x292
+        base_type_array = WORLD + 0x5DF44
+        <Address name="base_type_array">0x016b90cc</Address>
         <Address name="mat_templates">0x16afcec</Address>
         
         <!-- soil, stone, metal -->
+        inorganics vector = WORLD + 0x54B7C = 0x16AFD04
         <Address name="mat_inorganics">0x16afd04</Address>
+        <Offset name="inorganic_material_template_instantiation">0x178</Offset>
         
         <!-- wood and plant matter -->
         <Address name="mat_organics_all">0x16afd1C</Address>
@@ -2980,6 +3064,39 @@
         <Address name="creature_type_vector">0x016AFE58</Address>
         <!--<Address name="mat_creature_types2">0x16AEE08</Address>-->
         
+        
+        Constructions
+        =============
+        <Address name="construction_vector">0x165b290</Address>
+        <Offset name="sizeof_construction">0x14</Offset>
+        
+        Translations
+        ============
+        <Address name="language_vector">0x016AFFD8</Address>
+        <Address name="translation_vector">0x016B0008</Address>
+        <Offset name="word_table">0x4C</Offset>
+        
+        Vegetation
+        ==========
+        <Address name="vegetation_vector">0x0167030C</Address> belal: 0x017f6d98 ... what?
+        <Offset name="tree_desc_offset">0x6C</Offset>
+        
+        Buildings
+        =========
+        
+        :(
+        
+        Effects
+        =======
+        
+        :(
+        
+        Settlements
+        ===========
+        
+        :(
+        
+        
         <!-- 
         addresses from belal: vectors might need 8 subtracted from them
         buildings 0x0166f9a8
@@ -3002,7 +3119,6 @@
         settlement_current 0xffffffff
         settlements 0x016af4a4
         translation_vector 0x016b0010
-        vegetation 0x017f6da0
         view_screen 0xffffffff
         window_dims 0x017f5abc
         window_x 0x00e32798
@@ -3047,7 +3163,10 @@
         <Address name="z_count">0x09048d18</Address>
         -->
     </Entry>
-
+    <Entry version="v0.31.02" os="windows" id="0.31.02" base="0.31.01">
+        <String name="md5">23dfe141c7ea4e63ebb3c618a12b48ec</String>
+        <HexValue name="pe_timestamp">0x4BBDF378</HexValue>
+    </Entry>
                             .-"""-.
                            '       \
                           |,.  ,-.  |   _________________________

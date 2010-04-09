@@ -321,7 +321,7 @@ void drawDebugCursorAndInfo(){
 	if(b->creature != null){
 		draw_textf_border(font, 2, al_get_bitmap_height(al_get_target_bitmap())-20-(i--*al_get_font_line_height(font)), 0, 
 			"Creature:%s(%i) Job:%s", 
-			contentLoader.creatureMaterials.at(b->creature->type).id, b->creature->type, 
+			contentLoader.creatureMaterials.at(b->creature->race).id, b->creature->race, 
 			dfMemoryInfo->getProfession( b->creature->profession ).c_str());
 
 		char strCreature[150] = {0};
