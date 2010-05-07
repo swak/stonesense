@@ -32,4 +32,3 @@ namespace DFHack
     };
 }
 #endif
-

@@ -78,9 +78,9 @@ void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures,
 	{
 		//resize using hint from creature name list
 		unsigned int newsize = gameID +1;
-		if (newsize <= contentLoader.Mats->race.size())
+		if (newsize <= contentLoader.creatureMaterials.size())
 		{
-			newsize = contentLoader.Mats->race.size() + 1;
+			newsize = contentLoader.creatureMaterials.size() + 1;
 		}
 		knownCreatures.resize(newsize);
 	}
@@ -94,7 +94,7 @@ void pushCreatureConfig( vector<vector<CreatureConfiguration>*>& knownCreatures,
 }
 
 bool addSingleCreatureConfig( TiXmlElement* elemCreature, vector<vector<CreatureConfiguration>*>& knownCreatures, int basefile ){
-	int gameID = lookupIndexedType(elemCreature->Attribute("gameID"),contentLoader.Mats->race);
+	int gameID = lookupIndexedType(elemCreature->Attribute("gameID"),contentLoader.creatureMaterials);
 	if (gameID == INVALID_INDEX)
 		return false;
 	const char* sheetIndexStr;

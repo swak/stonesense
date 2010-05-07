@@ -8,25 +8,16 @@
 
 TerrainMaterialConfiguration::TerrainMaterialConfiguration()
 {
-	overridingMaterials.resize(NUM_FORMS);
-	defaultSprite.resize(NUM_FORMS);
-	for(int i = 0; i < NUM_FORMS; i++)
-	{
-	defaultSprite[i].fileIndex=INVALID_INDEX;
-	defaultSprite[i].sheetIndex=UNCONFIGURED_INDEX;
-	}
+	defaultSprite.fileIndex=INVALID_INDEX;
+	defaultSprite.sheetIndex=UNCONFIGURED_INDEX;
 	//dont really care about the rest of the sprite right now.
 
 }
 
 TerrainConfiguration::TerrainConfiguration()
 {
-	defaultSprite.resize(NUM_FORMS);
-	for(int i = 0; i < NUM_FORMS; i++)
-	{
-	defaultSprite[i].fileIndex=INVALID_INDEX;
-	defaultSprite[i].sheetIndex=UNCONFIGURED_INDEX;
-	}
+	defaultSprite.fileIndex=INVALID_INDEX;
+	defaultSprite.sheetIndex=UNCONFIGURED_INDEX;
 	//dont really care about the rest of the sprite right now.
 }
 
@@ -45,8 +36,8 @@ TerrainConfiguration::~TerrainConfiguration()
 void DumpInorganicMaterialNamesToDisk(){
 	FILE* fp = fopen("dump.txt", "w");
 	if(!fp) return;
-	for(uint32_t j=0; j < contentLoader.Mats->inorganic.size(); j++){
-		fprintf(fp, "%i:%s\n",j, contentLoader.Mats->inorganic[j].id);
+	for(uint32_t j=0; j < contentLoader.inorganicMaterials.size(); j++){
+		fprintf(fp, "%i:%s\n",j, contentLoader.inorganicMaterials[j].id);
 	}
 	fclose(fp);
 }
@@ -263,27 +254,6 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 	if (elems == 0)
 		return; //nothing to link to
 
-	vector<bool> formToggle;
-	formToggle.resize(NUM_FORMS);
-	// parse weather tile is for a block, log, etc
-	TiXmlElement* elemForm = elemWallFloorSprite->FirstChildElement("form");
-	if(elemForm == NULL)
-	{
-		formToggle[0] = true;
-	}
-	for( ;elemForm;elemForm = elemForm->NextSiblingElement("form"))
-	{
-		const char * strForm = elemForm->Attribute("value");
-
-		if( strcmp(strForm, "bar") == 0)
-			formToggle[FORM_BAR] = true;
-		if( strcmp(strForm, "block") == 0)
-			formToggle[FORM_BLOCK] = true;
-		if( strcmp(strForm, "boulder") == 0)
-			formToggle[FORM_BOULDER] = true;
-		if( strcmp(strForm, "log") == 0)
-			formToggle[FORM_LOG] = true;
-	}
 	// parse material elements
 	TiXmlElement* elemMaterial = elemWallFloorSprite->FirstChildElement("material");
 	if (elemMaterial == NULL)
@@ -294,13 +264,9 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 			TerrainConfiguration *tConfig = configTable[lookupKeys[i]];
 			// if that was null we have *really* screwed up earlier
 			// only update if not by previous configs
-			for( int i = 0; i < NUM_FORMS; i++)
+			if (tConfig->defaultSprite.sheetIndex == UNCONFIGURED_INDEX)
 			{
-				if(formToggle[i])
-					if (tConfig->defaultSprite[i].sheetIndex == UNCONFIGURED_INDEX)
-					{
-						tConfig->defaultSprite[i] = sprite;
-					}
+				tConfig->defaultSprite = sprite;
 			}
 		}
 	}
@@ -336,13 +302,9 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 					tConfig->terrainMaterials[elemIndex] = new TerrainMaterialConfiguration();
 				}
 				// only update if not set by earlier configs
-				for( int i = 0; i < NUM_FORMS; i++)
+				if (tConfig->terrainMaterials[elemIndex]->defaultSprite.sheetIndex == UNCONFIGURED_INDEX)
 				{
-					if(formToggle[i])
-						if (tConfig->terrainMaterials[elemIndex]->defaultSprite[i].sheetIndex == UNCONFIGURED_INDEX)
-						{
-							tConfig->terrainMaterials[elemIndex]->defaultSprite[i] = sprite;
-						}
+					tConfig->terrainMaterials[elemIndex]->defaultSprite = sprite;
 				}
 			} 	
 		}
@@ -374,17 +336,11 @@ void parseWallFloorSpriteElement( TiXmlElement* elemWallFloorSprite, vector<Terr
 					tConfig->terrainMaterials[elemIndex] = new TerrainMaterialConfiguration();
 				}
 				// add to map (if not already present)
-				for( int i = 0; i < NUM_FORMS; i++)
+				map<int,t_SpriteWithOffset>::iterator it = tConfig->terrainMaterials[elemIndex]->overridingMaterials.find(subtypeId);
+				if (it == tConfig->terrainMaterials[elemIndex]->overridingMaterials.end())
 				{
-					if(formToggle[i])
-					{
-						map<int,t_SpriteWithOffset>::iterator it = tConfig->terrainMaterials[elemIndex]->overridingMaterials[i].find(subtypeId);
-						if (it == tConfig->terrainMaterials[elemIndex]->overridingMaterials[i].end())
-						{
-							tConfig->terrainMaterials[elemIndex]->overridingMaterials[i][subtypeId]=sprite;
-						}	
-					}
-				}
+					tConfig->terrainMaterials[elemIndex]->overridingMaterials[subtypeId]=sprite;
+				}			
 			} 			
 		}
 	}

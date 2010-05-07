@@ -11,9 +11,9 @@ typedef struct OverridingMaterial{
 class TerrainMaterialConfiguration
 {
 public:
-	vector<t_SpriteWithOffset> defaultSprite;
+	t_SpriteWithOffset defaultSprite;
 	int gameID;
-	vector<map<int,t_SpriteWithOffset>> overridingMaterials;
+	map<int,t_SpriteWithOffset> overridingMaterials;
 	
 	TerrainMaterialConfiguration();
 	~TerrainMaterialConfiguration(){}
@@ -23,7 +23,7 @@ class TerrainConfiguration
 {
 public:
 	vector<TerrainMaterialConfiguration*> terrainMaterials;
-	vector<t_SpriteWithOffset> defaultSprite;
+	t_SpriteWithOffset defaultSprite;
 	TerrainConfiguration();
 	~TerrainConfiguration();	
 };

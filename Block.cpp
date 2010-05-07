@@ -563,19 +563,19 @@ void Block::Draw(){
 		//If tile has no floor, look for a Filler Floor from it's wall
 		if (floorType > 0)
 		{
-			sprite = GetFloorSpriteMap(floorType, this->material, consForm);
+			sprite = GetFloorSpriteMap(floorType, this->material);
 		}
 		else if (wallType > 0)
 		{
-			sprite = GetFloorSpriteMap(wallType, this->material, consForm);
+			sprite = GetFloorSpriteMap(wallType, this->material);
 		}
 		else if (ramp.type > 0)
 		{
-			sprite = GetFloorSpriteMap(ramp.type, this->material, consForm);
+			sprite = GetFloorSpriteMap(ramp.type, this->material);
 		}
 		else if (stairType > 0)
 		{
-			sprite = GetFloorSpriteMap(stairType, this->material, consForm);
+			sprite = GetFloorSpriteMap(stairType, this->material);
 		}
 
 		if(sprite.sheetIndex != INVALID_INDEX)
@@ -660,7 +660,7 @@ void Block::Draw(){
 	}
 	//Draw Ramp
 	if(ramp.type > 0){
-		sprite = GetBlockSpriteMap(ramp.type, material, consForm);
+		sprite = GetBlockSpriteMap(ramp.type, material);
 		if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 		{
 			sprite.sheetIndex = 0;
@@ -761,7 +761,7 @@ void Block::Draw(){
 		bool mirrored = false;
 		if(findWallCloseTo(ownerSegment, this) == eSimpleW)
 			mirrored = true;
-		sprite = GetBlockSpriteMap(stairType, material, consForm);
+		sprite = GetBlockSpriteMap(stairType, material);
 		if(sprite.sheetIndex != INVALID_INDEX && sprite.sheetIndex != UNCONFIGURED_INDEX)
 		{
 			if (mirrored)
@@ -784,7 +784,7 @@ void Block::Draw(){
 	//Draw Walls
 	if(wallType > 0){
 		//draw wall
-		sprite =  GetBlockSpriteMap(wallType, material, consForm);
+		sprite =  GetBlockSpriteMap(wallType, material);
 		int spriteOffset = 0;
 		if(sprite.numVariations)
 			spriteOffset = rando % sprite.numVariations;
@@ -993,7 +993,7 @@ void Block::DrawRamptops(){
 		pointToScreen((int*)&drawx, (int*)&drawy, drawz);
 		drawx -= TILEWIDTH>>1;
 
-		t_SpriteWithOffset sprite = GetBlockSpriteMap(ramp.type,material, consForm);
+		t_SpriteWithOffset sprite = GetBlockSpriteMap(ramp.type,material);
 		if (sprite.sheetIndex == UNCONFIGURED_INDEX)
 		{
 			sprite.sheetIndex = 0;

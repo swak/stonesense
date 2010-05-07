@@ -4,17 +4,8 @@
 #include "ContentLoader.h"
 
 
-t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<TerrainConfiguration*>& configTable, uint16_t form)
+t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<TerrainConfiguration*>& configTable)
 {
-	int tempform;
-	if(form == constr_bar)
-		tempform = FORM_BAR;
-	if(form == constr_block)
-		tempform = FORM_BLOCK;
-	if(form == constr_boulder)
-		tempform = FORM_BOULDER;
-	if(form == constr_logs)
-		tempform = FORM_LOG;
 	// in case we need to return nothing
 	t_SpriteWithOffset defaultSprite = {
 		UNCONFIGURED_INDEX,
@@ -37,47 +28,34 @@ t_SpriteWithOffset GetTerrainSpriteMap(int in, t_matglossPair material, vector<T
 	// check material sanity
 	if (material.type<0 || material.type >= (int16_t)terrain->terrainMaterials.size())
 	{
-		if(terrain->defaultSprite[tempform].sheetIndex == UNCONFIGURED_INDEX)
-			return terrain->defaultSprite[0];
-		else return terrain->defaultSprite[tempform];
+		return terrain->defaultSprite;
 	}
 	// find mat config
 	TerrainMaterialConfiguration* terrainMat = terrain->terrainMaterials[material.type];
 	if (terrainMat == NULL)
 	{
-		if(terrain->defaultSprite[tempform].sheetIndex == UNCONFIGURED_INDEX)
-			return terrain->defaultSprite[0];
-		else return terrain->defaultSprite[tempform];
+		return terrain->defaultSprite;
 	}
 	// return subtype, type default or terrain default as available
 	// do map lookup
-	map<int,t_SpriteWithOffset>::iterator it = terrainMat->overridingMaterials[tempform].find(material.index);
-	if (it != terrainMat->overridingMaterials[tempform].end())
+	map<int,t_SpriteWithOffset>::iterator it = terrainMat->overridingMaterials.find(material.index);
+	if (it != terrainMat->overridingMaterials.end())
 	{
 		return it->second;
 	}
-	if (terrainMat->defaultSprite[tempform].sheetIndex != UNCONFIGURED_INDEX)
+	if (terrainMat->defaultSprite.sheetIndex != UNCONFIGURED_INDEX)
 	{
-		return terrainMat->defaultSprite[tempform];
+		return terrainMat->defaultSprite;
 	}
-	it = terrainMat->overridingMaterials[0].find(material.index);
-	if (it != terrainMat->overridingMaterials[0].end())
-	{
-		return it->second;
-	}
-	if (terrainMat->defaultSprite[0].sheetIndex != UNCONFIGURED_INDEX)
-	{
-		return terrainMat->defaultSprite[0];
-	}
-	return terrain->defaultSprite[0];
+	return terrain->defaultSprite;
 }
 
-t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material, uint16_t form){
-	return GetTerrainSpriteMap(in, material, contentLoader.terrainFloorConfigs, form);
+t_SpriteWithOffset GetFloorSpriteMap(int in, t_matglossPair material){
+	return GetTerrainSpriteMap(in, material, contentLoader.terrainFloorConfigs);
 }
 
-t_SpriteWithOffset GetBlockSpriteMap(int in, t_matglossPair material, uint16_t form){
-	return GetTerrainSpriteMap(in, material, contentLoader.terrainBlockConfigs, form);
+t_SpriteWithOffset GetBlockSpriteMap(int in, t_matglossPair material){
+	return GetTerrainSpriteMap(in, material, contentLoader.terrainBlockConfigs);
 }
 
 t_SpriteWithOffset GetSpriteVegetation( TileClass type, int index)
@@ -119,13 +97,7 @@ t_SpriteWithOffset GetSpriteVegetation( TileClass type, int index)
 		graphicSet = &(contentLoader.shrubConfigs);
 		break;
 	default:
-		t_SpriteWithOffset defaultSprite = 
-		{SPRITEOBJECT_BLANK,
-		0,
-		0,
-		-1,
-		0,
-		ALL_FRAMES};
+		t_SpriteWithOffset defaultSprite = {SPRITEOBJECT_BLANK,0,0,-1,ALL_FRAMES};
 		return defaultSprite;
 	}  	
   	

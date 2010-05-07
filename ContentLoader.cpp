@@ -42,9 +42,9 @@ void DumpPrefessionNamesToDisk(vector<string> material, const char* filename){
 }
 bool ContentLoader::Load(API& DF){
 	/*draw_textf_border(font, 
-	al_get_bitmap_width(al_get_target_bitmap())/2,
-	al_get_bitmap_height(al_get_target_bitmap())/2,
-	ALLEGRO_ALIGN_CENTRE, "Loading...");
+		al_get_bitmap_width(al_get_target_bitmap())/2,
+		al_get_bitmap_height(al_get_target_bitmap())/2,
+		ALLEGRO_ALIGN_CENTRE, "Loading...");
 	al_flip_display();*/
 	//flush old config
 	flushBuildingConfig(&buildingConfigs);
@@ -70,10 +70,13 @@ bool ContentLoader::Load(API& DF){
 	//// make a copy for our use
 	//classIdStrings = *tempClasses;
 
-	Mats = DF.getMaterials();
-	Mats->ReadInorganicMaterials();
-	Mats->ReadOrganicMaterials ();
-	Mats->ReadCreatureTypes ();
+	DFHack::Materials * Mats = DF.getMaterials();
+	if(inorganicMaterials.empty())
+	Mats->ReadInorganicMaterials (inorganicMaterials);
+	if(organicMaterials.empty())
+	Mats->ReadOrganicMaterials (organicMaterials);
+	if(creatureMaterials.empty())
+	Mats->ReadCreatureTypes (creatureMaterials);
 	Bld = DF.getBuildings();
 	DFHack::memory_info *mem = DF.getMemoryInfo();
 	if(professionStrings.empty())
@@ -112,7 +115,7 @@ bool ContentLoader::Load(API& DF){
 	//DumpPrefessionNamesToDisk(professionStrings, "priofessiondump.txt");
 	//DumpPrefessionNamesToDisk(classIdStrings, "buildingdump.txt");
 	//DumpMaterialNamesToDisk(inorganicMaterials, "DUMPSES.txt");
-	//DumpMaterialNamesToDisk(Mats->race, "creaturedump.txt");
+	//DumpMaterialNamesToDisk(creatureMaterials, "creaturedump.txt");
 
 	//DF.Resume();
 
@@ -151,8 +154,8 @@ bool ContentLoader::parseContentIndexFile( char* filepath )
 	/*
 	al_clear_to_color(al_map_rgb(0,0,0));
 	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2, 
-	al_get_bitmap_height(al_get_target_bitmap())/2,
-	ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
+		al_get_bitmap_height(al_get_target_bitmap())/2,
+		ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
 	al_flip_display();
 	*/
 	string line;
@@ -227,8 +230,8 @@ bool ContentLoader::parseContentXMLFile( char* filepath ){
 	/*
 	al_clear_to_color(al_map_rgb(0,0,0));
 	draw_textf_border(font, al_get_bitmap_width(al_get_target_bitmap())/2,
-	al_get_bitmap_height(al_get_target_bitmap())/2,
-	ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
+		al_get_bitmap_height(al_get_target_bitmap())/2,
+		ALLEGRO_ALIGN_CENTRE, "Loading %s...", filepath);
 	al_flip_display();*/
 	TiXmlDocument doc( filepath );
 	if(!doc.LoadFile())
@@ -276,11 +279,11 @@ bool ContentLoader::parseCreatureContent(TiXmlElement* elemRoot ){
 }
 
 bool ContentLoader::parseShrubContent(TiXmlElement* elemRoot ){
-	return addSingleVegetationConfig( elemRoot, &shrubConfigs, Mats->organic );
+	return addSingleVegetationConfig( elemRoot, &shrubConfigs, organicMaterials );
 }
 
 bool ContentLoader::parseTreeContent(TiXmlElement* elemRoot ){
-	return addSingleVegetationConfig( elemRoot, &treeConfigs, Mats->organic );
+	return addSingleVegetationConfig( elemRoot, &treeConfigs, organicMaterials );
 }
 
 bool ContentLoader::parseTerrainContent(TiXmlElement* elemRoot ){
@@ -379,19 +382,19 @@ int lookupMaterialIndex(int matType, const char* strValue)
 	// for appropriate elements, look up subtype
 	if (matType == INORGANIC)
 	{
-		typeVector=&(contentLoader.Mats->inorganic);
+		typeVector=&(contentLoader.inorganicMaterials);
 	}
 	else if (matType == WOOD)
 	{
-		typeVector=&(contentLoader.Mats->organic);
+		typeVector=&(contentLoader.organicMaterials);
 	}
 	else if (matType == PLANTCLOTH)
 	{
-		typeVector=&(contentLoader.Mats->organic);
+		typeVector=&(contentLoader.organicMaterials);
 	}
 	else if (matType == LEATHER)
 	{
-		typeVector=&(contentLoader.Mats->race);
+		typeVector=&(contentLoader.creatureMaterials);
 	}
 	else
 	{
@@ -430,19 +433,19 @@ const char *lookupMaterialName(int matType,int matIndex)
 	// for appropriate elements, look up subtype
 	if (matType == INORGANIC)
 	{
-		typeVector=&(contentLoader.Mats->inorganic);
+		typeVector=&(contentLoader.inorganicMaterials);
 	}
 	else if (matType == WOOD)
 	{
-		typeVector=&(contentLoader.Mats->organic);
+		typeVector=&(contentLoader.organicMaterials);
 	}
 	else if (matType == PLANTCLOTH)
 	{
-		typeVector=&(contentLoader.Mats->organic);
+		typeVector=&(contentLoader.organicMaterials);
 	}
 	else if (matType == LEATHER)
 	{
-		typeVector=&(contentLoader.Mats->race);
+		typeVector=&(contentLoader.creatureMaterials);
 	}
 	else
 	{
@@ -460,27 +463,10 @@ const char *lookupTreeName(int matIndex)
 		return NULL;
 	vector<t_matgloss>* typeVector;
 	// for appropriate elements, look up subtype
-	typeVector=&(contentLoader.Mats->organic);
+	typeVector=&(contentLoader.organicMaterials);
 	if (matIndex >= typeVector->size())
 		return NULL;
 	return (*typeVector)[matIndex].id;
-}
-
-const char * lookupFormName(int formType)
-{
-	switch (formType)
-	{
-	case constr_bar:
-		return "bar";
-	case constr_block:
-		return "block";
-	case constr_boulder:
-		return "boulder";
-	case constr_logs:
-		return "log";
-	default:
-		return NULL;
-	}
 }
 
 uint8_t lookupMaterialFore(int matType,int matIndex)
@@ -503,8 +489,8 @@ uint8_t lookupMaterialFore(int matType,int matIndex)
 	//}
 	//else
 	//{
-	//maybe allow some more in later
-	return NULL;
+		//maybe allow some more in later
+		return NULL;
 	//}
 	if (matIndex >= typeVector->size())
 		return NULL;
@@ -531,8 +517,8 @@ uint8_t lookupMaterialBack(int matType,int matIndex)
 	//}
 	//else
 	//{
-	//maybe allow some more in later
-	return NULL;
+		//maybe allow some more in later
+		return NULL;
 	//}
 	if (matIndex >= typeVector->size())
 		return NULL;
@@ -559,8 +545,8 @@ uint8_t lookupMaterialBright(int matType,int matIndex)
 	//}
 	//else
 	//{
-	//maybe allow some more in later
-	return NULL;
+		//maybe allow some more in later
+		return NULL;
 	//}
 	if (matIndex >= typeVector->size())
 		return NULL;
@@ -589,6 +575,10 @@ void ContentLoader::flushCreatureConfig()
 	}
 	// make big enough to hold all creatures
 	creatureConfigs.clear();
+	if (num <= creatureMaterials.size())
+	{
+		creatureConfigs.resize(creatureMaterials.size()+1,NULL);
+	}
 }
 ALLEGRO_COLOR lookupMaterialColor(int matType,int matIndex)
 {

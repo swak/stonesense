@@ -11,8 +11,6 @@
     #pragma warning( disable: 4996 )
     // disable stupid
     #pragma warning( disable: 4800 )
-    // disable more stupid
-    #pragma warning( disable: 4068 )
 #endif
 
 #endif
