@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<building name="Table" gameID="building_tablest">
+  <if>
+    <MaterialType value="Wood" />
+    <sprite index="82" color="material" />
+  </if>
+  <else>
+    <sprite index="83" color="material" />
+  </else>
+</building>
