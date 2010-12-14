@@ -149,10 +149,6 @@ typedef struct {
 	bool fogenable;
 	Crd3D segmentSize;
 	
-	bool follow_DFcursor;
-	int dfCursorX;
-	int dfCursorY;
-	int dfCursorZ;
 	unsigned int cellDimX;
 	unsigned int cellDimY;
 	unsigned int cellDimZ;

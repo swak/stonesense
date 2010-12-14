@@ -52,7 +52,6 @@ public:
 	Block* getBlockRelativeTo(uint32_t x, uint32_t y, uint32_t z,  dirRelative direction);
 	Block* getBlock(uint32_t index);
 	void addBlock(Block* b);
-	void drawAllBlocks();
 	void drawTile();
 	bool CoordinateInsideSegment(uint32_t x, uint32_t y, uint32_t z);
 };

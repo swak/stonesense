@@ -36,16 +36,6 @@ class ConditionalNode
 
 //TODO: sort these (alpha order?)
 
-class NeighbourWallCondition : public BlockCondition
-{
-  public:
-  NeighbourWallCondition(const char* strValue);
-  ~NeighbourWallCondition(void){};
-
-  int value;
-  bool Matches(Block* b);
-};
-
 
 class PositionIndexCondition : public BlockCondition
 {

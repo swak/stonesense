@@ -1,7 +1,6 @@
 #include <fstream>
 #include "common.h"
 #include "ContentLoader.h"
-#include "ContentBuildingReader.h"
 #include "MapLoading.h"
 #include "ColorConfiguration.h"
 
@@ -16,10 +15,6 @@ ContentLoader::ContentLoader(void) { }
 ContentLoader::~ContentLoader(void)
 { 
 	//flush content on exit
-	flushBuildingConfig(&buildingConfigs);
-	flushTerrainConfig(terrainFloorConfigs);
-	flushTerrainConfig(terrainBlockConfigs);	
-	flushCreatureConfig();
 	flushColorConfig(colorConfigs);
 }
 
@@ -41,34 +36,14 @@ void DumpPrefessionNamesToDisk(vector<string> material, const char* filename){
 	fclose(fp);
 }
 bool ContentLoader::Load( DFHack::Context& DF){
-	/*draw_textf_border(font, 
-	al_get_bitmap_width(al_get_target_bitmap())/2,
-	al_get_bitmap_height(al_get_target_bitmap())/2,
-	ALLEGRO_ALIGN_CENTRE, "Loading...");
-	al_flip_display();*/
-	//flush old config
-	flushBuildingConfig(&buildingConfigs);
-	flushTerrainConfig(terrainFloorConfigs);
-	flushTerrainConfig(terrainBlockConfigs);
 	flushColorConfig(colorConfigs);
-	creatureConfigs.clear();
-	treeConfigs.clear();
-	shrubConfigs.clear();
-	flushImgFiles();
 
-	// This is an extra suspend/resume, but it only happens when reloading the config
-	// ie not enough to worry about
-	//DF.Suspend();
 
 	if(!DF.isAttached())
 	{
 		WriteErr("FAIL");
 		return false;
 	}
-	////read data from DF
-	//const vector<string> *tempClasses = DF.getMemoryInfo()->getClassIDMapping();
-	//// make a copy for our use
-	//classIdStrings = *tempClasses;
 
 	try
 	{
@@ -197,19 +172,8 @@ bool ContentLoader::Load( DFHack::Context& DF){
 		}
 	}
 
-	civzoneNum = TranslateBuildingName("building_civzonest", contentLoader.classIdStrings );
-	stockpileNum = TranslateBuildingName("building_stockpilest", contentLoader.classIdStrings );
-
-	//DumpPrefessionNamesToDisk(professionStrings, "priofessiondump.txt");
-	//DumpPrefessionNamesToDisk(classIdStrings, "buildingdump.txt");
-	//DumpMaterialNamesToDisk(inorganicMaterials, "DUMPSES.txt");
-	//DumpMaterialNamesToDisk(Mats->race, "creaturedump.txt");
-
-	//DF.Resume();
-
 	contentLoader.obsidian = lookupMaterialIndex(INORGANIC, "OBSIDIAN");
 
-	loadGraphicsFromDisk(); //these get destroyed when flushImgFiles is called.
 	bool overallResult = parseContentIndexFile( "index.txt" );
 	translationComplete = false;
 
@@ -336,22 +300,8 @@ bool ContentLoader::parseContentXMLFile( char* filepath ){
 	elemRoot = hDoc.FirstChildElement().Element();
 	while( elemRoot ){
 		string elementType = elemRoot->Value();
-		if( elementType.compare( "building" ) == 0 )
-			runningResult &= parseBuildingContent( elemRoot );
-		else if( elementType.compare( "creatures" ) == 0 )
-			runningResult &= parseCreatureContent( elemRoot );
-		else if( elementType.compare( "floors" ) == 0 )
-			runningResult &= parseTerrainContent( elemRoot );
-		else if( elementType.compare( "blocks" ) == 0 )
-			runningResult &= parseTerrainContent( elemRoot );
-		else if( elementType.compare( "shrubs" ) == 0 )
-			runningResult &= parseShrubContent( elemRoot );
-		else if( elementType.compare( "trees" ) == 0 )
-			runningResult &= parseTreeContent( elemRoot );
-		else if( elementType.compare( "colors" ) == 0 )
+		if( elementType.compare( "colors" ) == 0 )
 			runningResult &= parseColorContent( elemRoot );
-		else if( elementType.compare( "fluids" ) == 0 )
-			runningResult &= parseFluidContent( elemRoot );
 		else
 			contentError("Unrecognised root element",elemRoot);
 
@@ -361,33 +311,8 @@ bool ContentLoader::parseContentXMLFile( char* filepath ){
 	return runningResult;
 }
 
-
-bool ContentLoader::parseBuildingContent(TiXmlElement* elemRoot ){
-	return addSingleBuildingConfig( elemRoot, &buildingConfigs );
-}
-
-bool ContentLoader::parseCreatureContent(TiXmlElement* elemRoot ){
-	return addCreaturesConfig( elemRoot, creatureConfigs );
-}
-
-bool ContentLoader::parseShrubContent(TiXmlElement* elemRoot ){
-	return addSingleVegetationConfig( elemRoot, &shrubConfigs, Mats->organic );
-}
-
-bool ContentLoader::parseTreeContent(TiXmlElement* elemRoot ){
-	return addSingleVegetationConfig( elemRoot, &treeConfigs, Mats->organic );
-}
-
-bool ContentLoader::parseTerrainContent(TiXmlElement* elemRoot ){
-	return addSingleTerrainConfig( elemRoot );
-}
-
 bool ContentLoader::parseColorContent(TiXmlElement* elemRoot ){
 	return addSingleColorConfig( elemRoot );
-}
-
-bool ContentLoader::parseFluidContent(TiXmlElement* elemRoot ){
-	return addSingleFluidConfig( elemRoot );
 }
 
 const char* getDocument(TiXmlNode* element)
@@ -674,29 +599,6 @@ uint8_t lookupMaterialBright(int matType,int matIndex)
 	return (*typeVector)[matIndex].bright;
 }
 
-int loadConfigImgFile(const char* filename, TiXmlElement* referrer)
-{
-	const char* documentRef = getDocument(referrer);
-	char configfilepath[FILENAME_BUFFERSIZE] = {0};
-	if (!getLocalFilename(configfilepath,filename,documentRef))
-	{
-		contentError("Failed to parse sprites filename",referrer);
-		return -1;
-	}
-	return loadImgFile(configfilepath);
-}
-
-void ContentLoader::flushCreatureConfig()
-{
-	uint32_t num = (uint32_t)creatureConfigs.size();
-	for ( int i = 0 ; i < num; i++ )
-	{
-		if (creatureConfigs[i])
-			delete creatureConfigs[i];
-	}
-	// make big enough to hold all creatures
-	creatureConfigs.clear();
-}
 ALLEGRO_COLOR lookupMaterialColor(int matType,int matIndex)
 {
 	if (matType >= contentLoader.colorConfigs.size())

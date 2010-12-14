@@ -350,6 +350,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BlockCondition.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BlockFactory.cpp"
 				>
 			</File>
@@ -359,10 +363,6 @@
 			</File>
 			<File
 				RelativePath=".\Constructions.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Creatures.cpp"
 				>
 			</File>
 			<File
@@ -379,18 +379,6 @@
 			</File>
 			<File
 				RelativePath=".\MapLoading.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SpriteColors.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SpriteMaps.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SpriteObjects.cpp"
 				>
 			</File>
 			<File
@@ -429,43 +417,11 @@
 				Name="Configuration"
 				>
 				<File
-					RelativePath=".\BlockCondition.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\BuildingConfiguration.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\ColorConfiguration.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\ConditionalSprite.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\ContentBuildingReader.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\ContentLoader.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\CreatureConfiguration.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FluidConfiguration.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\GroundMaterialConfiguration.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\VegetationConfiguration.cpp"
 					>
 				</File>
 			</Filter>
@@ -504,10 +460,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Creatures.h"
-				>
-			</File>
-			<File
 				RelativePath=".\dfhack\library\Export.h"
 				>
 			</File>
@@ -525,14 +477,6 @@
 			</File>
 			<File
 				RelativePath=".\SpriteColors.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SpriteMaps.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SpriteObjects.h"
 				>
 			</File>
 			<File
@@ -1599,39 +1543,11 @@
 				Name="Configuration"
 				>
 				<File
-					RelativePath=".\BuildingConfiguration.h"
-					>
-				</File>
-				<File
 					RelativePath=".\ColorConfiguration.h"
 					>
 				</File>
 				<File
-					RelativePath=".\ConditionalSprite.h"
-					>
-				</File>
-				<File
-					RelativePath=".\ContentBuildingReader.h"
-					>
-				</File>
-				<File
 					RelativePath=".\ContentLoader.h"
-					>
-				</File>
-				<File
-					RelativePath=".\CreatureConfiguration.h"
-					>
-				</File>
-				<File
-					RelativePath=".\FluidConfiguration.h"
-					>
-				</File>
-				<File
-					RelativePath=".\GroundMaterialConfiguration.h"
-					>
-				</File>
-				<File
-					RelativePath=".\VegetationConfiguration.h"
 					>
 				</File>
 			</Filter>

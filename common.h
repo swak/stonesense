@@ -65,8 +65,8 @@ using namespace DFHack;
 #define FLOORHEIGHT 8
 #endif
 
-#define TARGET_TILE_WIDTH 32
-#define TARGET_TILE_HEIGHT 16
+#define TARGET_TILE_WIDTH 96
+#define TARGET_TILE_HEIGHT 48
 #define TARGET_REGION_WIDTH 48
 #define TARGET_Z_HEIGHT 1
 
