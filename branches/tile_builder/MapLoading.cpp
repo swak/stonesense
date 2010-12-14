@@ -2,10 +2,8 @@
 #include "GUI.h"
 #include "MapLoading.h"
 #include "WorldSegment.h"
-#include "SpriteMaps.h"
 #include "Constructions.h"
 #include "GameBuildings.h"
-#include "Creatures.h"
 #include "ContentLoader.h"
 
 static DFHack::Context* pDFApiHandle = 0;
@@ -45,77 +43,6 @@ char rampblut[] =
 	3 , 10 ,  3 , 10 , 17 , 17 , 17 , 17 ,  3 , 10 , 26 , 10 , 17 , 17 , 17 , 17 ,
 	11 , 16 , 11 , 16 , 17 , 16 , 17 , 10 , 11 , 16 , 11 , 16 , 17 , 11 , 17 , 26
 };
-
-inline bool isBlockHighRampEnd(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment, dirRelative dir)
-{
-	Block* block = segment->getBlockRelativeTo( x, y, z, dir);
-	if(!block) return false;
-	if(block->wallType == 0) return false;
-	return IDisWall( block->wallType );
-}
-
-inline int blockWaterDepth(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment, dirRelative dir)
-{
-	Block* block = segment->getBlockRelativeTo( x, y, z, dir);
-	if(!block) return false;
-	if(block->water.index == 0 || block->water.type == 1) return false;
-	return block->water.index;
-}
-
-inline bool isBlockHighRampTop(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment, dirRelative dir)
-{
-	Block* block = segment->getBlockRelativeTo( x, y, z, dir);
-	if(!block) return false;
-	if(block->floorType == 0 && block->ramp.type == 0 && block->stairType == 0) return false;
-	if(block->wallType == 0) return true;
-	return !IDisWall( block->wallType );
-}
-
-int CalculateRampType(uint32_t x, uint32_t y, uint32_t z, WorldSegment* segment){
-	int ramplookup = 0;
-	if (isBlockHighRampEnd(x, y, z, segment, eUp) && isBlockHighRampTop(x, y, z+1, segment, eUp))
-		ramplookup ^= 1;
-	if (isBlockHighRampEnd(x, y, z, segment, eUpRight) && isBlockHighRampTop(x, y, z+1, segment, eUpRight))
-		ramplookup ^= 2;
-	if (isBlockHighRampEnd(x, y, z, segment, eRight) && isBlockHighRampTop(x, y, z+1, segment, eRight))
-		ramplookup ^= 4;
-	if (isBlockHighRampEnd(x, y, z, segment, eDownRight) && isBlockHighRampTop(x, y, z+1, segment, eDownRight))
-		ramplookup ^= 8;
-	if (isBlockHighRampEnd(x, y, z, segment, eDown) && isBlockHighRampTop(x, y, z+1, segment, eDown))
-		ramplookup ^= 16;
-	if (isBlockHighRampEnd(x, y, z, segment, eDownLeft) && isBlockHighRampTop(x, y, z+1, segment, eDownLeft))
-		ramplookup ^= 32;
-	if (isBlockHighRampEnd(x, y, z, segment, eLeft) && isBlockHighRampTop(x, y, z+1, segment, eLeft))
-		ramplookup ^= 64;
-	if (isBlockHighRampEnd(x, y, z, segment, eUpLeft) && isBlockHighRampTop(x, y, z+1, segment, eUpLeft))
-		ramplookup ^= 128;
-
-	// creation should ensure in range
-	if (ramplookup > 0)
-	{
-		return rampblut[ramplookup];
-	}
-
-	if (isBlockHighRampEnd(x, y, z, segment, eUp))
-		ramplookup ^= 1;
-	if (isBlockHighRampEnd(x, y, z, segment, eUpRight))
-		ramplookup ^= 2;
-	if (isBlockHighRampEnd(x, y, z, segment, eRight))
-		ramplookup ^= 4;
-	if (isBlockHighRampEnd(x, y, z, segment, eDownRight))
-		ramplookup ^= 8;
-	if (isBlockHighRampEnd(x, y, z, segment, eDown))
-		ramplookup ^= 16;
-	if (isBlockHighRampEnd(x, y, z, segment, eDownLeft))
-		ramplookup ^= 32;
-	if (isBlockHighRampEnd(x, y, z, segment, eLeft))
-		ramplookup ^= 64;
-	if (isBlockHighRampEnd(x, y, z, segment, eUpLeft))
-		ramplookup ^= 128;
-
-	// creation should ensure in range
-	return rampblut[ramplookup];
-}
 
 bool isBlockOnVisibleEdgeOfSegment(WorldSegment* segment, Block* b)
 {
@@ -284,7 +211,7 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 
 	try
 	{
-	Maps->ReadVeins(CellX,CellY,CellZ,&veins,&ices,&splatter);
+		Maps->ReadVeins(CellX,CellY,CellZ,&veins,&ices,&splatter);
 	}
 	catch (exception &e)
 	{
@@ -394,10 +321,6 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 			{
 				b->bloodcolor = al_map_rgb(150, 0, 24);
 			}
-			//temperatures
-
-			b->temp1 = temp1[lx][ly];
-			b->temp2 = temp2[lx][ly];
 			//liquids
 			if(designations[lx][ly].bits.flow_size > 0){
 				b->water.type  = designations[lx][ly].bits.liquid_type;
@@ -406,170 +329,97 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 
 			//read tiletype
 			int t = tiletypes[lx][ly];
-			if(IDisWall(t)) 
-				b->wallType = t;
-			if(IDisFloor(t))
-				b->floorType = t;
-			if(isStairTerrain(t))
-				b->stairType = t;
-			if(isRampTerrain(t))
-				b->ramp.type = t;
 			b->tileType = t;
 
-			//142,136,15
-			//if(b->x == 142 && b->y == 136 && b->z == 15)
-			//  int j = 10;
+			//this only needs to be done for included blocks
 
-			//save in segment
-			bool isHidden = designations[lx][ly].bits.hidden;
-			//option for including hidden blocks
-			isHidden &= !config.show_hidden_blocks;
-			bool shouldBeIncluded = (!isOpenTerrain(t) || b->water.index || !designations[lx][ly].bits.skyview) && !isHidden;
-			//include hidden blocks as shaded black 
-			if(config.shade_hidden_blocks && isHidden && (isBlockOnVisibleEdgeOfSegment(&segment, b) || areNeighborsVisible(designations, lx, ly)))
+			//determine rock/soil type
+			int rockIndex = -1;
+			if(regionoffsets[designations[lx][ly].bits.biome] < (*allLayers).size())
+				if(designations[lx][ly].bits.geolayer_index < (*allLayers).at(regionoffsets[designations[lx][ly].bits.biome]).size())
+					rockIndex = (*allLayers).at(regionoffsets[designations[lx][ly].bits.biome]).at(designations[lx][ly].bits.geolayer_index);
+			for(uint32_t i=0; i<numVeins; i++)
 			{
-				b->wallType = 0;
-				b->floorType = 0;
-				b->stairType = 0;
-				b->ramp.type = 0;
-				b->water.index = 0;
-				b->building.info.type = BUILDINGTYPE_BLACKBOX;
-				static c_sprite sprite;
-				sprite.set_sheetindex(SPRITEOBJECT_BLACK);
-				sprite.set_defaultsheet(IMGObjectSheet);
-				sprite.set_offset(0, 4);
-				b->building.sprites.push_back( sprite );
-				sprite.set_offset(0, 0);
-				b->building.sprites.push_back( sprite );
-				shouldBeIncluded= true;
+				//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
+
+				//if((uint32_t)veins[i].type >= groundTypes.size())
+				//continue;
+
+				// DANGER: THIS CODE MAY BE BUGGY
+				// This was apparently causing a crash in previous version
+				// But works fine for me
+				uint16_t row = veins[i].assignment[ly];
+				bool set = (row & (1 << lx)) != 0;
+				if(set){
+					rockIndex = veins[i].type;
+					b->material.type = INORGANIC;
+					b->material.index = veins[i].type;
+				}
+				else
+				{
+					b->material.type = INORGANIC;
+					b->material.index = rockIndex;
+				}
 			}
 
-			if( shouldBeIncluded )
+			//read global features
+			int16_t idx = mapBlock.global_feature;
+			if( idx != -1 && (uint16_t)idx < global_features->size() && global_features->at(idx).main_material != -1)
 			{
-				//this only needs to be done for included blocks
-
-				//determine rock/soil type
-				int rockIndex = -1;
-				if(regionoffsets[designations[lx][ly].bits.biome] < (*allLayers).size())
-					if(designations[lx][ly].bits.geolayer_index < (*allLayers).at(regionoffsets[designations[lx][ly].bits.biome]).size())
-						rockIndex = (*allLayers).at(regionoffsets[designations[lx][ly].bits.biome]).at(designations[lx][ly].bits.geolayer_index);
-				b->layerMaterial.type = INORGANIC;
-				b->layerMaterial.index = rockIndex;
-				//check veins
-				//if there's no veins, the vein material should just be the layer material.
-				b->veinMaterial.type = INORGANIC;
-				b->veinMaterial.index = rockIndex;
-				for(uint32_t i=0; i<numVeins; i++)
+				if(designations[lx][ly].bits.feature_global)
 				{
-					//TODO: This will be fixed in dfHack at some point, but right now objects that arnt veins pass through as. So we filter on vtable
-
-					//if((uint32_t)veins[i].type >= groundTypes.size())
-					//continue;
-
-					// DANGER: THIS CODE MAY BE BUGGY
-					// This was apparently causing a crash in previous version
-					// But works fine for me
-					uint16_t row = veins[i].assignment[ly];
-					bool set = (row & (1 << lx)) != 0;
-					if(set){
-						rockIndex = veins[i].type;
-						b->veinMaterial.type = INORGANIC;
-						b->veinMaterial.index = veins[i].type;
-						b->hasVein = 1;
-					}
-					else
-					{
-						b->veinMaterial.type = INORGANIC;
-						b->veinMaterial.index = rockIndex;
-					}
+					//if(global_features->at(idx).main_material == INORGANIC) // stone
+					//{
+					//there may be other features.
+					b->material.type = global_features->at(idx).main_material;
+					b->material.index = global_features->at(idx).sub_material;
+					//}
 				}
-				b->material.type = INORGANIC;
-				b->material.index = b->veinMaterial.index;
+			}
 
-				//read global features
-				int16_t idx = mapBlock.global_feature;
-				if( idx != -1 && (uint16_t)idx < global_features->size() && global_features->at(idx).main_material != -1)
+			//read local features
+			idx = mapBlock.local_feature;
+			if( idx != -1 )
+			{
+				DFHack::planecoord pc;
+				pc.dim.x = CellX;
+				pc.dim.y = CellY;
+				std::map <DFHack::planecoord, std::vector<DFHack::t_feature *> >::iterator it;
+				it = local_features->find(pc);
+				if(it != local_features->end())
 				{
-					if(designations[lx][ly].bits.feature_global)
+					std::vector<DFHack::t_feature *>& vectr = (*it).second;
+					if((uint16_t)idx < vectr.size() && vectr[idx]->main_material != -1)
 					{
-						//if(global_features->at(idx).main_material == INORGANIC) // stone
-						//{
-						//there may be other features.
-						b->layerMaterial.type = global_features->at(idx).main_material;
-						b->layerMaterial.index = global_features->at(idx).sub_material;
-						b->material.type = global_features->at(idx).main_material;
-						b->material.index = global_features->at(idx).sub_material;
-						b->hasVein = 0;
-						//}
-					}
-				}
-
-				//read local features
-				idx = mapBlock.local_feature;
-				if( idx != -1 )
-				{
-					DFHack::planecoord pc;
-					pc.dim.x = CellX;
-					pc.dim.y = CellY;
-					std::map <DFHack::planecoord, std::vector<DFHack::t_feature *> >::iterator it;
-					it = local_features->find(pc);
-					if(it != local_features->end())
-					{
-						std::vector<DFHack::t_feature *>& vectr = (*it).second;
-						if((uint16_t)idx < vectr.size() && vectr[idx]->main_material != -1)
+						if(mapBlock.designation[lx][ly].bits.feature_local)
 						{
-							if(mapBlock.designation[lx][ly].bits.feature_local)
-							{
-								//if(vectr[idx]->main_material == INORGANIC) // stone
-								//{
-								//We can probably get away with this.
-								b->veinMaterial.type = vectr[idx]->main_material;
-								b->veinMaterial.index = vectr[idx]->sub_material;
-								b->material.type = vectr[idx]->main_material;
-								b->material.index = vectr[idx]->sub_material;
-								b->hasVein = 1;
-								//}
-							}
+							//if(vectr[idx]->main_material == INORGANIC) // stone
+							//{
+							//We can probably get away with this.
+							b->material.type = vectr[idx]->main_material;
+							b->material.index = vectr[idx]->sub_material;
+							//}
 						}
 					}
 				}
+			}
 
-				if(tileTypeTable[b->tileType].m == OBSIDIAN)
-				{
-					b->material.type = INORGANIC;
-					b->material.index = contentLoader.obsidian;
-				}
+			if(tileTypeTable[b->tileType].m == OBSIDIAN)
+			{
+				b->material.type = INORGANIC;
+				b->material.index = contentLoader.obsidian;
+			}
 
 
-				//string name = v_stonetypes[j].id;
-				if (createdBlock)
-				{
-					segment.addBlock(b);
-				}
-			}else if (createdBlock){
-				delete(b);
+			//string name = v_stonetypes[j].id;
+			if (createdBlock)
+			{
+				segment.addBlock(b);
 			}
 
 		}
 	}
 }
-
-
-bool checkFloorBorderRequirement(WorldSegment* segment, int x, int y, int z, dirRelative offset)
-{
-	Block* bHigh = segment->getBlockRelativeTo(x, y, z, offset);
-	if (bHigh && (bHigh->floorType > 0 || bHigh->ramp.type > 0 || bHigh->wallType > 0))
-	{
-		return false;
-	}
-	Block* bLow = segment->getBlockRelativeTo(x, y, z-1, offset);
-	if (bLow == NULL || bLow->ramp.type == 0)
-	{
-		return true;
-	}
-	return false;
-}
-
 
 WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex, int sizey, int sizez){
 	uint32_t index;
@@ -691,10 +541,6 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 	//Read Number of cells
 	int celldimX, celldimY, celldimZ;
 	Maps->getSize((unsigned int &)celldimX, (unsigned int &)celldimY, (unsigned int &)celldimZ);
-	//Store these
-	config.cellDimX = celldimX * 16;
-	config.cellDimY = celldimY * 16;
-	config.cellDimZ = celldimZ;
 	//bound view to world
 	if(x > celldimX * CELLEDGESIZE -sizex/2) DisplayedSegmentX = x = celldimX * CELLEDGESIZE -sizex/2;
 	if(y > celldimY * CELLEDGESIZE -sizey/2) DisplayedSegmentY = y = celldimY * CELLEDGESIZE -sizey/2;
@@ -721,10 +567,6 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 	{
 		WriteErr("Can't get region geology.\n");
 	}
-
-	//read cursor
-	Pos->getCursorCoords(config.dfCursorX, config.dfCursorY, config.dfCursorZ);
-
 	// read constructions
 	vector<t_construction> allConstructions;
 	uint32_t numconstructions = 0;
@@ -830,81 +672,12 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 		}
 	}
 
-	////Read Effects
-	//uint32_t numeffects;
-	//if (DF.InitReadEffects(numeffects))
-	//{
-	//	t_effect_df40d tempeffect;
-	//	index = 0;
-	//	while(index < numeffects )
-	//	{
-	//		DF.ReadEffect(index, tempeffect);
-	//		//want hashtable :(
-	//		Block* b;
-	//		if( b = segment->getBlock( tempeffect.x, tempeffect.y, tempeffect.z) )
-	//			if(!(tempeffect.isHidden))
-	//			{
-	//				b->blockeffects.type = tempeffect.type;
-	//				b->blockeffects.canCreateNew = tempeffect.canCreateNew;
-	//				b->blockeffects.lifetime = tempeffect.lifetime;
-	//				b->blockeffects.material = tempeffect.material;
-	//				b->blockeffects.x_direction = tempeffect.x_direction;
-	//				b->blockeffects.y_direction = tempeffect.y_direction;
-	//				b->blockeffects.count +=1;
-	//				if(tempeffect.type == 0)
-	//					b->eff_miasma = tempeffect.lifetime;
-	//				if(tempeffect.type == 1)
-	//					b->eff_water = tempeffect.lifetime;
-	//				if(tempeffect.type == 2)
-	//					b->eff_water2 = tempeffect.lifetime;
-	//				if(tempeffect.type == 3)
-	//					b->eff_blood = tempeffect.lifetime;
-	//				if(tempeffect.type == 4)
-	//					b->eff_dust = tempeffect.lifetime;
-	//				if(tempeffect.type == 5)
-	//					b->eff_magma = tempeffect.lifetime;
-	//				if(tempeffect.type == 6)
-	//					b->eff_smoke = tempeffect.lifetime;
-	//				if(tempeffect.type == 7)
-	//					b->eff_dragonfire = tempeffect.lifetime;
-	//				if(tempeffect.type == 8)
-	//					b->eff_fire = tempeffect.lifetime;
-	//				if(tempeffect.type == 9)
-	//					b->eff_webing = tempeffect.lifetime;
-	//				if(tempeffect.type == 10)
-	//					b->eff_boiling = tempeffect.lifetime;
-	//				if(tempeffect.type == 11)
-	//					b->eff_oceanwave = tempeffect.lifetime;
-	//			}
-	//			index ++;
-	//	}
-	//	DF.FinishReadEffects();
-	//}
-	//Read Creatures
-
-	if(!config.skipCreatures)
-		ReadCreaturesToSegment( DF, segment );
-
 	//do misc beautification
 	uint32_t numblocks = segment->getNumBlocks();
 	for(uint32_t i=0; i < numblocks; i++){
 		Block* b = segment->getBlock(i);
 		//setup building sprites
-		if( b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX )
-			loadBuildingSprites( b, DF );
 
-		//setup deep water
-		if( b->water.index == 7 && b->water.type == 0)
-		{
-			int topdepth = blockWaterDepth(b->x, b->y, b->z, segment, eAbove);
-			if(topdepth)
-				b->water.index = 8;
-		}
-
-
-		//setup ramps
-		if(b->ramp.type > 0) 
-			b->ramp.index = CalculateRampType(b->x, b->y, b->z, segment);
 		//add edges to blocks and floors  
 
 		Block * dir1 = segment->getBlockRelativeTo(b->x, b->y, b->z, eUpLeft);
@@ -916,118 +689,16 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 		Block * dir7 = segment->getBlockRelativeTo(b->x, b->y, b->z, eDownLeft);
 		Block * dir8 = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
 
-		b->obscuringBuilding=0;
-		b->obscuringCreature=0;
+		if(dir1) if((tileTypeTable[dir1->tileType].c != EMPTY)) b->openborders |= 1;
+		if(dir2) if((tileTypeTable[dir2->tileType].c != EMPTY)) b->openborders |= 2;
+		if(dir3) if((tileTypeTable[dir3->tileType].c != EMPTY)) b->openborders |= 4;
+		if(dir4) if((tileTypeTable[dir4->tileType].c != EMPTY)) b->openborders |= 8;
+		if(dir5) if((tileTypeTable[dir5->tileType].c != EMPTY)) b->openborders |= 16;
+		if(dir6) if((tileTypeTable[dir6->tileType].c != EMPTY)) b->openborders |= 32;
+		if(dir7) if((tileTypeTable[dir7->tileType].c != EMPTY)) b->openborders |= 64;
+		if(dir8) if((tileTypeTable[dir8->tileType].c != EMPTY)) b->openborders |= 128;
 
-		if(dir1) if(dir1->creaturePresent) b->obscuringCreature = 1;
-		if(dir2) if(dir2->creaturePresent) b->obscuringCreature = 1;
-		if(dir8) if(dir8->creaturePresent) b->obscuringCreature = 1;
-
-		if(dir1) if(dir1->building.info.type != BUILDINGTYPE_NA && dir1->building.info.type != BUILDINGTYPE_BLACKBOX && dir1->building.info.type != contentLoader.civzoneNum && dir1->building.info.type != contentLoader.stockpileNum) b->obscuringBuilding = 1;
-		if(dir2) if(dir2->building.info.type != BUILDINGTYPE_NA && dir2->building.info.type != BUILDINGTYPE_BLACKBOX && dir2->building.info.type != contentLoader.civzoneNum && dir2->building.info.type != contentLoader.stockpileNum) b->obscuringBuilding = 1;
-		if(dir8) if(dir8->building.info.type != BUILDINGTYPE_NA && dir8->building.info.type != BUILDINGTYPE_BLACKBOX && dir8->building.info.type != contentLoader.civzoneNum && dir8->building.info.type != contentLoader.stockpileNum) b->obscuringBuilding = 1;
-
-		if( b->floorType > 0 )
-		{
-			b->depthBorderWest = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eLeft);
-			b->depthBorderNorth = checkFloorBorderRequirement(segment, b->x, b->y, b->z, eUp);
-
-			Block* belowBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eBelow);
-			if(!belowBlock || (!belowBlock->wallType && !belowBlock->ramp.type)) 
-				b->depthBorderDown = true;
-		}
-		else if( b->wallType > 0 && wallShouldNotHaveBorders( b->wallType ) == false )
-		{
-			Block* leftBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
-			Block* upBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eUp);
-			if(!leftBlock || (!leftBlock->wallType && !leftBlock->ramp.type)) 
-				b->depthBorderWest = true;
-			if(!upBlock || (!upBlock->wallType && !upBlock->ramp.type))
-				b->depthBorderNorth = true;
-			Block* belowBlock = segment->getBlockRelativeTo(b->x, b->y, b->z, eBelow);
-			if(!belowBlock || (!belowBlock->wallType && !belowBlock->ramp.type)) 
-				b->depthBorderDown = true;
-		}
-		b->wallborders = 0;
-		if(dir1) if(dir1->wallType) b->wallborders |= 1;
-		if(dir2) if(dir2->wallType) b->wallborders |= 2;
-		if(dir3) if(dir3->wallType) b->wallborders |= 4;
-		if(dir4) if(dir4->wallType) b->wallborders |= 8;
-		if(dir5) if(dir5->wallType) b->wallborders |= 16;
-		if(dir6) if(dir6->wallType) b->wallborders |= 32;
-		if(dir7) if(dir7->wallType) b->wallborders |= 64;
-		if(dir8) if(dir8->wallType) b->wallborders |= 128;
-
-		b->rampborders = 0;
-		if(dir1) if(dir1->ramp.type) b->wallborders |= 1;
-		if(dir2) if(dir2->ramp.type) b->wallborders |= 2;
-		if(dir3) if(dir3->ramp.type) b->wallborders |= 4;
-		if(dir4) if(dir4->ramp.type) b->wallborders |= 8;
-		if(dir5) if(dir5->ramp.type) b->wallborders |= 16;
-		if(dir6) if(dir6->ramp.type) b->wallborders |= 32;
-		if(dir7) if(dir7->ramp.type) b->wallborders |= 64;
-		if(dir8) if(dir8->ramp.type) b->wallborders |= 128;
-
-		b->upstairborders = 0;
-		b->downstairborders = 0;
-		if(dir1) if(dir1->stairType == STAIR_UP) b->upstairborders |= 1;
-		if(dir2) if(dir2->stairType == STAIR_UP) b->upstairborders |= 2;
-		if(dir3) if(dir3->stairType == STAIR_UP) b->upstairborders |= 4;
-		if(dir4) if(dir4->stairType == STAIR_UP) b->upstairborders |= 8;
-		if(dir5) if(dir5->stairType == STAIR_UP) b->upstairborders |= 16;
-		if(dir6) if(dir6->stairType == STAIR_UP) b->upstairborders |= 32;
-		if(dir7) if(dir7->stairType == STAIR_UP) b->upstairborders |= 64;
-		if(dir8) if(dir8->stairType == STAIR_UP) b->upstairborders |= 128;
-
-		if(dir1) if(dir1->stairType == STAIR_UPDOWN) b->upstairborders |= 1;
-		if(dir2) if(dir2->stairType == STAIR_UPDOWN) b->upstairborders |= 2;
-		if(dir3) if(dir3->stairType == STAIR_UPDOWN) b->upstairborders |= 4;
-		if(dir4) if(dir4->stairType == STAIR_UPDOWN) b->upstairborders |= 8;
-		if(dir5) if(dir5->stairType == STAIR_UPDOWN) b->upstairborders |= 16;
-		if(dir6) if(dir6->stairType == STAIR_UPDOWN) b->upstairborders |= 32;
-		if(dir7) if(dir7->stairType == STAIR_UPDOWN) b->upstairborders |= 64;
-		if(dir8) if(dir8->stairType == STAIR_UPDOWN) b->upstairborders |= 128;
-
-		if(dir1) if(dir1->stairType == STAIR_UPDOWN) b->downstairborders |= 1;
-		if(dir2) if(dir2->stairType == STAIR_UPDOWN) b->downstairborders |= 2;
-		if(dir3) if(dir3->stairType == STAIR_UPDOWN) b->downstairborders |= 4;
-		if(dir4) if(dir4->stairType == STAIR_UPDOWN) b->downstairborders |= 8;
-		if(dir5) if(dir5->stairType == STAIR_UPDOWN) b->downstairborders |= 16;
-		if(dir6) if(dir6->stairType == STAIR_UPDOWN) b->downstairborders |= 32;
-		if(dir7) if(dir7->stairType == STAIR_UPDOWN) b->downstairborders |= 64;
-		if(dir8) if(dir8->stairType == STAIR_UPDOWN) b->downstairborders |= 128;
-
-		if(dir1) if(dir1->stairType == STAIR_DOWN) b->downstairborders |= 1;
-		if(dir2) if(dir2->stairType == STAIR_DOWN) b->downstairborders |= 2;
-		if(dir3) if(dir3->stairType == STAIR_DOWN) b->downstairborders |= 4;
-		if(dir4) if(dir4->stairType == STAIR_DOWN) b->downstairborders |= 8;
-		if(dir5) if(dir5->stairType == STAIR_DOWN) b->downstairborders |= 16;
-		if(dir6) if(dir6->stairType == STAIR_DOWN) b->downstairborders |= 32;
-		if(dir7) if(dir7->stairType == STAIR_DOWN) b->downstairborders |= 64;
-		if(dir8) if(dir8->stairType == STAIR_DOWN) b->downstairborders |= 128;
-
-		b->floorborders = 0;
-		if(dir1) if(dir1->floorType) b->floorborders |= 1;
-		if(dir2) if(dir2->floorType) b->floorborders |= 2;
-		if(dir3) if(dir3->floorType) b->floorborders |= 4;
-		if(dir4) if(dir4->floorType) b->floorborders |= 8;
-		if(dir5) if(dir5->floorType) b->floorborders |= 16;
-		if(dir6) if(dir6->floorType) b->floorborders |= 32;
-		if(dir7) if(dir7->floorType) b->floorborders |= 64;
-		if(dir8) if(dir8->floorType) b->floorborders |= 128;
-
-		b->lightborders = 0;
-		if(dir1) if(!dir1->designation.bits.skyview) b->lightborders |= 1;
-		if(dir2) if(!dir2->designation.bits.skyview) b->lightborders |= 2;
-		if(dir3) if(!dir3->designation.bits.skyview) b->lightborders |= 4;
-		if(dir4) if(!dir4->designation.bits.skyview) b->lightborders |= 8;
-		if(dir5) if(!dir5->designation.bits.skyview) b->lightborders |= 16;
-		if(dir6) if(!dir6->designation.bits.skyview) b->lightborders |= 32;
-		if(dir7) if(!dir7->designation.bits.skyview) b->lightborders |= 64;
-		if(dir8) if(!dir8->designation.bits.skyview) b->lightborders |= 128;
-		b->lightborders = ~b->lightborders;
-
-		b->openborders = ~(b->floorborders|b->rampborders|b->wallborders|b->downstairborders|b->upstairborders);
+		b->openborders = ~(b->openborders);
 	}
 
 	Maps->Finish();
@@ -1072,101 +743,11 @@ bool IsConnectedToDF(){
 	return pDFApiHandle->isAttached();
 }
 
-void FollowCurrentDFWindow( )
-{
-	int32_t newviewx;
-	int32_t newviewy;
-	int32_t viewsizex;
-	int32_t viewsizey;
-	int32_t newviewz;
-	int32_t mapx, mapy, mapz;
-	DFHack::Position *Pos =pDFApiHandle->getPosition();
-	try
-	{
-		if (Pos)
-		{
-			// we take the rectangle you'd get if you scrolled the DF view closely around
-			// map edges with a pen pierced through the center,
-			// compute the scaling factor between this rectangle and the map bounds and then scale
-			// the coords with this scaling factor
-			/**
 
-			+---+
-			|W+-++----------+
-			+-+-+---------+ |
-			| |         | |
-			| | inner   | |
-			| |   rect. | |
-			| |         | |
-			| |         | |--- map boundary
-			| +---------+ |
-			+-------------+  W - corrected view
-
-			*/
-			pDFApiHandle->getMaps()->getSize((uint32_t &)mapx, (uint32_t &)mapy, (uint32_t &)mapz);
-			mapx *= 16;
-			mapy *= 16;
-
-			Pos->getWindowSize(viewsizex,viewsizey);
-			float scalex = float (mapx) / float (mapx - viewsizex);
-			float scaley = float (mapy) / float (mapy - viewsizey);
-
-			Pos->getViewCoords(newviewx,newviewy,newviewz);
-			newviewx = newviewx + (viewsizex / 2) - mapx / 2;
-			newviewy = newviewy + (viewsizey / 2) - mapy / 2;
-
-			DisplayedSegmentX = float (newviewx) * scalex - (config.segmentSize.x / 2) + config.viewXoffset + mapx / 2;
-			DisplayedSegmentY = float (newviewy) * scaley - (config.segmentSize.y / 2) + config.viewYoffset + mapy / 2;
-			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;
-
-		}
-		else
-		{
-			//fail
-			config.follow_DFscreen = false;
-		}
-	}
-	catch(exception &err)
-	{
-		WriteErr("DFhack exeption: %s \n", err.what());
-		config.follow_DFscreen = false;
-	}
-}
-
-void FollowCurrentDFCenter( )
-{
-	int32_t newviewx;
-	int32_t newviewy;
-	int32_t viewsizex;
-	int32_t viewsizey;
-	int32_t newviewz;
-	DFHack::Position *Pos =pDFApiHandle->getPosition();
-	try
-	{
-		if (Pos)
-		{
-			Pos->getWindowSize(viewsizex,viewsizey); 
-			Pos->getViewCoords(newviewx,newviewy,newviewz);
-
-			DisplayedSegmentX = newviewx + (viewsizex/2) - (config.segmentSize.x / 2) + config.viewXoffset;
-			DisplayedSegmentY = newviewy + (viewsizey/2) - (config.segmentSize.y / 2) + config.viewYoffset;
-			DisplayedSegmentZ = newviewz + config.viewZoffset + 1;       
-		}
-		else
-		{
-			//fail
-			config.follow_DFscreen = false;
-		}
-	}
-	catch(exception &err)
-	{
-		WriteErr("DFhack exeption: %s \n", err.what());
-		config.follow_DFscreen = false;
-	}
-}
 
 void reloadDisplayedSegment(){
 	//create handle to dfHack API
+	
 	bool firstLoad = (pDFApiHandle == 0);
 	if(pDFApiHandle == 0){
 		al_clear_to_color(al_map_rgb(0,0,0));
@@ -1227,15 +808,38 @@ void reloadDisplayedSegment(){
 	//G->ReadViewScreen(config.viewscreen);
 	//config.menustate = G->ReadMenuState();
 	//G->Finish();
-	if (firstLoad || config.follow_DFscreen)
+	DFHack::Maps *Maps;
+	if(!config.skipMaps)
 	{
-		if (config.track_center)
+		try
 		{
-			FollowCurrentDFCenter();
+			Maps = DF.getMaps();
+		}
+		catch (exception &e)
+		{
+			WriteErr("%DFhack exeption: s\n", e.what());
+		}
+		if(!Maps->Start())
+		{
+			WriteErr("Can't init map.\n");
 		}
 		else
 		{
-			FollowCurrentDFWindow();
+			//Read Number of cells
+			int celldimX, celldimY, celldimZ;
+			Maps->getSize((unsigned int &)celldimX, (unsigned int &)celldimY, (unsigned int &)celldimZ);
+			//Store these
+			config.cellDimX = celldimX * 16;
+			config.cellDimY = celldimY * 16;
+			config.cellDimZ = celldimZ;
+
+			config.segmentSize.x = config.cellDimX + 2;
+			config.segmentSize.y = config.cellDimY + 2;
+			config.segmentSize.z = config.cellDimZ + 1;
+
+			DisplayedSegmentX = 0;
+			DisplayedSegmentY = 0;
+			DisplayedSegmentZ = config.cellDimZ;
 		}
 	}
 

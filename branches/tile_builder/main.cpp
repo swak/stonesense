@@ -7,13 +7,10 @@ using namespace std;
 #include "common.h"
 #include "Block.h"
 #include "GUI.h"
-#include "SpriteMaps.h"
 #include "GameBuildings.h"
 #include "Constructions.h"
 #include "MapLoading.h"
 #include "WorldSegment.h"
-#include "Creatures.h"
-#include "GroundMaterialConfiguration.h"
 #include "ContentLoader.h"
 
 #ifdef LINUX_BUILD
@@ -306,7 +303,6 @@ int main(void)
 	al_set_display_icon(display, IMGIcon);
 
 	al_set_separate_blender(ALLEGRO_ADD, ALLEGRO_ALPHA, ALLEGRO_INVERSE_ALPHA, ALLEGRO_ADD, ALLEGRO_ONE, ALLEGRO_ONE);
-	loadGraphicsFromDisk();
 	al_clear_to_color(al_map_rgb(0,0,0));
 	al_draw_textf(font, al_map_rgb(255,255,255), al_get_bitmap_width(al_get_target_bitmap())/2, al_get_bitmap_height(al_get_target_bitmap())/2, ALLEGRO_ALIGN_CENTRE, "Starting up...");
 	al_flip_display();
@@ -355,24 +351,11 @@ int main(void)
 		if (redraw && al_event_queue_is_empty(queue))
 		{
 			al_rest(ALLEGRO_MSECS_TO_SECS(30));
-			if(config.spriteIndexOverlay)
-			{
-				DrawSpriteIndexOverlay(config.currentSpriteOverlay);
-			}
-			else if( config.show_intro && config.creditScreen )
-			{
-				drawcredits();
-			}
-			else if( timeToReloadSegment ){
+			if( timeToReloadSegment ){
 				reloadDisplayedSegment();
 				al_clear_to_color(al_map_rgb(config.backr,config.backg,config.backb));
 				paintboard();
 				timeToReloadSegment = false;
-				animationFrameShown = true;
-			}
-			else if (animationFrameShown == false)
-			{
-				paintboard();
 				animationFrameShown = true;
 			}
 			doKeys();
@@ -421,7 +404,6 @@ int main(void)
 				redraw = true;
 		}
 	}
-	flushImgFiles();
 	DisconnectFromDF();
 
 	//dispose old segment

@@ -118,14 +118,6 @@ void parseConfigLine( string line ){
 		string result = parseStrFromLine( "TRACK_CENTER", line );
 		config.track_center = (result == "YES");
 	}
-	if( line.find("[FOLLOW_DF_SCREEN") != -1){
-		string result = parseStrFromLine( "FOLLOW_DF_SCREEN", line );
-		config.follow_DFscreen = (result == "YES");
-	}
-	if( line.find("[FOLLOW_DF_CURSOR") != -1){
-		string result = parseStrFromLine( "FOLLOW_DF_CURSOR", line );
-		config.follow_DFcursor = (result == "YES");
-	}
 	if( line.find("[SHOW_CREATURE_NAMES") != -1){
 		string result = parseStrFromLine( "SHOW_CREATURE_NAMES", line );
 		config.show_creature_names = (result == "YES");

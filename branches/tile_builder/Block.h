@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include "SpriteObjects.h"
 class WorldSegment;
 
 
@@ -16,26 +15,11 @@ public:
 	WorldSegment* ownerSegment;
 
 	uint32_t x, y, z;
-	int floorType;
-	int wallType;
-	int stairType;
+
 	int tileType;
 	t_matglossPair material;
-	t_matglossPair layerMaterial;
-	t_matglossPair veinMaterial;
-	bool hasVein;
 
-	bool depthBorderNorth;
-	bool depthBorderWest;
-	bool depthBorderDown;
-	int shadow;
-
-	uint8_t wallborders;
-	uint8_t floorborders;
 	uint8_t openborders;
-	uint8_t rampborders;
-	uint8_t upstairborders;
-	uint8_t downstairborders;
 	uint8_t lightborders;
 	
 	bool creaturePresent;
@@ -43,76 +27,33 @@ public:
 	t_matglossPair ramp;
 	t_matglossPair water;
 
-	//following are neighbor water levels
-	t_matglossPair abovewater;
-	t_matglossPair belowwater;
-	t_matglossPair rightwater;
-	t_matglossPair leftwater;
-
-	t_designation designation;
 	t_occupancy occ;
-	t_creature * creature;
 	t_matglossPair tree;
+	t_designation designation;
 
 	int mudlevel;
 	int snowlevel;
 	int bloodlevel;
 	ALLEGRO_COLOR bloodcolor;
-	struct BlockEffects //size 40
-	{
-		uint16_t count;
-		uint16_t type;
-		t_matglossPair material;
-		int16_t lifetime;
-		int16_t x_direction;
-		int16_t y_direction;
-		uint8_t canCreateNew;//??
-	} blockeffects;
 
-	//individual effects
-	/*int16_t eff_miasma;
-	int16_t eff_water;
-	int16_t eff_water2;
-	int16_t eff_blood;
-	int16_t eff_dust;
-	int16_t eff_magma;
-	int16_t eff_smoke;
-	int16_t eff_dragonfire;
-	int16_t eff_fire;
-	int16_t eff_boiling;
-	int16_t eff_webing;
-	int16_t eff_oceanwave;*/
 	struct {
 		t_building info;
-		vector<c_sprite> sprites;
 		uint32_t index;
 	} building;
 
 	bool IsVisible(){
-		return (floorType || wallType) != 0;
+		return tileTypeTable[tileType].c != EMPTY;
 	}
-	void Draw();
 	void Draw_pixel(bool * bitmask);
-	void Drawcreaturetext();
-	void DrawRamptops();
-
-	uint16_t temp1;
-	uint16_t temp2;
 
 	uint16_t consForm;
-
-	bool obscuringCreature;
-	bool obscuringBuilding;
 
 private:
 
 };
-void createEffectSprites();
-void destroyEffectSprites();
 void initRandomCube();
 
 //find a better place for these
-bool hasWall(Block* b);
 bool hasBuildingOfID(Block* b, int ID);
 bool hasBuildingIdentity(Block* b, uint32_t index, int buildingOcc);
 bool hasBuildingOfIndex(Block* b, uint32_t index);

@@ -1,8 +1,6 @@
 #include "common.h"
 #include "WorldSegment.h"
-#include "SpriteMaps.h"
 #include "GameBuildings.h"
-#include "BuildingConfiguration.h"
 #include "ContentLoader.h"
 
 //vector<BuildingConfiguration> buildingTypes;
@@ -43,22 +41,6 @@ return eSimpleSingle;
 bool blockHasBridge(Block* b){
 	if(!b) return 0;
 	return b->building.info.type == BUILDINGTYPE_BRIDGE;
-}
-
-dirTypes findWallCloseTo(WorldSegment* segment, Block* b){
-	uint32_t x,y,z;
-	x = b->x; y = b->y; z = b->z;
-	bool n = hasWall( segment->getBlockRelativeTo( x, y, z, eUp) );
-	bool s = hasWall( segment->getBlockRelativeTo( x, y, z, eDown) );
-	bool w = hasWall( segment->getBlockRelativeTo( x, y, z, eLeft) );
-	bool e = hasWall( segment->getBlockRelativeTo( x, y, z, eRight) );
-
-	if(w) return eSimpleW;
-	if(n) return eSimpleN;
-	if(s) return eSimpleS;
-	if(e) return eSimpleE;
-
-	return eSimpleSingle;
 }
 
 void ReadBuildings(DFHack::Context& DF, vector<t_building>* buildingHolder)
@@ -138,74 +120,10 @@ void MergeBuildingsToSegment(vector<t_building>* buildings, WorldSegment* segmen
 					}
 
 					if( b ){
-						//handle special case where zones and stockpiles overlap buildings, and try to replace them
-						if(b->building.info.type != BUILDINGTYPE_NA && tempbuilding.type == TranslateBuildingName("building_civzonest", contentLoader.classIdStrings ) )
-							continue;
-						if(b->building.info.type != BUILDINGTYPE_NA && tempbuilding.type == TranslateBuildingName("building_stockpilest", contentLoader.classIdStrings ) )
-							continue; 
 						b->building.index = i;
 						b->building.info = tempbuilding;
 					}
 				}
 			}
 	}
-
-	//all blocks in the segment now have their building info loaded.
-	//now set their sprites
-	/*
-	for(uint32_t i=0; i < segment->getNumBlocks(); i++){
-	Block* b = segment->getBlock( i );
-	if( b->building.info.type != BUILDINGTYPE_NA && b->building.info.type != BUILDINGTYPE_BLACKBOX )
-	loadBuildingSprites( b );
-	}
-	*/
-
-}
-
-
-void loadBuildingSprites ( Block* b, DFHack::Context& DF){
-	bool foundBlockBuildingInfo = false;
-	if (b == NULL)
-	{
-		WriteErr("Null Block skipped in loadBuildingSprites\n");
-		return;
-	}
-
-	uint32_t numBuildings = (uint32_t)contentLoader.buildingConfigs.size();
-	for(uint32_t i = 0; i < numBuildings; i++){
-		BuildingConfiguration& conf = contentLoader.buildingConfigs[i];
-		if(b->building.info.type != conf.gameID) continue;
-
-		//check all sprites for one that matches all conditions
-		if (conf.sprites != NULL && conf.sprites->BlockMatches(b))
-		{
-			foundBlockBuildingInfo = true;
-		}
-		break;
-	}
-	//add yellow box, if needed. But only if the building was not found (this way we can have blank slots in buildings)
-	if(b->building.sprites.size() == 0 && foundBlockBuildingInfo == false){
-		c_sprite unknownBuildingSprite;
-		b->building.sprites.push_back( unknownBuildingSprite );
-	}
-}
-
-/*TODO: this function takes a massive amount of work, looping all buildings for every block*/
-bool BlockHasSuspendedBuilding(vector<t_building>* buildingList, Block* b){
-	uint32_t num = (uint32_t)buildingList->size();
-	for(uint32_t i=0; i < num; i++){
-		t_building* building = &(*buildingList)[i];
-
-		//boundry check
-		if(b->z != building->z) continue;
-		if(b->x < building->x1  ||   b->x > building->x2) continue;
-		if(b->y < building->y1  ||   b->y > building->y2) continue;
-
-		if(building->type == TranslateBuildingName("building_bridgest", contentLoader.classIdStrings )){
-			return true;
-		}
-		if(building->type == TranslateBuildingName("building_civzonest", contentLoader.classIdStrings ))
-			return true;
-	}
-	return false;
 }

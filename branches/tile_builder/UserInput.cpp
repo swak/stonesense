@@ -1,9 +1,7 @@
 #include "common.h"
 #include "GUI.h"
-#include "BuildingConfiguration.h"
 #include "ContentLoader.h"
 #include "GameBuildings.h"
-#include "Creatures.h"
 extern int mouse_x, mouse_y, mouse_z;
 extern unsigned int mouse_b;
 ALLEGRO_MOUSE_STATE mouse;
@@ -134,7 +132,6 @@ void doKeys(){
 		//rest(50);
 	}
 	if( mouse.buttons & 1 ){
-		config.follow_DFcursor = false;
 		int x, y;
 		x = mouse.x;//pos >> 16;
 		y = mouse.y; //pos & 0x0000ffff;
@@ -212,8 +209,6 @@ void doKeys(int Key)
 		paintboard();
 	}
 	if(Key == ALLEGRO_KEY_G){
-		flushImgFiles();
-		loadGraphicsFromDisk();
 		timeToReloadConfig = true;
 		timeToReloadSegment = true;
 	}
@@ -232,13 +227,6 @@ void doKeys(int Key)
 	if(Key == ALLEGRO_KEY_C){
 		config.truncate_walls++;
 		if (config.truncate_walls > 4) config.truncate_walls = 0;
-		timeToReloadSegment = true;
-	}
-	if(Key == ALLEGRO_KEY_F){
-		if (al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL))
-			config.follow_DFcursor = !config.follow_DFcursor;
-		else
-			config.follow_DFscreen = !config.follow_DFscreen;
 		timeToReloadSegment = true;
 	}
 	if(Key == ALLEGRO_KEY_1){
@@ -272,12 +260,7 @@ void doKeys(int Key)
 		timeToReloadSegment = true;
 	}
 	if(Key == ALLEGRO_KEY_F5){
-		if (!(al_key_down(&keyboard,ALLEGRO_KEY_LCTRL) || al_key_down(&keyboard,ALLEGRO_KEY_RCTRL)))
-			saveScreenshot();
-		else{
-			saveMegashot();
-		}
-
+		saveScreenshot();
 	} 
 	if(Key == ALLEGRO_KEY_PAD_PLUS){
 		config.automatic_reload_time += config.automatic_reload_step;
@@ -305,22 +288,18 @@ void doKeys(int Key)
 	if(config.debug_mode)
 	{
 		if(Key == ALLEGRO_KEY_PAD_8){
-			config.follow_DFcursor = false;
 			debugCursor.y--;
 			paintboard();
 		}
 		if(Key == ALLEGRO_KEY_PAD_2){
-			config.follow_DFcursor = false;
 			debugCursor.y++;
 			paintboard();
 		}
 		if(Key == ALLEGRO_KEY_PAD_4){
-			config.follow_DFcursor = false;
 			debugCursor.x--;
 			paintboard();
 		}
 		if(Key == ALLEGRO_KEY_PAD_6){
-			config.follow_DFcursor = false;
 			debugCursor.x++;
 			paintboard();
 		}

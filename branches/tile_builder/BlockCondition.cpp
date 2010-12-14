@@ -41,31 +41,6 @@ int getBuildingFromString(const char* strType)
 	return INVALID_INDEX;	
 }
 
-NeighbourWallCondition::NeighbourWallCondition(const char* strDir)
-	: BlockCondition()
-{
-	this->value = getDirectionFromString(strDir);
-}
-
-bool NeighbourWallCondition::Matches(Block* b)
-{
-
-    bool n = hasWall( b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eUp ) );
-    bool s = hasWall( b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eDown ) );
-    bool w = hasWall( b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eLeft ) );
-    bool e = hasWall( b->ownerSegment->getBlockRelativeTo( b->x, b->y, b->z, eRight ) );
-     
-    if( value == eSimpleN && n) return true;
-    if( value == eSimpleS && s) return true;
-    if( value == eSimpleW && w) return true;
-    if( value == eSimpleE && e) return true;
-    
-    if( value == eSimpleSingle && !n && !s && !w && !e) return true;
-
-    return false;
-}
-
-
 PositionIndexCondition::PositionIndexCondition(const char* strValue)
 	: BlockCondition()
 {
@@ -327,11 +302,6 @@ bool NotConditionalNode::addCondition(BlockCondition* cond)
 	}
 	childcond = cond;
 	return true;
-}
-
-bool HaveFloorCondition::Matches(Block* b)
-{	
-	return (b->floorType > 0);
 }
 
 FluidBelowCondition::FluidBelowCondition(const char* strValue)
