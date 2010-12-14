@@ -1662,6 +1662,14 @@
 			Name="My Amplifier Results"
 			>
 			<File
+				RelativePath=".\My Amplifier Results\r000hs\r000hs.ampl"
+				>
+			</File>
+			<File
+				RelativePath=".\My Amplifier Results\r001hs\r001hs.ampl"
+				>
+			</File>
+			<File
 				RelativePath=".\My Amplifier Results\r002hs\r002hs.ampl"
 				>
 			</File>

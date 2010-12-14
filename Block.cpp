@@ -85,6 +85,319 @@ inline ALLEGRO_BITMAP* imageSheet(t_subSprite sprite, ALLEGRO_BITMAP* defaultBmp
 		return getImgFile(sprite.fileIndex);
 	}
 }
+void Block::Draw_pixel(bool * bitmask){
+	if((material.type == INORGANIC) && (material.index == -1))
+	{
+		material.index = 0;
+	}
+	bool defaultSnow = 1;
+	int sheetOffsetX, sheetOffsetY;
+	t_SpriteWithOffset sprite;
+	c_sprite* spriteobject;
+	/*if(config.hide_outer_blocks){
+	if(x == ownerSegment->x || x == ownerSegment->x + ownerSegment->sizex - 1) return;
+	if(y == ownerSegment->y || y == ownerSegment->y + ownerSegment->sizey - 1) return;
+	}*/
+	int32_t drawx = x;
+	int32_t drawy = y;
+	int32_t drawz = z; //- ownerSegment->sizez + 1;
+
+
+	correctBlockForSegmetOffset( drawx, drawy, drawz);
+	correctBlockForRotation( drawx, drawy, drawz);
+	int32_t viewx = drawx;
+	int32_t viewy = drawy;
+	int32_t viewz = drawz;
+	pointToTile((int*)&drawx, (int*)&drawy, drawz);
+
+	if(bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] == 1)
+		return;
+	ALLEGRO_COLOR tileBorderColor = al_map_rgb(85,85,85);
+	int rando = randomCube[x%RANDOM_CUBE][y%RANDOM_CUBE][z%RANDOM_CUBE];
+	//Draw Block
+	if(floorType > 0 || wallType > 0 || ramp.type > 0 || stairType > 0)
+	{
+		ALLEGRO_COLOR color;
+		if(tileTypeTable[tileType].m == GRASS)
+			color = al_map_rgb(89,164,61);
+		else if(tileTypeTable[tileType].m == GRASS2)
+			color = al_map_rgb(62,137,64);
+		else if(tileTypeTable[tileType].m == GRASS_DEAD)
+			color = al_map_rgb(151,164,61);
+		else if(tileTypeTable[tileType].m == GRASS_DRY)
+			color = al_map_rgb(151,164,61);
+		else if(water.index > 0)
+		{
+			if(water.type == 0)
+				color = al_map_rgb(0,186,255);
+			else
+				color = al_map_rgb(255,44,0);
+
+		}
+		//probably all we need right now
+		else
+			color = lookupMaterialColor(material.type, material.index);
+
+		if(tileTypeTable[tileType].c == BOULDER)
+		{
+			color.r *= 0.5;
+			color.g *= 0.5;
+			color.b *= 0.5;
+		}
+		else if(tileTypeTable[tileType].c == PEBBLES)
+		{
+			color.r *= 0.75;
+			color.g *= 0.75;
+			color.b *= 0.75;
+		}
+
+		if(!designation.bits.skyview)
+		{
+			if(openborders & 8)
+			{
+				color.r *= 0.5;
+				color.g *= 0.5;
+				color.b *= 0.5;
+			}
+			else
+			{
+				color.r *= 0.75;
+				color.g *= 0.75;
+				color.b *= 0.75;
+			}
+		}
+		al_put_pixel(drawx, drawy, color);
+		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
+	}
+
+	//vegetation
+	if(tree.index > 0 || tree.type > 0)
+	{
+		ALLEGRO_COLOR color;
+		color = al_map_rgb(18,72,21);
+		al_put_pixel(drawx, drawy, color);
+		al_put_pixel(drawx, drawy-1, color);
+		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
+	}
+
+
+	////draw surf
+	//if(eff_oceanwave > 0)
+	//{
+	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color*al_map_rgba(255, 255, 255, (255*eff_oceanwave)/100));
+	//	al_draw_tinted_bitmap(sprite_oceanwave, drawx, drawy - (WALLHEIGHT), 0);
+	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	//}
+	//if(eff_webing > 0)
+	//{
+	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color*al_map_rgba(255, 255, 255, (255*eff_webing)/100));
+	//	al_draw_tinted_bitmap(sprite_webing, drawx, drawy - (WALLHEIGHT), 0);
+	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	//}
+	//Draw Ramp
+	//if(ramp.type > 0){
+	//	spriteobject = GetBlockSpriteMap(ramp.type, material, consForm);
+	//	if (spriteobject->get_sheetindex() == UNCONFIGURED_INDEX)
+	//	{
+	//		spriteobject->set_sheetindex(0);
+	//		spriteobject->set_fileindex(INVALID_INDEX);
+	//		spriteobject->set_defaultsheet(IMGRampSheet);
+	//	}
+	//	if (spriteobject->get_sheetindex() != INVALID_INDEX)
+	//	{
+	//		spriteobject->set_size(SPRITEWIDTH, SPRITEHEIGHT);
+	//		spriteobject->set_tile_layout(RAMPBOTTOMTILE);
+	//		spriteobject->draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
+	//	}
+	//	spriteobject->set_tile_layout(BLOCKTILE);
+	//}
+
+	//drawFloorBlood ( this, drawx, drawy );
+	////first part of snow
+	//if(ramp.type == 0 && wallType == 0 && stairType == 0 && defaultSnow)
+	//{
+	//	if(snowlevel > 75)
+	//	{
+	//		DrawSpriteFromSheet( 20, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//	else if(snowlevel > 50)
+	//	{
+	//		DrawSpriteFromSheet( 21, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//	else if(snowlevel > 25)
+	//	{
+	//		DrawSpriteFromSheet( 22, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//	else if(snowlevel > 0)
+	//	{
+	//		DrawSpriteFromSheet( 23, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//}
+
+
+
+	////shadow
+	//if (shadow > 0)
+	//{
+	//	DrawSpriteFromSheet( BASE_SHADOW_TILE + shadow - 1, IMGObjectSheet, al_map_rgb(255,255,255), drawx, (ramp.type > 0)?(drawy - (WALLHEIGHT/2)):drawy );
+	//}
+
+	////Building
+	//bool skipBuilding =
+	//	(building.info.type == contentLoader.civzoneNum && !config.show_stockpiles) ||
+	//	(building.info.type == contentLoader.stockpileNum && !config.show_zones);
+
+	//if(building.info.type != BUILDINGTYPE_NA && !skipBuilding)
+	//{
+	//	int spriteNum =  SPRITEOBJECT_NA; //getBuildingSprite(this->building, mirroredBuilding);
+
+	//	for(uint32_t i=0; i < building.sprites.size(); i++)
+	//	{
+	//		spriteobject = &building.sprites[i];
+	//		spriteobject->draw_world(x, y, z);
+	//	}
+	//}
+
+
+
+
+	////Draw Stairs
+	//if(stairType > 0)
+	//{
+	//	bool mirrored = false;
+	//	if(findWallCloseTo(ownerSegment, this) == eSimpleW)
+	//		mirrored = true;
+
+	//	//down part
+	//	spriteobject = GetFloorSpriteMap(stairType, material, consForm);
+	//	if(spriteobject->get_sheetindex() != INVALID_INDEX && spriteobject->get_sheetindex() != UNCONFIGURED_INDEX)
+	//	{
+	//		if (mirrored)
+	//			spriteobject->draw_world_offset(x, y, z, 1);
+	//		else
+	//			spriteobject->draw_world(x, y, z);
+	//	}
+
+	//	//up part
+	//	spriteobject = GetBlockSpriteMap(stairType, material, consForm);
+	//	if(spriteobject->get_sheetindex() != INVALID_INDEX && spriteobject->get_sheetindex() != UNCONFIGURED_INDEX)
+	//	{
+	//		if (mirrored)
+	//			spriteobject->draw_world_offset(x, y, z, 1);
+	//		else
+	//			spriteobject->draw_world(x, y, z);
+	//	}
+	//}
+
+	//if(wallType > 0)
+	//{
+	//	//draw wall
+	//	spriteobject =  GetBlockSpriteMap(wallType, material, consForm);
+	//	int spriteOffset = 0;
+	//	if (spriteobject->get_sheetindex() == UNCONFIGURED_INDEX)
+	//	{
+	//		spriteobject->set_sheetindex(SPRITEOBJECT_WALL_NA);
+	//		spriteobject->set_fileindex(INVALID_INDEX);
+	//			spriteobject->set_tile_layout(BLOCKTILE);
+	//			spriteobject->set_defaultsheet(IMGObjectSheet);
+	//	}
+	//	if (spriteobject->get_sheetindex() == INVALID_INDEX)
+	//	{
+	//		//skip   
+	//	}    
+	//	else 
+	//	{
+	//		spriteobject->draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
+	//	}
+	//}
+
+
+	//if(water.index > 0)
+	//{
+	//	//if(waterlevel == 7) waterlevel--;
+	//	if(water.type == 0)
+	//	{
+	//		contentLoader.water[water.index-1].sprite.draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
+	//	}
+	//	else
+	//	{
+	//		contentLoader.lava[water.index-1].sprite.draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
+	//	}
+	//}
+
+	//// creature
+	//// ensure there is *some* creature according to the map data
+	//// (no guarantee it is the right one)
+	//if(creaturePresent)
+	//{
+	//	DrawCreature(drawx, drawy, creature);
+	//}
+
+	////second part of snow
+	//if(wallType == 0 && stairType == 0 && defaultSnow)
+	//{
+	//	if(snowlevel > 75)
+	//	{
+	//		DrawSpriteFromSheet( 24, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//	else if(snowlevel > 50)
+	//	{
+	//		DrawSpriteFromSheet( 25, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//	else if(snowlevel > 25)
+	//	{
+	//		DrawSpriteFromSheet( 26, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
+	//	}
+	//}
+
+	////if(eff_miasma > 0)
+	////{
+	////	draw_particle_cloud(eff_miasma, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_miasma);
+	////}
+	////if(eff_water > 0)
+	////{
+	////	draw_particle_cloud(eff_water, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_water);
+	////}
+	////if(eff_water2 > 0)
+	////{
+	////	draw_particle_cloud(eff_water2, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_water2);
+	////}
+	////if(eff_blood > 0)
+	////{
+	////	draw_particle_cloud(eff_blood, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_blood);
+	////}
+	//////if(eff_magma > 0)
+	//////{
+	//////	al_set_separate_blender(op, ALLEGRO_ONE, ALLEGRO_ONE, alpha_op, ALLEGRO_ONE, ALLEGRO_ONE, al_map_rgba(255, 255, 255, (255*eff_magma/100)));
+	//////	DrawSpriteFromSheet( 185, IMGObjectSheet, drawx, drawy );
+	//////	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
+	//////}
+	////if(eff_magma > 0)
+	////{
+	////	draw_particle_cloud(eff_magma, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_magma);
+	////}
+	////if(eff_dust > 0)
+	////{
+	////	draw_particle_cloud(eff_dust, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_dust);
+	////}
+	////if(eff_smoke > 0)
+	////{
+	////	draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	////}
+	////if(eff_dragonfire > 0)
+	////{
+	////	draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	////}
+	////if(eff_fire > 0)
+	////{
+	////	draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	////}
+	////if(eff_boiling > 0)
+	////{
+	////	draw_particle_cloud(eff_smoke, drawx, drawy - (SPRITEHEIGHT/2), SPRITEWIDTH, SPRITEHEIGHT, sprite_smoke);
+	////}
+}
+
 
 void Block::Draw(){
 	if((material.type == INORGANIC) && (material.index == -1))
@@ -295,8 +608,8 @@ void Block::Draw(){
 		{
 			spriteobject->set_sheetindex(SPRITEOBJECT_WALL_NA);
 			spriteobject->set_fileindex(INVALID_INDEX);
-				spriteobject->set_tile_layout(BLOCKTILE);
-				spriteobject->set_defaultsheet(IMGObjectSheet);
+			spriteobject->set_tile_layout(BLOCKTILE);
+			spriteobject->set_defaultsheet(IMGObjectSheet);
 		}
 		if (spriteobject->get_sheetindex() == INVALID_INDEX)
 		{

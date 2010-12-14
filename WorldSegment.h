@@ -24,6 +24,8 @@ public:
 		uint32_t memoryNeeded = sizex * sizey * sizez * sizeof(Block*);
 		blocksAsPointerVolume = (Block**) malloc( memoryNeeded );
 		memset(blocksAsPointerVolume, 0, memoryNeeded);
+		bitmask = 0;
+		mask_size = 0;
 	}
 
 	~WorldSegment(){
@@ -42,11 +44,15 @@ public:
 		return (uint32_t)blocks.size();
 	}
 
+	bool * bitmask;
+	int mask_size;
+
 	Block* getBlock(int32_t x, int32_t y, int32_t z);
 	Block* getBlockLocal(uint32_t x, uint32_t y, uint32_t z);
 	Block* getBlockRelativeTo(uint32_t x, uint32_t y, uint32_t z,  dirRelative direction);
 	Block* getBlock(uint32_t index);
 	void addBlock(Block* b);
 	void drawAllBlocks();
+	void drawTile();
 	bool CoordinateInsideSegment(uint32_t x, uint32_t y, uint32_t z);
 };

@@ -228,18 +228,69 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 	uint8_t regionoffsets[16];
 	t_temperatures temp1, temp2;
 	DFHack::mapblock40d mapBlock;
-	Maps->ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
-	Maps->ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
-	Maps->ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
-	Maps->ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
-	Maps->ReadTemperatures(CellX, CellY, CellZ, &temp1, &temp2);
-	Maps->ReadBlock40d(CellX, CellY, CellZ, &mapBlock);
+	try
+	{
+		Maps->ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+	try
+	{
+		Maps->ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+	try
+	{
+		Maps->ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+	try
+	{
+		Maps->ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+	try
+	{
+		Maps->ReadTemperatures(CellX, CellY, CellZ, &temp1, &temp2);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+	try
+	{
+		Maps->ReadBlock40d(CellX, CellY, CellZ, &mapBlock);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+
 	//read local vein data
 	vector <t_vein> veins;
 	vector <t_frozenliquidvein> ices;
 	vector <t_spattervein> splatter;
 
+	try
+	{
 	Maps->ReadVeins(CellX,CellY,CellZ,&veins,&ices,&splatter);
+	}
+	catch (exception &e)
+	{
+		WriteErr("%DFhack exeption: s\n", e.what());
+	}
+
 	uint32_t numVeins = (uint32_t)veins.size();
 
 	//parse cell
@@ -334,7 +385,7 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 				}
 				if(b->bloodlevel)
 				{
-				b->bloodcolor = al_map_rgba(red/b->bloodlevel, green/b->bloodlevel, blue/b->bloodlevel, (b->bloodlevel > config.bloodcutoff) ? 255 : b->bloodlevel*255/config.bloodcutoff);
+					b->bloodcolor = al_map_rgba(red/b->bloodlevel, green/b->bloodlevel, blue/b->bloodlevel, (b->bloodlevel > config.bloodcutoff) ? 255 : b->bloodlevel*255/config.bloodcutoff);
 				}
 				else
 					b->bloodcolor = al_map_rgba(0,0,0,0);
@@ -597,7 +648,7 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 	{
 		if(!Maps->Start())
 		{
-			WriteErr("Can't init map.");
+			WriteErr("Can't init map.\n");
 			DisconnectFromDF();
 			//return new blank segment
 			return new WorldSegment(x,y,z + 1,sizex,sizey,sizez + 1);

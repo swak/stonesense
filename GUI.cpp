@@ -269,6 +269,20 @@ void pointToScreen(int *inx, int *iny, int inz){
 	*inx=x;*iny=y;
 }
 
+void pointToTile(int *inx, int *iny, int inz){
+	int offx = al_get_bitmap_width(al_get_target_bitmap()) / 2;
+	int offy = 0;
+	int z=inz-1;
+	int x = *inx-*iny;
+	int y = *inx+*iny;
+	x = x * (TARGET_TILE_WIDTH / 2) / TARGET_REGION_WIDTH;
+	y = y * (TARGET_TILE_HEIGHT / 2) / TARGET_REGION_WIDTH;
+	x+=offx;
+	y+=offy;
+	y-=z * TARGET_Z_HEIGHT;
+	*inx=x;*iny=y;
+}
+
 Crd2D WorldBlockToScreen(int32_t x, int32_t y, int32_t z){
 	correctBlockForSegmetOffset( x, y, z);
 	return LocalBlockToScreen(x, y, z-1);
@@ -685,7 +699,8 @@ void paintboard(){
 
 
 
-	viewedSegment->drawAllBlocks();
+	//viewedSegment->drawAllBlocks();
+	viewedSegment->drawTile();
 	if (config.show_osd) DrawCurrentLevelOutline(false);
 
 	DebugInt1 = viewedSegment->getNumBlocks();

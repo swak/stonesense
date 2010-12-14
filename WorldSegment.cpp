@@ -230,6 +230,48 @@ void WorldSegment::drawAllBlocks(){
 		SetTitle("Stonesense");
 }
 
+void WorldSegment::drawTile(){
+
+	// x,y,z print pricess
+	ALLEGRO_BITMAP * temp = al_get_target_bitmap();
+	int32_t vsxmax = viewedSegment->sizex-1;
+	int32_t vsymax = viewedSegment->sizey-1;
+	int32_t vszmax = viewedSegment->sizez-1; // grabbing one tile +z more than we should for tile rules
+	//al_hold_bitmap_drawing(true);
+	int op, src, dst, alpha_op, alpha_src, alpha_dst;
+	ALLEGRO_COLOR color;
+	al_get_separate_blender(&op, &src, &dst, &alpha_op, &alpha_src, &alpha_dst);
+
+	int size = al_get_bitmap_height(al_get_target_bitmap()) * 
+		al_get_bitmap_width(al_get_target_bitmap());
+	if(!(mask_size == size))
+	{
+		delete [mask_size] bitmask;
+		bitmask = new bool[size];
+		mask_size = size;
+	}
+	for(int i = 0; i < mask_size; i++)
+		bitmask[i] = 0;
+	al_lock_bitmap(al_get_target_bitmap(),al_get_bitmap_format(al_get_target_bitmap()), ALLEGRO_LOCK_WRITEONLY);
+	for(int32_t vsz=vszmax-1; vsz >= 0; vsz--)
+	{
+		for(int32_t vsx=vsxmax-1; vsx > 0; vsx--)
+		{
+			for(int32_t vsy=vsymax-1; vsy > 0; vsy--)
+			{
+				Block *b = getBlockLocal(vsx,vsy,vsz);
+				if (b)
+				{
+					b->Draw_pixel(bitmask);
+					//while(!key[KEY_SPACE]) ;
+					//rest(100);
+				}
+			}
+		}
+	}
+	al_unlock_bitmap(al_get_target_bitmap());
+}
+
 /*
 void WorldSegment::drawAllBlocks(ALLEGRO_BITMAP* target){
 // x,y,z print pricess
