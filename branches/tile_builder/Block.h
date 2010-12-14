@@ -92,6 +92,7 @@ public:
 		return (floorType || wallType) != 0;
 	}
 	void Draw();
+	void Draw_pixel(bool * bitmask);
 	void Drawcreaturetext();
 	void DrawRamptops();
 
