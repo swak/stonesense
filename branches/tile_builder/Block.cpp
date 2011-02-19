@@ -69,9 +69,8 @@ void Block::Draw_pixel(bool * bitmask){
 	int32_t viewz = drawz;
 	pointToTile((int*)&drawx, (int*)&drawy, drawz);
 
-	if(bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] == 1)
-		return;
-	ALLEGRO_COLOR tileBorderColor = al_map_rgb(85,85,85);
+	//if(bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] == 1)
+	//	return;
 	int rando = randomCube[x%RANDOM_CUBE][y%RANDOM_CUBE][z%RANDOM_CUBE];
 	//Draw Block
 	if(tileTypeTable[tileType].c != EMPTY)
@@ -85,15 +84,8 @@ void Block::Draw_pixel(bool * bitmask){
 			color = al_map_rgb(151,164,61);
 		else if(tileTypeTable[tileType].m == GRASS_DRY)
 			color = al_map_rgb(151,164,61);
-		else if(water.index > 0)
-		{
-			if(water.type == 0)
-				color = al_map_rgb(0,186,255);
-			else
-				color = al_map_rgb(255,44,0);
-
-		}
-		//probably all we need right now
+		else if(tileTypeTable[tileType].m == MAGMA)
+			color = al_map_rgb(217,38,0);
 		else
 			color = lookupMaterialColor(material.type, material.index);
 
@@ -129,6 +121,19 @@ void Block::Draw_pixel(bool * bitmask){
 		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
 	}
 
+	if(water.index > 0)
+	{
+		ALLEGRO_COLOR color;
+		if(water.type == 0)
+			color = al_map_rgb(0,186,255);
+		else
+			color = al_map_rgb(255,44,0);
+
+		al_put_pixel(drawx, drawy, color);
+		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
+
+	}
+
 	//vegetation
 	if(tree.index > 0 || tree.type > 0)
 	{
@@ -138,176 +143,6 @@ void Block::Draw_pixel(bool * bitmask){
 		//al_put_pixel(drawx, drawy-1, color);
 		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
 	}
-
-
-	////draw surf
-	//if(eff_oceanwave > 0)
-	//{
-	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color*al_map_rgba(255, 255, 255, (255*eff_oceanwave)/100));
-	//	al_draw_tinted_bitmap(sprite_oceanwave, drawx, drawy - (WALLHEIGHT), 0);
-	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-	//}
-	//if(eff_webing > 0)
-	//{
-	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color*al_map_rgba(255, 255, 255, (255*eff_webing)/100));
-	//	al_draw_tinted_bitmap(sprite_webing, drawx, drawy - (WALLHEIGHT), 0);
-	//	al_set_separate_blender(op, src, dst, alpha_op, alpha_src, alpha_dst, color);
-	//}
-	//Draw Ramp
-	//if(ramp.type > 0){
-	//	spriteobject = GetBlockSpriteMap(ramp.type, material, consForm);
-	//	if (spriteobject->get_sheetindex() == UNCONFIGURED_INDEX)
-	//	{
-	//		spriteobject->set_sheetindex(0);
-	//		spriteobject->set_fileindex(INVALID_INDEX);
-	//		spriteobject->set_defaultsheet(IMGRampSheet);
-	//	}
-	//	if (spriteobject->get_sheetindex() != INVALID_INDEX)
-	//	{
-	//		spriteobject->set_size(SPRITEWIDTH, SPRITEHEIGHT);
-	//		spriteobject->set_tile_layout(RAMPBOTTOMTILE);
-	//		spriteobject->draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
-	//	}
-	//	spriteobject->set_tile_layout(BLOCKTILE);
-	//}
-
-	//drawFloorBlood ( this, drawx, drawy );
-	////first part of snow
-	//if(ramp.type == 0 && wallType == 0 && stairType == 0 && defaultSnow)
-	//{
-	//	if(snowlevel > 75)
-	//	{
-	//		DrawSpriteFromSheet( 20, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//	else if(snowlevel > 50)
-	//	{
-	//		DrawSpriteFromSheet( 21, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//	else if(snowlevel > 25)
-	//	{
-	//		DrawSpriteFromSheet( 22, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//	else if(snowlevel > 0)
-	//	{
-	//		DrawSpriteFromSheet( 23, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//}
-
-
-
-	////shadow
-	//if (shadow > 0)
-	//{
-	//	DrawSpriteFromSheet( BASE_SHADOW_TILE + shadow - 1, IMGObjectSheet, al_map_rgb(255,255,255), drawx, (ramp.type > 0)?(drawy - (WALLHEIGHT/2)):drawy );
-	//}
-
-	////Building
-	//bool skipBuilding =
-	//	(building.info.type == contentLoader.civzoneNum && !config.show_stockpiles) ||
-	//	(building.info.type == contentLoader.stockpileNum && !config.show_zones);
-
-	//if(building.info.type != BUILDINGTYPE_NA && !skipBuilding)
-	//{
-	//	int spriteNum =  SPRITEOBJECT_NA; //getBuildingSprite(this->building, mirroredBuilding);
-
-	//	for(uint32_t i=0; i < building.sprites.size(); i++)
-	//	{
-	//		spriteobject = &building.sprites[i];
-	//		spriteobject->draw_world(x, y, z);
-	//	}
-	//}
-
-
-
-
-	////Draw Stairs
-	//if(stairType > 0)
-	//{
-	//	bool mirrored = false;
-	//	if(findWallCloseTo(ownerSegment, this) == eSimpleW)
-	//		mirrored = true;
-
-	//	//down part
-	//	spriteobject = GetFloorSpriteMap(stairType, material, consForm);
-	//	if(spriteobject->get_sheetindex() != INVALID_INDEX && spriteobject->get_sheetindex() != UNCONFIGURED_INDEX)
-	//	{
-	//		if (mirrored)
-	//			spriteobject->draw_world_offset(x, y, z, 1);
-	//		else
-	//			spriteobject->draw_world(x, y, z);
-	//	}
-
-	//	//up part
-	//	spriteobject = GetBlockSpriteMap(stairType, material, consForm);
-	//	if(spriteobject->get_sheetindex() != INVALID_INDEX && spriteobject->get_sheetindex() != UNCONFIGURED_INDEX)
-	//	{
-	//		if (mirrored)
-	//			spriteobject->draw_world_offset(x, y, z, 1);
-	//		else
-	//			spriteobject->draw_world(x, y, z);
-	//	}
-	//}
-
-	//if(wallType > 0)
-	//{
-	//	//draw wall
-	//	spriteobject =  GetBlockSpriteMap(wallType, material, consForm);
-	//	int spriteOffset = 0;
-	//	if (spriteobject->get_sheetindex() == UNCONFIGURED_INDEX)
-	//	{
-	//		spriteobject->set_sheetindex(SPRITEOBJECT_WALL_NA);
-	//		spriteobject->set_fileindex(INVALID_INDEX);
-	//			spriteobject->set_tile_layout(BLOCKTILE);
-	//			spriteobject->set_defaultsheet(IMGObjectSheet);
-	//	}
-	//	if (spriteobject->get_sheetindex() == INVALID_INDEX)
-	//	{
-	//		//skip   
-	//	}    
-	//	else 
-	//	{
-	//		spriteobject->draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
-	//	}
-	//}
-
-
-	//if(water.index > 0)
-	//{
-	//	//if(waterlevel == 7) waterlevel--;
-	//	if(water.type == 0)
-	//	{
-	//		contentLoader.water[water.index-1].sprite.draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
-	//	}
-	//	else
-	//	{
-	//		contentLoader.lava[water.index-1].sprite.draw_world(x, y, z, (chopThisBlock && this->z == ownerSegment->z + ownerSegment->sizez -2));
-	//	}
-	//}
-
-	//// creature
-	//// ensure there is *some* creature according to the map data
-	//// (no guarantee it is the right one)
-	//if(creaturePresent)
-	//{
-	//	DrawCreature(drawx, drawy, creature);
-	//}
-
-	////second part of snow
-	//if(wallType == 0 && stairType == 0 && defaultSnow)
-	//{
-	//	if(snowlevel > 75)
-	//	{
-	//		DrawSpriteFromSheet( 24, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//	else if(snowlevel > 50)
-	//	{
-	//		DrawSpriteFromSheet( 25, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//	else if(snowlevel > 25)
-	//	{
-	//		DrawSpriteFromSheet( 26, IMGObjectSheet, al_map_rgb(255,255,255), drawx, drawy );
-	//	}
-	//}
 }
 
 bool hasBuildingOfID(Block* b, int ID){
