@@ -163,11 +163,11 @@ void WorldSegment::drawTile(){
 	for(int i = 0; i < mask_size; i++)
 		bitmask[i] = 0;
 	al_lock_bitmap(al_get_target_bitmap(),al_get_bitmap_format(al_get_target_bitmap()), ALLEGRO_LOCK_WRITEONLY);
-	for(int32_t vsz=vszmax-1; vsz >= 0; vsz--)
+	for(int32_t vsz=0; vsz < vszmax; vsz++)
 	{
-		for(int32_t vsx=vsxmax-1; vsx > 0; vsx--)
+		for(int32_t vsx=1; vsx < vsxmax; vsx++)
 		{
-			for(int32_t vsy=vsymax-1; vsy > 0; vsy--)
+			for(int32_t vsy=1; vsy < vsymax; vsy++)
 			{
 				Block *b = getBlockLocal(vsx,vsy,vsz);
 				if (b)
