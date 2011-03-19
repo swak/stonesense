@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+
+
+
+<building name="Coffin" gameID="building_coffinst">
+	<sprite index = 275 color = building />
+	<sprite index = 274 color = none />
+</building> 
