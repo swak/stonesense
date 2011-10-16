@@ -22,10 +22,13 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
+
 #ifndef ERROR_H_INCLUDED
 #define ERROR_H_INCLUDED
 
 #include "DFExport.h"
+#include "DFPragma.h"
 #include <string>
 #include <sstream>
 #include <exception>
@@ -39,6 +42,7 @@ namespace DFHack
          * the whole array of DFHack exceptions from the rest
          */
         class DFHACK_EXPORT All : public std::exception{};
+        class DFHACK_EXPORT AllMemdef : public All{};
         class DFHACK_EXPORT NoProcess : public All
         {
         public:
@@ -80,7 +84,7 @@ namespace DFHack
         };
 
         // a call to DFHack::mem_info::get* failed
-        class DFHACK_EXPORT MissingMemoryDefinition : public All
+        class DFHACK_EXPORT MissingMemoryDefinition : public AllMemdef
         {
         public:
             MissingMemoryDefinition(const char* _type, const std::string _key) : type(_type), key(_key)
@@ -113,7 +117,7 @@ namespace DFHack
         };
 
         // a call to DFHack::mem_info::get* failed
-        class DFHACK_EXPORT UnsetMemoryDefinition : public All
+        class DFHACK_EXPORT UnsetMemoryDefinition : public AllMemdef
         {
         public:
             UnsetMemoryDefinition(const char* _type, const std::string _key) : type(_type), key(_key)
@@ -145,7 +149,41 @@ namespace DFHack
             }
         };
 
-        // Syntax errors and whatnot, the xml cant be read
+        // a call to DFHack::mem_info::get* failed
+        class DFHACK_EXPORT InvalidMemoryDefinition : public AllMemdef
+        {
+        public:
+            InvalidMemoryDefinition(const char* _type, const std::string _key) : type(_type), key(_key)
+            {
+                std::stringstream s;
+                s << "memory object is INVALID: type " << type << " key " << key;
+                full = s.str();
+            }
+            // Used by functios using integer keys, such as getTrait
+            InvalidMemoryDefinition(const char* _type, uint32_t _key) : type(_type)
+            {
+                std::stringstream s1;
+                s1 << _key;
+                key = s1.str();
+
+                std::stringstream s;
+                s << "memory object is INVALID: type " << type << " key " << key;
+                full = s.str();
+            }
+            virtual ~InvalidMemoryDefinition() throw(){};
+
+            std::string full;
+            const std::string type;
+            std::string key;
+
+            virtual const char* what() const throw()
+            {
+                return full.c_str();
+            }
+        };
+
+        
+        // Syntax errors and whatnot, the xml can't be read
         class DFHACK_EXPORT MemoryXmlParse : public All
         {
         public:
@@ -156,14 +194,12 @@ namespace DFHack
                 s << "error " << id << ": " << desc << ", at row " << row << " col " << col;
                 full = s.str();
             }
-                
-                
+
             std::string full;
             const std::string desc;
             const int id;
             const int row;
             const int col;
-            
             virtual ~MemoryXmlParse() throw(){};
 
             virtual const char* what() const throw()
@@ -295,11 +331,17 @@ namespace DFHack
         class DFHACK_EXPORT MemoryAccessDenied : public All
         {
         public:
-            MemoryAccessDenied() {}
+            std::string descr;
+            MemoryAccessDenied(uint64_t address)
+            {
+                std::stringstream s;
+                s << "Invalid memory access @0x" << std::hex << address;
+                descr = s.str();
+            }
             virtual ~MemoryAccessDenied() throw(){};
             virtual const char* what() const throw()
             {
-                return "SHM ACCESS DENIED";
+                return descr.c_str();
             }
         };
         class DFHACK_EXPORT SHMVersionMismatch : public All

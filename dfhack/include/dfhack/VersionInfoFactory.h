@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
+
 #ifndef MEMINFO_MANAGER_H_INCLUDED
 #define MEMINFO_MANAGER_H_INCLUDED
 
@@ -41,6 +43,8 @@ namespace DFHack
             // memory info entries loaded from a file
             bool loadFile( std::string path_to_xml);
             bool isInErrorState() const {return error;};
+            VersionInfo * getVersionInfoByMD5(std::string md5string);
+            VersionInfo * getVersionInfoByPETimestamp(uint32_t timestamp);
             std::vector<VersionInfo*> versions;
         private:
             void ParseVTable(TiXmlElement* vtable, VersionInfo* mem);

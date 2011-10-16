@@ -46,6 +46,8 @@ void Block::operator delete (void *p){
 }
 
 void Block::Draw_pixel(bool * bitmask){
+	if(this->designation.bits.hidden)
+		return;
 	if((material.type == INORGANIC) && (material.index == -1))
 	{
 		material.index = 0;
@@ -73,29 +75,29 @@ void Block::Draw_pixel(bool * bitmask){
 	//	return;
 	int rando = randomCube[x%RANDOM_CUBE][y%RANDOM_CUBE][z%RANDOM_CUBE];
 	//Draw Block
-	if(tileTypeTable[tileType].c != EMPTY)
+	if(tileTypeTable[tileType].shape != EMPTY)
 	{
 		ALLEGRO_COLOR color;
-		if(tileTypeTable[tileType].m == GRASS)
+		if(tileTypeTable[tileType].material == GRASS)
 			color = al_map_rgb(89,164,61);
-		else if(tileTypeTable[tileType].m == GRASS2)
+		else if(tileTypeTable[tileType].material == GRASS2)
 			color = al_map_rgb(62,137,64);
-		else if(tileTypeTable[tileType].m == GRASS_DEAD)
+		else if(tileTypeTable[tileType].material == GRASS_DEAD)
 			color = al_map_rgb(151,164,61);
-		else if(tileTypeTable[tileType].m == GRASS_DRY)
+		else if(tileTypeTable[tileType].material == GRASS_DRY)
 			color = al_map_rgb(151,164,61);
-		else if(tileTypeTable[tileType].m == MAGMA)
+		else if(tileTypeTable[tileType].material == MAGMA)
 			color = al_map_rgb(217,38,0);
 		else
 			color = lookupMaterialColor(material.type, material.index);
 
-		if(tileTypeTable[tileType].c == BOULDER)
+		if(tileTypeTable[tileType].shape == BOULDER)
 		{
 			color.r *= 0.5;
 			color.g *= 0.5;
 			color.b *= 0.5;
 		}
-		else if(tileTypeTable[tileType].c == PEBBLES)
+		else if(tileTypeTable[tileType].shape == PEBBLES)
 		{
 			color.r *= 0.75;
 			color.g *= 0.75;
@@ -132,16 +134,6 @@ void Block::Draw_pixel(bool * bitmask){
 		al_put_pixel(drawx, drawy, color);
 		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
 
-	}
-
-	//vegetation
-	if(tree.index > 0 || tree.type > 0)
-	{
-		ALLEGRO_COLOR color;
-		color = al_map_rgb(18,72,21);
-		al_put_pixel(drawx, drawy, color);
-		//al_put_pixel(drawx, drawy-1, color);
-		bitmask[drawx + (drawy * al_get_bitmap_width(al_get_target_bitmap()))] = true;
 	}
 }
 
