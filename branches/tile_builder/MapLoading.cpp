@@ -155,54 +155,14 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 	uint8_t regionoffsets[16];
 	t_temperatures temp1, temp2;
 	DFHack::mapblock40d mapBlock;
-	try
-	{
-		Maps->ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
-	try
-	{
-		Maps->ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
-	try
-	{
-		Maps->ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
-	try
-	{
-		Maps->ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
-	try
-	{
-		Maps->ReadTemperatures(CellX, CellY, CellZ, &temp1, &temp2);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
-	try
-	{
-		Maps->ReadBlock40d(CellX, CellY, CellZ, &mapBlock);
-	}
-	catch (exception &e)
-	{
-		WriteErr("%DFhack exeption: s\n", e.what());
-	}
+	std::vector<t_tree> plants;
+	Maps->ReadTileTypes(CellX, CellY, CellZ, (tiletypes40d *) tiletypes);
+	Maps->ReadDesignations(CellX, CellY, CellZ, (designations40d *) designations);
+	Maps->ReadOccupancy(CellX, CellY, CellZ, (occupancies40d *) occupancies);
+	Maps->ReadRegionOffsets(CellX,CellY,CellZ, (biome_indices40d *)regionoffsets);
+	Maps->ReadTemperatures(CellX, CellY, CellZ, &temp1, &temp2);
+	Maps->ReadBlock40d(CellX, CellY, CellZ, &mapBlock);
+	Maps->ReadVegetation(CellX, CellY, CellZ, &plants);
 
 	//read local vein data
 	vector <t_vein> veins;
@@ -246,81 +206,6 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 			b->mudlevel = 0;
 			b->snowlevel = 0;
 			b->bloodlevel = 0;
-			if(1)
-			{
-				long red=0;
-				long green=0;
-				long blue=0;
-				for(int i = 0; i < splatter.size(); i++)
-				{
-					if(splatter[i].mat1 == MUD)
-					{
-						b->mudlevel = splatter[i].intensity[lx][ly];
-					}
-					else if(splatter[i].mat1 == ICE)
-					{
-						b->snowlevel = splatter[i].intensity[lx][ly];
-					}
-					else if(splatter[i].mat1 == VOMIT)
-					{
-						b->bloodlevel += splatter[i].intensity[lx][ly];
-						red += (127 * splatter[i].intensity[lx][ly]);
-						green += (196 * splatter[i].intensity[lx][ly]);
-						blue += (28 *splatter[i].intensity[lx][ly]);
-					}
-					else if(splatter[i].mat1 == ICHOR)
-					{
-						b->bloodlevel += splatter[i].intensity[lx][ly];
-						red += (255 * splatter[i].intensity[lx][ly]);
-						green += (255 * splatter[i].intensity[lx][ly]);
-						blue += (255 * splatter[i].intensity[lx][ly]);
-					}
-					else if(splatter[i].mat1 == BLOOD_NAMED)
-					{
-						b->bloodlevel += splatter[i].intensity[lx][ly];
-						red += (150 * splatter[i].intensity[lx][ly]);
-						//green += (0 * splatter[i].intensity[lx][ly]);
-						blue += (24 * splatter[i].intensity[lx][ly]);
-					}
-					else if(splatter[i].mat1 == BLOOD_1
-						|| splatter[i].mat1 == BLOOD_2
-						|| splatter[i].mat1 == BLOOD_3
-						|| splatter[i].mat1 == BLOOD_4
-						|| splatter[i].mat1 == BLOOD_5
-						|| splatter[i].mat1 == BLOOD_6)
-					{
-						b->bloodlevel += splatter[i].intensity[lx][ly];
-						if(splatter[i].mat2 == 206) //troll
-						{
-							//red += (0 * splatter[i].intensity[lx][ly]);
-							green += (255 * splatter[i].intensity[lx][ly]);
-							blue += (255 * splatter[i].intensity[lx][ly]);
-						}
-						else if(splatter[i].mat2 == 242) //imp
-						{
-							//red += (0 * splatter[i].intensity[lx][ly]);
-							//green += (0 * splatter[i].intensity[lx][ly]);
-							//blue += (0 * splatter[i].intensity[lx][ly]);
-						}
-						else
-						{
-							red += (150 * splatter[i].intensity[lx][ly]);
-							//green += (0 * splatter[i].intensity[lx][ly]);
-							blue += (24 * splatter[i].intensity[lx][ly]);
-						}
-					}
-				}
-				if(b->bloodlevel)
-				{
-					b->bloodcolor = al_map_rgba(red/b->bloodlevel, green/b->bloodlevel, blue/b->bloodlevel, (b->bloodlevel > config.bloodcutoff) ? 255 : b->bloodlevel*255/config.bloodcutoff);
-				}
-				else
-					b->bloodcolor = al_map_rgba(0,0,0,0);
-			}
-			else
-			{
-				b->bloodcolor = al_map_rgb(150, 0, 24);
-			}
 			//liquids
 			if(designations[lx][ly].bits.flow_size > 0){
 				b->water.type  = designations[lx][ly].bits.liquid_type;
@@ -404,7 +289,7 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 				}
 			}
 
-			if(tileTypeTable[b->tileType].m == OBSIDIAN)
+			if(tileTypeTable[b->tileType].material == OBSIDIAN)
 			{
 				b->material.type = INORGANIC;
 				b->material.index = contentLoader.obsidian;
@@ -417,6 +302,24 @@ void ReadCellToSegment(DFHack::Context& DF, WorldSegment& segment, int CellX, in
 				segment.addBlock(b);
 			}
 
+		}
+	}
+
+	//add trees and other vegetation
+	for(int i = 0; i < plants.size(); i++)
+	{
+		Block* b = segment.getBlock( plants[i].x, plants[i].y, CellZ);
+		if(b && (
+			(tileTypeTable[b->tileType].shape == TREE_DEAD) || 
+			(tileTypeTable[b->tileType].shape == TREE_OK) ||
+			(tileTypeTable[b->tileType].shape == SAPLING_DEAD) ||
+			(tileTypeTable[b->tileType].shape == SAPLING_OK) ||
+			(tileTypeTable[b->tileType].shape == SHRUB_DEAD) ||
+			(tileTypeTable[b->tileType].shape == SHRUB_OK)
+			))
+		{
+			b->material.type = plants[i].type;
+			b->material.index = plants[i].material;
 		}
 	}
 }
@@ -444,28 +347,6 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 	catch (exception &e)
 	{
 		WriteErr("DFhack exeption: %s\n", e.what());
-	}
-	DFHack::Position *Pos;
-	try
-	{
-		Pos = DF.getPosition();
-	}
-	catch (exception &e)
-	{
-		WriteErr("DFhack exeption: %s\n", e.what());
-	}
-	DFHack::Vegetation *Veg;
-	if(!config.skipVegetation)
-	{
-		try
-		{
-			Veg = DF.getVegetation();
-		}
-		catch (exception &e)
-		{
-			WriteErr("DFhack exeption: %s\n", e.what());
-			config.skipVegetation = true;
-		}
 	}
 	DFHack::Constructions *Cons;
 	if(!config.skipConstructions)
@@ -640,37 +521,36 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 	changeConstructionMaterials(segment, &allConstructions);
 
 
-	//Read Vegetation
-	uint32_t numtrees;
-	if(!config.skipVegetation)
-	{
-		try
-		{
-			if (Veg->Start(numtrees))
-			{
-				t_tree temptree;
-				index = 0;
-				while(index < numtrees )
-				{
-					Veg->Read(index, temptree);
-					//want hashtable :(
-					Block* b;
-					if( b = segment->getBlock( temptree.x, temptree.y, temptree.z) )
-					{
-						b->tree.type = temptree.type;
-						b->tree.index = temptree.material;
-					}
-					index ++;
-				}
-				Veg->Finish();
-			}
-		}
-		catch(exception &err)
-		{
-			WriteErr("DFhack exeption: %s\n", err.what());
-			config.skipVegetation = true;
-		}
-	}
+	//uint32_t numtrees;
+	//if(!config.skipVegetation)
+	//{
+	//	try
+	//	{
+	//		if (Veg->Start(numtrees))
+	//		{
+	//			t_tree temptree;
+	//			index = 0;
+	//			while(index < numtrees )
+	//			{
+	//				Veg->Read(index, temptree);
+	//				//want hashtable :(
+	//				Block* b;
+	//				if( b = segment->getBlock( temptree.x, temptree.y, temptree.z) )
+	//				{
+	//					b->tree.type = temptree.type;
+	//					b->tree.index = temptree.material;
+	//				}
+	//				index ++;
+	//			}
+	//			Veg->Finish();
+	//		}
+	//	}
+	//	catch(exception &err)
+	//	{
+	//		WriteErr("DFhack exeption: %s\n", err.what());
+	//		config.skipVegetation = true;
+	//	}
+	//}
 
 	//do misc beautification
 	uint32_t numblocks = segment->getNumBlocks();
@@ -689,14 +569,14 @@ WorldSegment* ReadMapSegment(DFHack::Context &DF, int x, int y, int z, int sizex
 		Block * dir7 = segment->getBlockRelativeTo(b->x, b->y, b->z, eDownLeft);
 		Block * dir8 = segment->getBlockRelativeTo(b->x, b->y, b->z, eLeft);
 
-		if(dir1) if((tileTypeTable[dir1->tileType].c != EMPTY)) b->openborders |= 1;
-		if(dir2) if((tileTypeTable[dir2->tileType].c != EMPTY)) b->openborders |= 2;
-		if(dir3) if((tileTypeTable[dir3->tileType].c != EMPTY)) b->openborders |= 4;
-		if(dir4) if((tileTypeTable[dir4->tileType].c != EMPTY)) b->openborders |= 8;
-		if(dir5) if((tileTypeTable[dir5->tileType].c != EMPTY)) b->openborders |= 16;
-		if(dir6) if((tileTypeTable[dir6->tileType].c != EMPTY)) b->openborders |= 32;
-		if(dir7) if((tileTypeTable[dir7->tileType].c != EMPTY)) b->openborders |= 64;
-		if(dir8) if((tileTypeTable[dir8->tileType].c != EMPTY)) b->openborders |= 128;
+		if(dir1) if((tileTypeTable[dir1->tileType].shape != EMPTY)) b->openborders |= 1;
+		if(dir2) if((tileTypeTable[dir2->tileType].shape != EMPTY)) b->openborders |= 2;
+		if(dir3) if((tileTypeTable[dir3->tileType].shape != EMPTY)) b->openborders |= 4;
+		if(dir4) if((tileTypeTable[dir4->tileType].shape != EMPTY)) b->openborders |= 8;
+		if(dir5) if((tileTypeTable[dir5->tileType].shape != EMPTY)) b->openborders |= 16;
+		if(dir6) if((tileTypeTable[dir6->tileType].shape != EMPTY)) b->openborders |= 32;
+		if(dir7) if((tileTypeTable[dir7->tileType].shape != EMPTY)) b->openborders |= 64;
+		if(dir8) if((tileTypeTable[dir8->tileType].shape != EMPTY)) b->openborders |= 128;
 
 		b->openborders = ~(b->openborders);
 	}
@@ -840,6 +720,8 @@ void reloadDisplayedSegment(){
 			DisplayedSegmentX = 0;
 			DisplayedSegmentY = 0;
 			DisplayedSegmentZ = config.cellDimZ;
+
+			Maps->getPosition(config.world_offsetX, config.world_offsetY, config.world_offsetZ);
 		}
 	}
 

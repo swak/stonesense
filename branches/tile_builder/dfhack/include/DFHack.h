@@ -1,6 +1,14 @@
 #ifndef DFHACK_API_H
 #define DFHACK_API_H
 
+/**
+ * \defgroup grp_context Context and Process management
+ * \defgroup grp_modules DFHack Module classes
+ * \defgroup grp_cwrap C Wrapper
+ */
+
+#pragma once
+
 // Defines
 #ifdef __GNUC__
 #define DEPRECATED(func) func __attribute__ ((deprecated))
@@ -13,7 +21,6 @@
 
 // DFHack core classes and types
 #include "dfhack/DFIntegers.h"
-#include "dfhack/DFGlobal.h"
 #include "dfhack/DFError.h"
 #include "dfhack/DFContextManager.h"
 #include "dfhack/DFContext.h"
@@ -23,8 +30,8 @@
 
 // DFHack modules
 #include "dfhack/modules/Buildings.h"
+#include "dfhack/modules/Engravings.h"
 #include "dfhack/modules/Materials.h"
-#include "dfhack/modules/Position.h"
 #include "dfhack/modules/Constructions.h"
 #include "dfhack/modules/Creatures.h"
 #include "dfhack/modules/Translation.h"

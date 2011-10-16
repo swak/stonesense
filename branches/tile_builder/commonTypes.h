@@ -153,6 +153,10 @@ typedef struct {
 	unsigned int cellDimY;
 	unsigned int cellDimZ;
 
+	int32_t world_offsetX;
+	int32_t world_offsetY;
+	int32_t world_offsetZ;
+
 	bool saveImageCache;
 	bool cache_images;
 	int imageCacheSize;

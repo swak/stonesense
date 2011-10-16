@@ -1,4 +1,3 @@
-
 /*
 www.sourceforge.net/projects/dfhack
 Copyright (c) 2009 Petr Mrázek (peterix), Kenneth Ferland (Impaler[WrG]), dorf
@@ -23,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
+
 #ifndef MODULE_H_INCLUDED
 #define MODULE_H_INCLUDED
 
@@ -30,6 +31,10 @@ distribution.
 namespace DFHack
 {
     class Context;
+    /**
+     * The parent class for all DFHack modules
+     * \ingroup grp_modules
+     */
     class DFHACK_EXPORT Module
     {
         public:

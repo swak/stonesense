@@ -42,7 +42,7 @@ public:
 	} building;
 
 	bool IsVisible(){
-		return tileTypeTable[tileType].c != EMPTY;
+		return tileTypeTable[tileType].shape != DFHack::EMPTY;
 	}
 	void Draw_pixel(bool * bitmask);
 

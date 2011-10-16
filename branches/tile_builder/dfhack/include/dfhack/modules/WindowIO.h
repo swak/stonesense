@@ -21,19 +21,27 @@ must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source
 distribution.
 */
-
+#pragma once
 #ifndef KEYS_H_INCLUDED
 #define KEYS_H_INCLUDED
 
-#include "dfhack/DFPragma.h"
-#include "dfhack/DFExport.h"
-#include "dfhack/DFModule.h"
+/**
+ * \defgroup grp_windowio WindowIO: Send events to DF's window
+ * @ingroup grp_modules
+ */
+
+
+#include "../DFPragma.h"
+#include "../DFExport.h"
+#include "../DFModule.h"
 
 namespace DFHack
 {
-
 class Process;
-    
+/**
+ * enum of all possible special keys
+ * \ingroup grp_windowio
+ */
 enum t_special
 {
     ENTER,
@@ -89,6 +97,11 @@ enum t_special
     NUM_SPECIALS
 };
 class DFContextShared;
+/**
+ * The WindowIO module
+ * \ingroup grp_windowio
+ * \ingroup grp_modules
+ */
 class DFHACK_EXPORT WindowIO : public Module
 {
     class Private;

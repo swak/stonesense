@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
+
 #ifndef PROCESSMANAGER_H_INCLUDED
 #define PROCESSMANAGER_H_INCLUDED
 
@@ -37,6 +39,7 @@ namespace DFHack
      * Process enumerator
      * Used to enumerate, create and destroy Processes.
      * @see DFHack::Process
+     * \ingroup grp_context
      */
     class DFHACK_EXPORT ProcessEnumerator
     {
@@ -84,6 +87,7 @@ namespace DFHack
     /**
      * Class used for holding a set of invalidated Process objects temporarily and destroy them safely.
      * @see DFHack::Process
+     * \ingroup grp_context
      */
     class DFHACK_EXPORT BadProcesses
     {

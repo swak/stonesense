@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DF_MISCUTILS
 #define DF_MISCUTILS
 #include <iostream>
@@ -56,24 +58,29 @@ length = length in lines. 1 line = 16 bytes
 */
 void hexdump (DFHack::Context *DF, uint32_t address, uint32_t length)
 {
-    char *buf = new char[length * 16];
-    DF->ReadRaw(address, length * 16, (uint8_t *) buf);
-    for (uint32_t i = 0; i < length; i++)
+    char *buf = new char[length];
+    DF->ReadRaw(address, length, (uint8_t *) buf);
+    int i = 0;
+    while (i < length)
     {
         // leading offset
-        cout << "0x" << hex << setw(8) << address + i*16 << "| ";
-        // groups
-        for(int j = 0; j < 4; j++)
+        if(i%16 == 0)
+            cout << "0x" << hex << setw(8) << address + i << "| ";
+        // bytes
+        for(int k = 0; k < 4; k++)
         {
-            // bytes
-            for(int k = 0; k < 4; k++)
-            {
-                int idx = i * 16 + j * 4 + k;
-                cout << hex << setw(2) << int(static_cast<unsigned char>(buf[idx])) << " ";
-            }
+            cout << hex << setw(2) << int(static_cast<unsigned char>(buf[i])) << " ";
+            i++;
+            if(i == length) break;
+        }
+        if(i%16 == 0 || i>= length)
+        {
+            cout << endl;
+        }
+        else if(i%4 == 0)
+        {
             cout << " ";
         }
-        cout << endl;
     }
     delete buf;
 }
@@ -130,8 +137,26 @@ template <typename T>
 void print_bits ( T val, std::ostream& out )
 {
     T n_bits = sizeof ( val ) * CHAR_BIT;
-
-    for ( unsigned i = 0; i < n_bits; ++i ) {
+    int cnt;
+    for ( unsigned i = 0; i < n_bits; ++i )
+    {
+        cnt = i/10;
+        cout << cnt << " ";
+    }
+    cout << endl;
+    for ( unsigned i = 0; i < n_bits; ++i )
+    {
+        cnt = i%10;
+        cout << cnt << " ";
+    }
+    cout << endl;
+    for ( unsigned i = 0; i < n_bits; ++i )
+    {
+        cout << "--";
+    }
+    cout << endl;
+    for ( unsigned i = 0; i < n_bits; ++i )
+    {
         out<< !!( val & 1 ) << " ";
         val >>= 1;
     }
@@ -145,61 +170,42 @@ std::string PrintSplatterType (int16_t mat1, int32_t mat2, vector<DFHack::t_matg
     {
         case 0:
             return "Rock";
-        break;
         case 1:
             return "Amber";
-            break;
         case 2:
             return "Coral";
-            break;
         case 3:
             return "Green Glass";
-            break;
         case 4:
             return "Clear Glass";
-            break;
         case 5:
             return "Crystal Glass";
-            break;
         case 6:
             return "Ice";
-            break;
         case 7:
             return "Coal";
-            break;
         case 8:
             return "Potash";
-            break;
         case 9:
             return "Ash";
-            break;
         case 10:
             return "Pearlash";
-            break;
         case 11:
             return "Lye";
-            break;
         case 12:
             return "Mud";
-            break;
         case 13:
             return "Vomit";
-            break;
         case 14:
             return "Salt";
-            break;
         case 15:
             return "Filth";
-            break;
         case 16:
             return "Frozen? Filth";
-            break;
         case 18:
             return "Grime";
-            break;
         case 0xF2:
             return  "Very Specific Blood (references a named creature)";
-            break;
         case 0x2A:
         case 0x2B:
             if(mat2 != -1)
@@ -209,10 +215,8 @@ std::string PrintSplatterType (int16_t mat1, int32_t mat2, vector<DFHack::t_matg
             }
             ret += "Blood";
             return ret;
-            break;
         default:
             return "Unknown";
-            break;
     }
 }
 #endif

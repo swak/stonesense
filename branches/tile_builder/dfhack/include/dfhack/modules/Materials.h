@@ -1,14 +1,18 @@
+#pragma once
 #ifndef CL_MOD_MATERIALS
 #define CL_MOD_MATERIALS
-/*
- * Materials
+/**
+ * \defgroup grp_materials Materials module - used for reading raws mostly
+ * @ingroup grp_modules
  */
 #include "dfhack/DFExport.h"
 #include "dfhack/DFModule.h"
 namespace DFHack
 {
     class DFContextShared;
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_matgloss
     {
         char id[128]; //the id in the raws
@@ -17,7 +21,9 @@ namespace DFHack
         uint8_t bright;
         char name[128]; //this is the name displayed ingame
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_descriptor_color
     {
         char id[128]; // id in the raws
@@ -26,7 +32,9 @@ namespace DFHack
         float b;
         char name[128]; //displayed name
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_matglossPlant
     {
         char id[128]; //the id in the raws
@@ -38,7 +46,9 @@ namespace DFHack
         char food_name[128];
         char extract_name[128];
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_bodypart
     {
         char id[128];
@@ -46,7 +56,9 @@ namespace DFHack
         char single[128];
         char plural[128];
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_colormodifier
     {
         char part[128];
@@ -54,7 +66,9 @@ namespace DFHack
         uint32_t startdate; /* in days */
         uint32_t enddate; /* in days */
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_creaturecaste
     {
         char rawname[128];
@@ -82,17 +96,25 @@ namespace DFHack
         t_attrib musicality;
         t_attrib kinesthetic_sense;
     };
+    #define NUM_CREAT_ATTRIBS 17
 
+    /**
+     * \ingroup grp_materials
+     */
     struct t_matglossOther
     {
         char rawname[128];
     };
-
+    /**
+     * \ingroup grp_materials
+     */
     struct t_creatureextract
     {
         char rawname[128];
     };
-    // this doesn't transfer well across the shm gap...
+    /**
+     * \ingroup grp_materials
+     */
     struct t_creaturetype
     {
         char rawname[128];
@@ -107,7 +129,10 @@ namespace DFHack
         } tilecolor;
     };
 
-    // this structure describes what are things made of in the DF world
+    /**
+     * this structure describes what are things made of in the DF world
+     * \ingroup grp_materials
+     */
     struct t_material
     {
         int16_t itemType;
@@ -116,7 +141,11 @@ namespace DFHack
         int32_t index;
         uint32_t flags;
     };
-
+    /**
+     * The Materials module
+     * \ingroup grp_modules
+     * \ingroup grp_materials
+     */
     class DFHACK_EXPORT Materials : public Module
     {
     public:
@@ -145,8 +174,8 @@ namespace DFHack
 
         void ReadAllMaterials(void);
 
-		std::string getType(t_material & mat);
-        std::string getDescription(t_material & mat);
+        std::string getType(const t_material & mat);
+        std::string getDescription(const t_material & mat);
     private:
         class Private;
         Private* d;

@@ -22,6 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#pragma once
+
 #ifndef MEMINFO_H_INCLUDED
 #define MEMINFO_H_INCLUDED
 
@@ -40,6 +42,13 @@ namespace DFHack
     struct t_class;
     class VersionInfoPrivate;
     class OffsetGroupPrivate;
+
+    enum INVAL_TYPE
+    {
+        NOT_SET,
+        IS_INVALID,
+        IS_VALID
+    };
 
     /*
      * Offset Group
@@ -68,31 +77,39 @@ namespace DFHack
         std::string getString (const std::string & key);
         OffsetGroup * getGroup ( const std::string & name );
 
-        void setOffset (const std::string & key, const std::string & value);
-        void setAddress (const std::string & key, const std::string & value);
-        void setHexValue (const std::string & key, const std::string & value);
-        void setString (const std::string & key, const std::string & value);
+        bool getSafeOffset (const std::string & key, int32_t & out);
+        bool getSafeAddress (const std::string & key, uint32_t & out);
+
+        void setOffset (const std::string& key, const std::string& value, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setOffsetValidity(const std::string& key, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setAddress (const std::string& key, const std::string& value, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setAddressValidity(const std::string& key, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setHexValue (const std::string& key, const std::string& value, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setHexValueValidity(const std::string& key, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setString (const std::string& key, const std::string& value, const DFHack::INVAL_TYPE inval = IS_VALID);
+        void setStringValidity(const std::string& key, const DFHack::INVAL_TYPE inval = IS_VALID);
         std::string PrintOffsets(int indentation);
         std::string getName();
         std::string getFullName();
         OffsetGroup * getParent();
+        void setInvalid(INVAL_TYPE arg1);
     };
 
     /*
      * Version Info
      */
+    enum OSType
+    {
+        OS_WINDOWS,
+        OS_LINUX,
+        OS_APPLE,
+        OS_BAD
+    };
     class DFHACK_EXPORT VersionInfo : public OffsetGroup
     {
     private:
         VersionInfoPrivate * d;
     public:
-        enum OSType
-        {
-            OS_WINDOWS,
-            OS_LINUX,
-            OS_APPLE,
-            OS_BAD
-        };
         VersionInfo();
         VersionInfo(const VersionInfo&);
         void copy(const DFHack::VersionInfo* old);
@@ -105,10 +122,10 @@ namespace DFHack
         void setBase (const uint32_t);
 
         void setMD5 (const std::string & _md5);
-        std::string getMD5();
+        bool getMD5(std::string & output);
 
         void setPE (uint32_t PE_);
-        uint32_t getPE();
+        bool getPE(uint32_t & output);
 
         std::string getMood(const uint32_t moodID);
         std::string getString (const std::string&);
